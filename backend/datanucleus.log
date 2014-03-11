@@ -1,0 +1,15 @@
+19:37:59,774 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+19:38:00,743 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+19:38:01,812 (main) INFO  [DataNucleus.Enhancer] - Writing class file "C:\Users\Mattias\Documents\GitHub\SocialFridge\backend\target\backend-1.0\WEB-INF\classes\be\kuleuven\cs\chikwadraat\socialfridge\DeviceInfo.class" with enhanced definition
+19:38:01,928 (main) INFO  [DataNucleus.Enhancer] - Writing class file "C:\Users\Mattias\Documents\GitHub\SocialFridge\backend\target\backend-1.0\WEB-INF\classes\be\kuleuven\cs\chikwadraat\socialfridge\MessageData.class" with enhanced definition
+19:38:02,067 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 2 classes. Timings : input=1009 ms, enhance=291 ms, total=1300 ms. Consult the log for full details
+19:40:50,705 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+19:40:50,902 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+19:40:51,136 (main) INFO  [DataNucleus.Enhancer] - Class "be.kuleuven.cs.chikwadraat.socialfridge.DeviceInfo" is already enhanced.
+19:40:51,137 (main) INFO  [DataNucleus.Enhancer] - Class "be.kuleuven.cs.chikwadraat.socialfridge.MessageData" is already enhanced.
+19:40:51,138 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 2 classes. Timings : input=207 ms, enhance=27 ms, total=234 ms. Consult the log for full details
+19:52:31,327 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+19:52:40,194 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+19:52:45,162 (main) INFO  [DataNucleus.Enhancer] - Class "be.kuleuven.cs.chikwadraat.socialfridge.DeviceInfo" is already enhanced.
+19:52:45,164 (main) INFO  [DataNucleus.Enhancer] - Class "be.kuleuven.cs.chikwadraat.socialfridge.MessageData" is already enhanced.
+19:52:45,227 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 2 classes. Timings : input=4866 ms, enhance=98 ms, total=4964 ms. Consult the log for full details
