@@ -20,4 +20,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    compile "com.android.support:support-v4:19.+"
+
+    // Facebook SDK
+    compile "fr.avianey:facebook-android-api:+@aar"
 }
