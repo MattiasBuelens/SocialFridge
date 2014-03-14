@@ -37,8 +37,9 @@ dependencies {
 
     compile "com.google.appengine:appengine-api-1.0-sdk:${appengineVersion}"
     compile "com.google.appengine:appengine-endpoints:${appengineVersion}"
-    compile "com.google.appengine:appengine-testing:${appengineVersion}"
-    compile "com.google.appengine:appengine-api-stubs:${appengineVersion}"
+
+    testCompile "com.google.appengine:appengine-testing:${appengineVersion}"
+    testCompile "com.google.appengine:appengine-api-stubs:${appengineVersion}"
 }
 
 sourceSets {
