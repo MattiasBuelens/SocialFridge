@@ -24,6 +24,7 @@ repositories {
 dependencies {
     appengineSdk "com.google.appengine:appengine-java-sdk:${appengineVersion}"
 
+    // App Engine
     compile "javax.servlet:servlet-api:2.5"
     compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
     compile "com.google.code.findbugs:jsr305:2.0.3"
@@ -40,6 +41,9 @@ dependencies {
 
     testCompile "com.google.appengine:appengine-testing:${appengineVersion}"
     testCompile "com.google.appengine:appengine-api-stubs:${appengineVersion}"
+
+    // Facebook
+    compile "com.restfb:restfb:1.6.+"
 }
 
 sourceSets {
