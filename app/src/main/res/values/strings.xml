@@ -5,6 +5,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="fb_app_id">510965062347064</string>
+    <string name="start_action_create_party">Create Cooking Party</string>
+    <string name="start_action_manage_fridge">Manage Fridge</string>
+
+    <string name="error_dialog_title">Something went wrong</string>
+    <string name="error_dialog_default_text">No response from server.</string>
+    <string name="error_authentication_retry">An error occurred that requires your attention. %1$s</string>
+    <string name="error_authentication_reopen">An error occurred, please re-login.</string>
+    <string name="error_server">The server is busy, please retry later.</string>
+    <string name="error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string>
+    <string name="error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string>
 
 </resources>

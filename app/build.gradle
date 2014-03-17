@@ -18,6 +18,14 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "http://mente.github.io/facebook-api-android-aar"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -25,5 +33,5 @@ dependencies {
     compile "com.android.support:support-v4:19.+"
 
     // Facebook SDK
-    compile "fr.avianey:facebook-android-api:+@aar"
+    compile "com.facebook:facebook-android-sdk:3.7"
 }
