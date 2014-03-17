@@ -1,29 +1,36 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.facebook.AppEventsLogger;
+import com.facebook.FacebookRequestError;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 
+/**
+ * Main activity.
+ */
 public class MainActivity extends FragmentActivity {
 
     private static final int LOGIN = 0;
     private static final int START = 1;
     private static final int FRAGMENT_COUNT = START + 1;
 
+    private static final Uri M_FACEBOOK_URL = Uri.parse("http://m.facebook.com");
+
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
     private boolean isResumed = false;
     private UiLifecycleHelper uiHelper;
-    private Session.StatusCallback callback = new Session.StatusCallback() {
+    private Session.StatusCallback sessionCallback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
             onSessionStateChange(session, state, exception);
@@ -37,7 +44,7 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             // TODO Initialize stuff
         }
-        uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper = new UiLifecycleHelper(this, sessionCallback);
         uiHelper.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
@@ -141,4 +148,89 @@ public class MainActivity extends FragmentActivity {
         }
         transaction.commit();
     }
+
+    /**
+     * Handles errors from sessions and requests.
+     *
+     * @param error The error.
+     */
+    public void handleError(FacebookRequestError error) {
+        DialogInterface.OnClickListener listener = null;
+        String dialogBody;
+
+        if (error == null) {
+            dialogBody = getString(R.string.error_dialog_default_text);
+        } else {
+            switch (error.getCategory()) {
+                case AUTHENTICATION_RETRY:
+                    // tell the user what happened by getting the message id, and
+                    // retry the operation later
+                    String userAction = (error.shouldNotifyUser()) ? "" :
+                            getString(error.getUserActionMessageId());
+                    dialogBody = getString(R.string.error_authentication_retry, userAction);
+                    listener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, M_FACEBOOK_URL);
+                            startActivity(intent);
+                        }
+                    };
+                    break;
+
+                case AUTHENTICATION_REOPEN_SESSION:
+                    // close the session and reopen it.
+                    dialogBody = getString(R.string.error_authentication_reopen);
+                    listener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Session session = Session.getActiveSession();
+                            if (session != null && !session.isClosed()) {
+                                session.closeAndClearTokenInformation();
+                            }
+                        }
+                    };
+                    break;
+
+                case PERMISSION:
+                    // request the publish permission
+                    /*dialogBody = getString(R.string.error_permission);
+                    listener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            pendingAnnounce = true;
+                            requestPublishPermissions(Session.getActiveSession());
+                        }
+                    };
+                    break;*/
+
+                case SERVER:
+                case THROTTLING:
+                    // this is usually temporary, don't clear the fields, and
+                    // ask the user to try again
+                    dialogBody = getString(R.string.error_server);
+                    break;
+
+                case BAD_REQUEST:
+                    // this is likely a coding error, ask the user to file a bug
+                    dialogBody = getString(R.string.error_bad_request, error.getErrorMessage());
+                    break;
+
+                case OTHER:
+                case CLIENT:
+                default:
+                    // an unknown issue occurred, this could be a code error, or
+                    // a server side issue, log the issue, and either ask the
+                    // user to retry, or file a bug
+                    dialogBody = getString(R.string.error_unknown, error.getErrorMessage());
+                    break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setPositiveButton(android.R.string.ok, listener)
+                .setTitle(R.string.error_dialog_title)
+                .setMessage(dialogBody)
+                .show();
+    }
+
 }
