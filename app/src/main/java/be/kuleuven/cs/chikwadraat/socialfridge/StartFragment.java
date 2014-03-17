@@ -103,6 +103,9 @@ public class StartFragment extends Fragment {
             case R.id.action_settings:
                 activity.showSettingsFragment();
                 return true;
+            case R.id.action_logout:
+                activity.logout();
+                return true;
         }
         return false;
     }

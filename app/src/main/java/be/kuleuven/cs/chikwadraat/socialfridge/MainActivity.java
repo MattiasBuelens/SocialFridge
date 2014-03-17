@@ -116,6 +116,13 @@ public class MainActivity extends FragmentActivity {
         // TODO Show settings fragment
     }
 
+    public void logout() {
+        Session session = Session.getActiveSession();
+        if (session != null && !session.isClosed()) {
+            session.closeAndClearTokenInformation();
+        }
+    }
+
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (isResumed) {
             FragmentManager manager = getSupportFragmentManager();
