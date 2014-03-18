@@ -1,0 +1,116 @@
+package be.kuleuven.cs.chikwadraat.socialfridge;
+
+import com.google.api.server.spi.config.Api;
+import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.ApiNamespace;
+
+import javax.inject.Named;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.auth.AuthException;
+import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
+
+@Api(name = "userEndpoint", namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge"))
+public class UserEndpoint extends FacebookAuthEndpoint {
+
+    /**
+     * Retrieves a user by user ID.
+     *
+     * @param id The user ID.
+     * @param accessToken The access token for authorization.
+     * @return The retrieved user.
+     */
+    @ApiMethod(name = "getUser")
+    public User getUser(@Named("id") String id, @Named("access_token") String accessToken) throws AuthException {
+        checkAccess(accessToken, id);
+        EntityManager mgr = getEntityManager();
+        User user = null;
+        try {
+            user = mgr.find(User.class, id);
+        } finally {
+            mgr.close();
+        }
+        return user;
+    }
+
+    /**
+     * Inserts a user. If the user already
+     * exists, an exception is thrown.
+     * It uses HTTP POST method.
+     *
+     * @param user        The user to be inserted.
+     * @param accessToken The access token for authorization.
+     * @return The newly inserted user.
+     */
+    @ApiMethod(name = "insertUser")
+    public User insertUser(User user, @Named("access_token") String accessToken) throws AuthException {
+        checkAccess(accessToken, user.getID());
+        EntityManager mgr = getEntityManager();
+        try {
+            if (containsUser(mgr, user)) {
+                throw new EntityExistsException("User already registered");
+            }
+            mgr.persist(user);
+        } finally {
+            mgr.close();
+        }
+        return user;
+    }
+
+    /**
+     * Updates a user. If the user doesn't exist yet, an exception is thrown.
+     * It uses HTTP PUT method.
+     *
+     * @param user        The user to be updated.
+     * @param accessToken The access token for authorization.
+     * @return The updated user.
+     */
+    @ApiMethod(name = "updateUser")
+    public User updateUser(User user, @Named("access_token") String accessToken) throws AuthException {
+        checkAccess(accessToken, user.getID());
+        EntityManager mgr = getEntityManager();
+        try {
+            if (!containsUser(mgr, user)) {
+                throw new EntityExistsException("User not yet registered");
+            }
+            mgr.persist(user);
+        } finally {
+            mgr.close();
+        }
+        return user;
+    }
+
+    /**
+     * Removes a user.
+     * It uses HTTP DELETE method.
+     *
+     * @param id          The user ID to be deleted.
+     * @param accessToken The access token for authorization.
+     * @return The deleted user.
+     */
+    @ApiMethod(name = "removeUser")
+    public User removeUserDevice(@Named("id") String id, @Named("access_token") String accessToken) throws AuthException {
+        checkAccess(accessToken, id);
+        EntityManager mgr = getEntityManager();
+        User user = null;
+        try {
+            user = mgr.find(User.class, id);
+            mgr.remove(user);
+        } finally {
+            mgr.close();
+        }
+        return user;
+    }
+
+    private boolean containsUser(EntityManager mgr, User user) {
+        User item = mgr.find(User.class, user.getKey());
+        return item != null;
+    }
+
+    private static EntityManager getEntityManager() {
+        return EMF.get().createEntityManager();
+    }
+
+}

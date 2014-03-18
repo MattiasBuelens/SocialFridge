@@ -1,0 +1,31 @@
+package be.kuleuven.cs.chikwadraat.socialfridge.auth;
+
+import com.restfb.exception.FacebookException;
+
+/**
+ * Base class for endpoints requiring authentication.
+ */
+public abstract class FacebookAuthEndpoint extends AuthEndpoint {
+
+    private final FacebookAuth auth;
+
+    protected FacebookAuthEndpoint() {
+        this.auth = new FacebookAuth();
+    }
+
+    protected void checkAccess(String accessToken) throws AuthException {
+        try {
+            auth.getUserId(accessToken);
+        } catch (FacebookException e) {
+            throw new AuthException(e);
+        }
+    }
+
+    protected void checkAccess(String accessToken, String userID) throws AuthException {
+        String tokenID = auth.getUserId(accessToken);
+        if (!tokenID.equals(userID)) {
+            throw new AuthException("Incorrect permission for this user.");
+        }
+    }
+
+}
