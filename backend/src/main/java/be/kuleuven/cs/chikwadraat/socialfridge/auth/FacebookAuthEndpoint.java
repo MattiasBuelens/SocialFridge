@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.auth;
 
+import com.google.api.server.spi.response.UnauthorizedException;
 import com.restfb.exception.FacebookException;
 
 /**
@@ -13,18 +14,18 @@ public abstract class FacebookAuthEndpoint extends AuthEndpoint {
         this.auth = new FacebookAuth();
     }
 
-    protected void checkAccess(String accessToken) throws AuthException {
+    protected void checkAccess(String accessToken) throws UnauthorizedException {
         try {
             auth.getUserId(accessToken);
         } catch (FacebookException e) {
-            throw new AuthException(e);
+            throw new UnauthorizedException(e);
         }
     }
 
-    protected void checkAccess(String accessToken, String userID) throws AuthException {
+    protected void checkAccess(String accessToken, String userID) throws UnauthorizedException {
         String tokenID = auth.getUserId(accessToken);
         if (!tokenID.equals(userID)) {
-            throw new AuthException("Incorrect permission for this user.");
+            throw new UnauthorizedException("Incorrect permission for this user.");
         }
     }
 

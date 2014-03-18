@@ -31,8 +31,8 @@ public class User {
         return id;
     }
 
-    public Key getKey() {
-        return getKey(getID());
+    public static Key getKey(User user) {
+        return getKey(user.getID());
     }
 
     public static Key getKey(String id) {

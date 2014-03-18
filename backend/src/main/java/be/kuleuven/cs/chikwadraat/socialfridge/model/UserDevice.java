@@ -45,12 +45,8 @@ public class UserDevice {
         this.timestamp = timestamp;
     }
 
-    public Key getKey() {
-        return key;
-    }
-
-    public Key getUserKey() {
-        return userKey;
+    public static Key getKey(UserDevice userDevice) {
+        return getKey(userDevice.getUserID(), userDevice.getRegistrationID());
     }
 
     public static Key getKey(String userID, String registrationID) {
@@ -73,7 +69,7 @@ public class UserDevice {
      * The parent user ID.
      */
     public String getUserID() {
-        return getUserKey().getName();
+        return getUserID(key);
     }
 
     /*
@@ -81,7 +77,7 @@ public class UserDevice {
      * indicates that the device is able to receive messages sent via GCM.
      */
     public String getRegistrationID() {
-        return getKey().getName();
+        return key.getName();
     }
 
     /*

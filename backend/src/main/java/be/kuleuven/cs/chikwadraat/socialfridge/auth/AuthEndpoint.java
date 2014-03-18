@@ -1,6 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.auth;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuth;
+import com.google.api.server.spi.response.UnauthorizedException;
 
 /**
  * Interface for endpoints requiring authentication.
@@ -11,17 +11,17 @@ public abstract class AuthEndpoint {
      * Check whether the given access token is valid.
      *
      * @param accessToken The access token to check.
-     * @throws AuthException
+     * @throws UnauthorizedException
      */
-    protected abstract void checkAccess(String accessToken) throws AuthException;
+    protected abstract void checkAccess(String accessToken) throws UnauthorizedException;
 
     /**
      * Check whether the given access token is valid for the given user.
      *
      * @param accessToken The access token to check.
      * @param userID      The expected user ID.
-     * @throws AuthException
+     * @throws UnauthorizedException
      */
-    protected abstract void checkAccess(String accessToken, String userID) throws AuthException;
+    protected abstract void checkAccess(String accessToken, String userID) throws UnauthorizedException;
 
 }

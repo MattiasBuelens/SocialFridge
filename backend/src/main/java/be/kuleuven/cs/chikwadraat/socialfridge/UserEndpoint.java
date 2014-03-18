@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -8,7 +9,6 @@ import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.auth.AuthException;
 import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
@@ -23,12 +23,12 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The retrieved user.
      */
     @ApiMethod(name = "getUser")
-    public User getUser(@Named("id") String id, @Named("access_token") String accessToken) throws AuthException {
+    public User getUser(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         EntityManager mgr = getEntityManager();
         User user = null;
         try {
-            user = mgr.find(User.class, id);
+            user = mgr.find(User.class, User.getKey(id));
         } finally {
             mgr.close();
         }
@@ -45,7 +45,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The newly inserted user.
      */
     @ApiMethod(name = "insertUser")
-    public User insertUser(User user, @Named("access_token") String accessToken) throws AuthException {
+    public User insertUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
         EntityManager mgr = getEntityManager();
         try {
@@ -68,7 +68,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The updated user.
      */
     @ApiMethod(name = "updateUser")
-    public User updateUser(User user, @Named("access_token") String accessToken) throws AuthException {
+    public User updateUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
         EntityManager mgr = getEntityManager();
         try {
@@ -91,12 +91,12 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The deleted user.
      */
     @ApiMethod(name = "removeUser")
-    public User removeUserDevice(@Named("id") String id, @Named("access_token") String accessToken) throws AuthException {
+    public User removeUserDevice(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         EntityManager mgr = getEntityManager();
         User user = null;
         try {
-            user = mgr.find(User.class, id);
+            user = mgr.find(User.class, User.getKey(id));
             mgr.remove(user);
         } finally {
             mgr.close();
@@ -105,7 +105,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
     }
 
     private boolean containsUser(EntityManager mgr, User user) {
-        User item = mgr.find(User.class, user.getKey());
+        User item = mgr.find(User.class, User.getKey(user));
         return item != null;
     }
 

@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -10,7 +11,6 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.auth.AuthException;
 import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
 
@@ -20,17 +20,18 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
     /**
      * Retrieves a user device.
      *
-     * @param key         The key of the user device.
-     * @param accessToken The access token for authorization.
+     * @param userID         The user ID of the device owner.
+     * @param registrationID The registration ID of the device.
+     * @param accessToken    The access token for authorization.
      * @return The retrieved user device.
      */
     @ApiMethod(name = "getUserDevice")
-    public UserDevice getUserDevice(Key key, @Named("access_token") String accessToken) throws AuthException {
-        checkAccess(accessToken, UserDevice.getUserID(key));
+    public UserDevice getUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
+        checkAccess(accessToken, userID);
         EntityManager mgr = getEntityManager();
         UserDevice userDevice = null;
         try {
-            userDevice = mgr.find(UserDevice.class, key);
+            userDevice = mgr.find(UserDevice.class, UserDevice.getKey(userID, registrationID));
         } finally {
             mgr.close();
         }
@@ -47,7 +48,7 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
      * @return The newly registered user device.
      */
     @ApiMethod(name = "insertUserDevice")
-    public UserDevice insertUserDevice(UserDevice userDevice, @Named("access_token") String accessToken) throws AuthException {
+    public UserDevice insertUserDevice(UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
         EntityManager mgr = getEntityManager();
         try {
@@ -71,7 +72,7 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
      * @return The updated user device.
      */
     @ApiMethod(name = "updateUserDevice")
-    public UserDevice updateUserDevice(UserDevice userDevice, @Named("access_token") String accessToken) throws AuthException {
+    public UserDevice updateUserDevice(UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
         EntityManager mgr = getEntityManager();
         try {
@@ -89,17 +90,18 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
      * Removes a user device.
      * It uses HTTP DELETE method.
      *
-     * @param key         The key of the user device to be deleted.
-     * @param accessToken The access token for authorization.
+     * @param userID         The user ID of the device owner.
+     * @param registrationID The registration ID of the device.
+     * @param accessToken    The access token for authorization.
      * @return The deleted user device.
      */
     @ApiMethod(name = "removeUserDevice")
-    public UserDevice removeUserDevice(Key key, @Named("access_token") String accessToken) throws AuthException {
-        checkAccess(accessToken, UserDevice.getUserID(key));
+    public UserDevice removeUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
+        checkAccess(accessToken, userID);
         EntityManager mgr = getEntityManager();
         UserDevice userDevice = null;
         try {
-            userDevice = mgr.find(UserDevice.class, key);
+            userDevice = mgr.find(UserDevice.class, UserDevice.getKey(userID, registrationID));
             mgr.remove(userDevice);
         } finally {
             mgr.close();
@@ -108,7 +110,7 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
     }
 
     private boolean containsUserDevice(EntityManager mgr, UserDevice userDevice) {
-        UserDevice item = mgr.find(UserDevice.class, userDevice.getKey());
+        UserDevice item = mgr.find(UserDevice.class, UserDevice.getKey(userDevice));
         return item != null;
     }
 
