@@ -43,7 +43,7 @@ import com.google.appengine.datanucleus.query.JPACursorHelper;
  * If this app is deployed, anyone can access this endpoint! If you'd like to
  * add authentication, take a look at the documentation.
  */
-@Api(name = "messageEndpoint", namespace = @ApiNamespace(ownerDomain = "cs.kuleuven.be", ownerName = "cs.kuleuven.be", packagePath = "chikwadraat.socialfridge"))
+@Api(name = "messageEndpoint", namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge"))
 // NO AUTHENTICATION; OPEN ENDPOINT!
 public class MessageEndpoint {
 

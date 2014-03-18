@@ -18,7 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-@Api(name = "deviceinfoendpoint", namespace = @ApiNamespace(ownerDomain = "cs.kuleuven.be", ownerName = "cs.kuleuven.be", packagePath = "chikwadraat.socialfridge"))
+@Api(name = "deviceinfoendpoint", namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge"))
 public class DeviceInfoEndpoint {
 
     /**
