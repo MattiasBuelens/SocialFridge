@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -126,7 +127,7 @@ public class StartFragment extends Fragment {
                     }
                 }
                 if (response.getError() != null) {
-                    activity.handleError(response.getError());
+                    handleError(response.getError());
                 }
             }
         }).executeAsync();
@@ -171,6 +172,12 @@ public class StartFragment extends Fragment {
         if (session != null && session.isOpened()) {
             updateUserProfile(session);
         }
+    }
+
+    public void handleError(FacebookRequestError error) {
+        if (error == null) return;
+        if (activity == null) return;
+        activity.handleError(error);
     }
 
 }

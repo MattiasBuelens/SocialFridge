@@ -162,44 +162,43 @@ public class MainActivity extends FragmentActivity {
      * @param error The error.
      */
     public void handleError(FacebookRequestError error) {
+        if (error == null) return;
+
         DialogInterface.OnClickListener listener = null;
         String dialogBody;
 
-        if (error == null) {
-            dialogBody = getString(R.string.error_dialog_default_text);
-        } else {
-            switch (error.getCategory()) {
-                case AUTHENTICATION_RETRY:
-                    // tell the user what happened by getting the message id, and
-                    // retry the operation later
-                    String userAction = (error.shouldNotifyUser()) ? "" :
-                            getString(error.getUserActionMessageId());
-                    dialogBody = getString(R.string.error_authentication_retry, userAction);
-                    listener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, M_FACEBOOK_URL);
-                            startActivity(intent);
-                        }
-                    };
-                    break;
+        switch (error.getCategory()) {
+            case AUTHENTICATION_RETRY:
+                // tell the user what happened by getting the message id, and
+                // retry the operation later
+                String userAction = (error.shouldNotifyUser()) ? "" :
+                        getString(error.getUserActionMessageId());
+                dialogBody = getString(R.string.error_authentication_retry, userAction);
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, M_FACEBOOK_URL);
+                        startActivity(intent);
+                    }
+                };
+                break;
 
-                case AUTHENTICATION_REOPEN_SESSION:
-                    // close the session and reopen it.
-                    dialogBody = getString(R.string.error_authentication_reopen);
-                    listener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Session session = Session.getActiveSession();
-                            if (session != null && !session.isClosed()) {
-                                session.closeAndClearTokenInformation();
-                            }
+            case AUTHENTICATION_REOPEN_SESSION:
+                // close the session and reopen it.
+                dialogBody = getString(R.string.error_authentication_reopen);
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Session session = Session.getActiveSession();
+                        if (session != null && !session.isClosed()) {
+                            session.closeAndClearTokenInformation();
                         }
-                    };
-                    break;
+                    }
+                };
+                break;
 
-                case PERMISSION:
-                    // request the publish permission
+            case PERMISSION:
+                // request the publish permission
                     /*dialogBody = getString(R.string.error_permission);
                     listener = new DialogInterface.OnClickListener() {
                         @Override
@@ -210,27 +209,26 @@ public class MainActivity extends FragmentActivity {
                     };
                     break;*/
 
-                case SERVER:
-                case THROTTLING:
-                    // this is usually temporary, don't clear the fields, and
-                    // ask the user to try again
-                    dialogBody = getString(R.string.error_server);
-                    break;
+            case SERVER:
+            case THROTTLING:
+                // this is usually temporary, don't clear the fields, and
+                // ask the user to try again
+                dialogBody = getString(R.string.error_server);
+                break;
 
-                case BAD_REQUEST:
-                    // this is likely a coding error, ask the user to file a bug
-                    dialogBody = getString(R.string.error_bad_request, error.getErrorMessage());
-                    break;
+            case BAD_REQUEST:
+                // this is likely a coding error, ask the user to file a bug
+                dialogBody = getString(R.string.error_bad_request, error.getErrorMessage());
+                break;
 
-                case OTHER:
-                case CLIENT:
-                default:
-                    // an unknown issue occurred, this could be a code error, or
-                    // a server side issue, log the issue, and either ask the
-                    // user to retry, or file a bug
-                    dialogBody = getString(R.string.error_unknown, error.getErrorMessage());
-                    break;
-            }
+            case OTHER:
+            case CLIENT:
+            default:
+                // an unknown issue occurred, this could be a code error, or
+                // a server side issue, log the issue, and either ask the
+                // user to retry, or file a bug
+                dialogBody = getString(R.string.error_unknown, error.getErrorMessage());
+                break;
         }
 
         new AlertDialog.Builder(this)
