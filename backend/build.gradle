@@ -3,6 +3,7 @@ apply plugin: 'war'
 apply plugin: 'appengine'
 
 def appId = "socialfridge"
+def appVersion = "0.1"
 def appEmail = "mattias.buelens@gmail.com"
 
 def appengineVersion = "1.9.0"
@@ -80,7 +81,7 @@ appengine {
 
         app {
             id = "${appId}"
-            version = "1"
+            version = "${appVersion}"
         }
     }
 }
