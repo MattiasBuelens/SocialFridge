@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -13,7 +14,7 @@ public final class AppSettings {
 
     static {
         try {
-            properties.load(AppSettings.class.getClassLoader().getResourceAsStream("/app.properties"));
+            properties.load(new FileInputStream("resources/app.properties"));
         } catch (IOException e) {
         }
     }

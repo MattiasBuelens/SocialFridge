@@ -25,6 +25,8 @@ repositories {
 dependencies {
     appengineSdk "com.google.appengine:appengine-java-sdk:${appengineVersion}"
 
+    compile "com.google.guava:guava:16.+"
+
     // App Engine
     compile "javax.servlet:servlet-api:2.5"
     compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"

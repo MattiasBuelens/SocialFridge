@@ -3,4 +3,8 @@
     <application>socialfridge</application>
     <version>1</version>
     <threadsafe>true</threadsafe>
+
+    <resource-files>
+        <include path="/resources/**" />
+    </resource-files>
 </appengine-web-app>

@@ -41,6 +41,9 @@ public class UserDevice {
     private String information;
     private long timestamp;
 
+    public UserDevice() {
+    }
+
     public UserDevice(User user, String registrationID, String information, long timestamp) {
         this.user = user;
         this.userKey = user.getKey();

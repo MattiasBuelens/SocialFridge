@@ -4,7 +4,7 @@ import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.appengine.repackaged.com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.DefaultJsonMapper;
 import com.restfb.FacebookClient;
@@ -76,9 +76,8 @@ public class FacebookAuth {
             FacebookClient.AccessToken token = rawGetAppAccessToken();
             // Cache token
             tokenJson = new DefaultJsonMapper().toJson(token);
-            // Cache expires one minute earlier
-            Date expireDate = new Date(token.getExpires().getTime() - 60 * 1000);
-            cache.put("fb:app-access-token", tokenJson, Expiration.onDate(expireDate));
+            Expiration tokenExpiration = token.getExpires() == null ? null : Expiration.onDate(token.getExpires());
+            cache.put("fb:app-access-token", tokenJson, tokenExpiration);
             return token;
         } else {
             return new DefaultJsonMapper().toJavaObject(tokenJson, FacebookClient.AccessToken.class);
