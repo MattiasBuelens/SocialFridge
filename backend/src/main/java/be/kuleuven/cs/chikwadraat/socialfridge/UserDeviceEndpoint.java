@@ -14,7 +14,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
 
 @Api(
-        name = "userDevices",
+        name = "users",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class UserDeviceEndpoint extends FacebookAuthEndpoint {

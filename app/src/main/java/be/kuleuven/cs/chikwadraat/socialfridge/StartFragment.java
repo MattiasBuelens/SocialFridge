@@ -1,8 +1,10 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +21,20 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import java.io.IOException;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
+import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
  * Start screen fragment.
  */
 public class StartFragment extends Fragment {
+
+    private static final String TAG = "StartFragment";
 
     private ProfilePictureView userPictureView;
     private TextView userNameView;
@@ -112,25 +123,65 @@ public class StartFragment extends Fragment {
     }
 
     /**
+     * Registers the user.
+     *
+     * @param graphUser The Facebook user.
+     * @param session   The user session.
+     */
+    private void registerUser(GraphUser graphUser, Session session) {
+        // Create user
+        User user = new User();
+        user.setId(graphUser.getId());
+        user.setName(graphUser.getName());
+        // Send register request
+        new RegisterUserTask(session).execute(user);
+    }
+
+    private static class RegisterUserTask extends AsyncTask<User, Void, User> {
+
+        private final Session session;
+        private Exception exception;
+
+        private RegisterUserTask(Session session) {
+            this.session = session;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected User doInBackground(User... users) {
+            User user = users[0];
+            Users endpoint = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null).build();
+            try {
+                return endpoint.insertUser(session.getAccessToken(), user).execute();
+            } catch (IOException e) {
+                exception = e;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+            if (user != null) {
+                Log.d(TAG, "User successfully registered");
+            } else if (exception != null) {
+                // TODO Error handling
+                Log.e(TAG, "Failed to register user: " + exception.getMessage());
+            }
+        }
+    }
+
+    /**
      * Updates the user's name and picture display.
      *
-     * @param session The user session.
+     * @param graphUser The Facebook user.
      */
-    private void updateUserProfile(final Session session) {
-        Request.newMeRequest(session, new Request.GraphUserCallback() {
-            @Override
-            public void onCompleted(GraphUser user, Response response) {
-                if (session == Session.getActiveSession()) {
-                    if (user != null) {
-                        userPictureView.setProfileId(user.getId());
-                        userNameView.setText(user.getName());
-                    }
-                }
-                if (response.getError() != null) {
-                    handleError(response.getError());
-                }
-            }
-        }).executeAsync();
+    private void updateUserProfile(GraphUser graphUser) {
+        userPictureView.setProfileId(graphUser.getId());
+        userNameView.setText(graphUser.getName());
     }
 
     /**
@@ -142,22 +193,60 @@ public class StartFragment extends Fragment {
     }
 
     /**
-     * Notifies that the session token has been updated.
+     * Triggered when the session is opened.
      */
-    private void sessionTokenUpdated() {
+    private void sessionOpened(Session session) {
+        requestUserProfile(session);
+    }
+
+    /**
+     * Triggered when the user profile is received.
+     */
+    private void userProfileReceived(Session session, GraphUser user) {
+        registerUser(user, session);
+        updateUserProfile(user);
+    }
+
+    /**
+     * Triggered when session token is updated.
+     */
+    private void sessionTokenUpdated(Session session) {
         // TODO Report to backend?
+    }
+
+    /**
+     * Triggered when the session is closed.
+     */
+    private void sessionClosed() {
+        clearUserProfile();
     }
 
     private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
         if (session != null && session.isOpened()) {
             if (state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
-                sessionTokenUpdated();
+                sessionTokenUpdated(session);
             } else {
-                updateUserProfile(session);
+                sessionOpened(session);
             }
         } else {
-            clearUserProfile();
+            sessionClosed();
         }
+    }
+
+    private void requestUserProfile(final Session session) {
+        Request.newMeRequest(session, new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                if (session == Session.getActiveSession()) {
+                    if (user != null) {
+                        userProfileReceived(session, user);
+                    }
+                    if (response.getError() != null) {
+                        handleError(response.getError());
+                    }
+                }
+            }
+        }).executeAsync();
     }
 
     /**
@@ -170,7 +259,7 @@ public class StartFragment extends Fragment {
 
         Session session = Session.getActiveSession();
         if (session != null && session.isOpened()) {
-            updateUserProfile(session);
+            sessionOpened(session);
         }
     }
 
