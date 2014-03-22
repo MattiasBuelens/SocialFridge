@@ -62,7 +62,7 @@ compileJava {
 }
 
 appengine {
-    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8889', '-Xmx1024m', '-XX:MaxPermSize=512m']
+    jvmFlags = ['-d64', '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8889', '-Xmx1024m', '-XX:MaxPermSize=512m']
     downloadSdk = true
 
     appcfg {

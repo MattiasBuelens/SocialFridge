@@ -12,17 +12,20 @@ import javax.persistence.EntityManager;
 import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
-@Api(name = "userEndpoint", namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge"))
+@Api(
+        name = "users",
+        namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
+)
 public class UserEndpoint extends FacebookAuthEndpoint {
 
     /**
      * Retrieves a user by user ID.
      *
-     * @param id The user ID.
+     * @param id          The user ID.
      * @param accessToken The access token for authorization.
      * @return The retrieved user.
      */
-    @ApiMethod(name = "getUser")
+    @ApiMethod(name = "getUser", path = "user/{id}")
     public User getUser(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         EntityManager mgr = getEntityManager();
@@ -44,7 +47,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @param accessToken The access token for authorization.
      * @return The newly inserted user.
      */
-    @ApiMethod(name = "insertUser")
+    @ApiMethod(name = "insertUser", path = "user")
     public User insertUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
         EntityManager mgr = getEntityManager();
@@ -60,21 +63,18 @@ public class UserEndpoint extends FacebookAuthEndpoint {
     }
 
     /**
-     * Updates a user. If the user doesn't exist yet, an exception is thrown.
+     * Inserts or updates a user.
      * It uses HTTP PUT method.
      *
      * @param user        The user to be updated.
      * @param accessToken The access token for authorization.
      * @return The updated user.
      */
-    @ApiMethod(name = "updateUser")
+    @ApiMethod(name = "updateUser", path = "user")
     public User updateUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
         EntityManager mgr = getEntityManager();
         try {
-            if (!containsUser(mgr, user)) {
-                throw new EntityExistsException("User not yet registered");
-            }
             mgr.persist(user);
         } finally {
             mgr.close();
@@ -90,7 +90,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @param accessToken The access token for authorization.
      * @return The deleted user.
      */
-    @ApiMethod(name = "removeUser")
+    @ApiMethod(name = "removeUser", path = "user/{id}")
     public User removeUserDevice(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         EntityManager mgr = getEntityManager();
@@ -105,7 +105,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
     }
 
     private boolean containsUser(EntityManager mgr, User user) {
-        User item = mgr.find(User.class, User.getKey(user));
+        User item = mgr.find(User.class, user.getKey());
         return item != null;
     }
 

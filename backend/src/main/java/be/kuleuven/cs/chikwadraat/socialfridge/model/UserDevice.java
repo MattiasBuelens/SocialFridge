@@ -1,12 +1,16 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import com.google.api.server.spi.config.AnnotationBoolean;
+import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 import org.datanucleus.api.jpa.annotations.Extension;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Device of a registered user.
@@ -17,13 +21,19 @@ public class UserDevice {
     public static final String KIND = "UserDevice";
 
     /**
-     * Composite key with (User, registrationID).
+     * Registration ID.
      */
     @Id
-    private Key key;
+    private String registrationID;
 
     /**
-     * Parent key of user.
+     * Parent user.
+     */
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+    private User user;
+
+    /**
+     * Key of parent user.
      */
     @Extension(vendorName = "datanucleus", key = "gae.parent-pk", value = "true")
     private Key userKey;
@@ -31,22 +41,21 @@ public class UserDevice {
     private String information;
     private long timestamp;
 
-    public UserDevice(Key userKey, String registrationID, String information, long timestamp) {
-        this(getKey(userKey, registrationID), information, timestamp);
-    }
-
-    public UserDevice(String userID, String registrationID, String information, long timestamp) {
-        this(getKey(userID, registrationID), information, timestamp);
-    }
-
-    private UserDevice(Key key, String information, long timestamp) {
-        this.key = key;
+    public UserDevice(User user, String registrationID, String information, long timestamp) {
+        this.user = user;
+        this.userKey = user.getKey();
+        this.registrationID = registrationID;
         this.information = information;
         this.timestamp = timestamp;
     }
 
-    public static Key getKey(UserDevice userDevice) {
-        return getKey(userDevice.getUserID(), userDevice.getRegistrationID());
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Key getKey() {
+        return getKey(getUser(), getRegistrationID());
+    }
+
+    public static Key getKey(User user, String registrationID) {
+        return getKey(user.getID(), registrationID);
     }
 
     public static Key getKey(String userID, String registrationID) {
@@ -57,19 +66,16 @@ public class UserDevice {
         return KeyFactory.createKey(userKey, KIND, registrationID);
     }
 
-    public static Key getUserKey(Key deviceKey) {
-        return deviceKey.getParent();
-    }
-
-    public static String getUserID(Key deviceKey) {
-        return User.getID(getUserKey(deviceKey));
-    }
-
     /**
-     * The parent user ID.
+     * The parent user.
      */
+    public User getUser() {
+        return user;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public String getUserID() {
-        return getUserID(key);
+        return getUser().getID();
     }
 
     /*
@@ -77,7 +83,7 @@ public class UserDevice {
      * indicates that the device is able to receive messages sent via GCM.
      */
     public String getRegistrationID() {
-        return key.getName();
+        return registrationID;
     }
 
     /*

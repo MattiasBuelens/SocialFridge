@@ -1,5 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import com.google.api.server.spi.config.AnnotationBoolean;
+import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
@@ -24,19 +26,20 @@ public class User {
         this.name = name;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Key getKey() {
+        return getKey(getID());
+    }
+
+    public static Key getKey(String id) {
+        return KeyFactory.createKey(KIND, id);
+    }
+
     /**
      * User ID.
      */
     public String getID() {
         return id;
-    }
-
-    public static Key getKey(User user) {
-        return getKey(user.getID());
-    }
-
-    public static Key getKey(String id) {
-        return KeyFactory.createKey(KIND, id);
     }
 
     public static String getID(Key userKey) {
