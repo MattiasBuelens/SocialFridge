@@ -154,7 +154,9 @@ public class StartFragment extends Fragment {
         @Override
         protected User doInBackground(User... users) {
             User user = users[0];
-            Users endpoint = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null).build();
+            Users endpoint = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null)
+                    //.setRootUrl("http://192.168.0.100:8080/_ah/api/") // TODO uncomment and replace with own IP for testing
+                    .build();
             try {
                 return endpoint.insertUser(session.getAccessToken(), user).execute();
             } catch (IOException e) {
