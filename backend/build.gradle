@@ -98,13 +98,11 @@ appengine {
 }
 
 /*
- * Dirty fix: run enhancer when running test server
+ * Dirty fix: run enhancer before war
  */
 def appengineEnhanceTask = project.tasks.appengineEnhance
-def appengineRunTask = project.tasks.appengineRun
 def javaClassesTask = project.tasks.getByName(JavaPlugin.CLASSES_TASK_NAME)
 def warTask = project.tasks.getByName(WarPlugin.WAR_TASK_NAME)
 
-appengineRunTask.dependsOn(appengineEnhanceTask)
+warTask.dependsOn(appengineEnhanceTask)
 appengineEnhanceTask.dependsOn(javaClassesTask)
-warTask.mustRunAfter(appengineEnhanceTask)
