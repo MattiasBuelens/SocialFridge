@@ -6,7 +6,7 @@ def appId = "socialfridge"
 def appVersion = "0.1"
 def appEmail = "mattias.buelens@gmail.com"
 
-def appengineVersion = "1.9.0"
+def appengineVersion = "1.9.1"
 
 buildscript {
     repositories {
@@ -75,6 +75,9 @@ appengine {
 
         email = "${appEmail}"
         passIn = true
+
+        enhancerApi = "jpa"
+        enhancerVersion = "v2"
 
         logs {
             severity = 1
