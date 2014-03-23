@@ -89,5 +89,10 @@ appengine {
             id = "${appId}"
             version = "${appVersion}"
         }
+
+        endpoints {
+            getDiscoveryDocsOnBuild = true
+            getClientLibsOnBuild = true
+        }
     }
 }
