@@ -4,7 +4,6 @@ apply plugin: 'appengine'
 
 def appId = "socialfridge"
 def appVersion = "0.1"
-def appEmail = "mattias.buelens@gmail.com"
 
 def appengineVersion = "1.9.1"
 
@@ -72,9 +71,6 @@ appengine {
         update {
             useJava7 = true
         }
-
-        email = "${appEmail}"
-        passIn = true
 
         enhancerApi = "jpa"
         enhancerVersion = "v2"
