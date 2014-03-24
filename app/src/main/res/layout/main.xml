@@ -20,5 +20,12 @@
         android:layout_height="match_parent"
         tools:layout="@layout/start" />
 
+    <fragment
+        android:id="@+id/fragment_dishes"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.DishesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/start" />
+
 </LinearLayout>
 

@@ -32,7 +32,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 /**
  * Start screen fragment.
  */
-public class StartFragment extends Fragment {
+public class StartFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "StartFragment";
 
@@ -71,6 +71,8 @@ public class StartFragment extends Fragment {
         userPictureView = (ProfilePictureView) view.findViewById(R.id.current_user_pic);
         userPictureView.setCropped(true);
         userNameView = (TextView) view.findViewById(R.id.current_user_name);
+
+        view.findViewById(R.id.action_create_party).setOnClickListener(this);
 
         init(savedInstanceState);
 
@@ -135,6 +137,15 @@ public class StartFragment extends Fragment {
         user.setName(graphUser.getName());
         // Send register request
         new RegisterUserTask(session).execute(user);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.action_create_party:
+                activity.showDishesFragment();
+                break;
+        }
     }
 
     private static class RegisterUserTask extends AsyncTask<User, Void, User> {

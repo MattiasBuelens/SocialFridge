@@ -23,7 +23,8 @@ public class MainActivity extends FragmentActivity {
 
     private static final int LOGIN = 0;
     private static final int START = 1;
-    private static final int FRAGMENT_COUNT = START + 1;
+    private static final int DISHES = 1;
+    private static final int FRAGMENT_COUNT = DISHES + 1;
 
     private static final Uri M_FACEBOOK_URL = Uri.parse("http://m.facebook.com");
 
@@ -52,6 +53,7 @@ public class MainActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         fragments[LOGIN] = fm.findFragmentById(R.id.fragment_login);
         fragments[START] = fm.findFragmentById(R.id.fragment_start);
+        fragments[DISHES] = fm.findFragmentById(R.id.fragment_dishes);
 
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
@@ -114,6 +116,10 @@ public class MainActivity extends FragmentActivity {
 
     public void showSettingsFragment() {
         // TODO Show settings fragment
+    }
+
+    public void showDishesFragment() {
+        showFragment(DISHES, true);
     }
 
     public void logout() {
@@ -237,5 +243,4 @@ public class MainActivity extends FragmentActivity {
                 .setMessage(dialogBody)
                 .show();
     }
-
 }
