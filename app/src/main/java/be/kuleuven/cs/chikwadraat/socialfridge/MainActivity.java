@@ -23,7 +23,7 @@ public class MainActivity extends FragmentActivity {
 
     private static final int LOGIN = 0;
     private static final int START = 1;
-    private static final int DISHES = 1;
+    private static final int DISHES = 2;
     private static final int FRAGMENT_COUNT = DISHES + 1;
 
     private static final Uri M_FACEBOOK_URL = Uri.parse("http://m.facebook.com");

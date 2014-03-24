@@ -169,7 +169,7 @@ public class StartFragment extends Fragment implements View.OnClickListener {
                     //.setRootUrl("http://192.168.0.100:8080/_ah/api/") // TODO uncomment and replace with own IP for testing
                     .build();
             try {
-                return endpoint.insertUser(session.getAccessToken(), user).execute();
+                return endpoint.updateUser(session.getAccessToken(), user).execute();
             } catch (IOException e) {
                 exception = e;
                 return null;
