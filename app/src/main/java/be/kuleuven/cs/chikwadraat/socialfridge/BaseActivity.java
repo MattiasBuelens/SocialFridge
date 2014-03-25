@@ -1,11 +1,11 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
 import com.facebook.FacebookRequestError;
 import com.facebook.Session;
@@ -15,7 +15,7 @@ import com.facebook.UiLifecycleHelper;
 /**
  * Base activity handling common things such as authentication.
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends ActionBarActivity {
 
     public static final int REQUEST_LOGIN = RESULT_FIRST_USER + 1;
 
@@ -66,7 +66,11 @@ public abstract class BaseActivity extends Activity {
         uiHelper.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_LOGIN) {
-            checkLoggedIn();
+            if (isLoggedIn()) {
+                checkLoggedIn();
+            } else if (resultCode == RESULT_CANCELED) {
+                finish();
+            }
         }
     }
 

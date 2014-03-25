@@ -64,11 +64,11 @@ public abstract class ListActivity extends BaseActivity {
      * Updates the screen state (current list and other views) when the
      * content changes.
      *
-     * @see Activity#onContentChanged()
+     * @see BaseActivity#onSupportContentChanged()
      */
     @Override
-    public void onContentChanged() {
-        super.onContentChanged();
+    public void onSupportContentChanged() {
+        super.onSupportContentChanged();
         View emptyView = findViewById(android.R.id.empty);
         mList = (ListView) findViewById(android.R.id.list);
         if (mList == null) {
