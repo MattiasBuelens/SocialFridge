@@ -19,6 +19,14 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name=".DishesActivity"
+            android:label="@string/dishes_title" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id" />

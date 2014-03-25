@@ -2,8 +2,10 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.LoginActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -13,10 +15,10 @@
             android:id="@+id/current_user"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <com.facebook.widget.ProfilePictureView
@@ -29,19 +31,19 @@
                 android:id="@+id/current_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/current_user_pic"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@id/current_user_pic" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/current_user"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
             <Button

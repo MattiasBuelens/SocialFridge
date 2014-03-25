@@ -2,8 +2,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,19 +13,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Login fragment.
+ * Dishes activity.
  */
-public class DishesFragment extends ListFragment {
+public class DishesActivity extends ListActivity {
+
+    private static final String TAG = "DishesActivity";
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void onAfterCreate(Bundle savedInstanceState) {
         List<Dish> dishes = new ArrayList<Dish>();
         dishes.add(new Dish("Spaghetti Bolognaise", "Blablabla", R.drawable.spaghetti));
 
-        setListAdapter(new DishesArrayAdapter(getActivity(), dishes));
-
-        return super.onCreateView(inflater, container, savedInstanceState);
+        setListAdapter(new DishesArrayAdapter(this, dishes));
     }
-
 
     public static class DishesArrayAdapter extends ArrayAdapter<Dish> {
 
