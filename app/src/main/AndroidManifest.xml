@@ -27,6 +27,10 @@
             android:name=".DishesActivity"
             android:label="@string/dishes_title" />
 
+        <activity
+            android:name=".PartyActivity"
+            android:label="@string/party_title" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id" />
