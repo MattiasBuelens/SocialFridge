@@ -4,23 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.DishesActivity">
 
     <TextView
+        android:id="@+id/party_partners_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
         android:text="@string/party_partners"
-        android:id="@+id/party_partners_header" />
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/section_margin"
+        android:layout_marginBottom="@dimen/section_margin">
+
+        <org.lucasr.twowayview.TwoWayView
+            android:id="@+id/party_partners_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+    </ScrollView>
 
     <TextView
+        android:id="@+id/party_candidates_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
         android:text="@string/party_candidates"
-        android:id="@+id/party_candidates_header" />
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
 </LinearLayout>

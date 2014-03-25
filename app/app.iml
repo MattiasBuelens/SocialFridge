@@ -82,6 +82,7 @@
     <orderEntry type="library" exported="" name="socialfridge-users-v1-1.17.0-rc-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.17.0-rc" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.0.1" level="project" />
+    <orderEntry type="module" module-name="library" exported="" />
   </component>
 </module>
 

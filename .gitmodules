@@ -1,0 +1,3 @@
+[submodule "twoway-view"]
+	path = twoway-view
+	url = https://github.com/MattiasBuelens/twoway-view.git
