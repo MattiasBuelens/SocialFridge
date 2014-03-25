@@ -8,24 +8,22 @@ import com.restfb.exception.FacebookException;
  */
 public abstract class FacebookAuthEndpoint extends AuthEndpoint {
 
-    private final FacebookAuth auth;
+    private final FacebookAPI api;
 
     protected FacebookAuthEndpoint() {
-        this.auth = new FacebookAuth();
+        this.api = new FacebookAPI();
     }
 
-    protected void checkAccess(String accessToken) throws UnauthorizedException {
+    protected FacebookAPI getAPI() {
+        return api;
+    }
+
+    @Override
+    protected String getUserID(String accessToken) throws UnauthorizedException {
         try {
-            auth.getUserId(accessToken);
+            return getAPI().getUserID(accessToken);
         } catch (FacebookException e) {
             throw new UnauthorizedException(e);
-        }
-    }
-
-    protected void checkAccess(String accessToken, String userID) throws UnauthorizedException {
-        String tokenID = auth.getUserId(accessToken);
-        if (!tokenID.equals(userID)) {
-            throw new UnauthorizedException("Incorrect permission for this user.");
         }
     }
 
