@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.DishesActivity">
 
     <TextView
         android:id="@+id/party_partners_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:text="@string/party_partners"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <ScrollView
+        android:id="@+id/party_partners_list_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/party_partners_header"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin">
 
@@ -37,7 +40,19 @@
         android:id="@+id/party_candidates_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/party_partners_list_scroll"
         android:text="@string/party_candidates"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-</LinearLayout>
+    <ListView
+        android:id="@+id/party_candidates_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/party_candidates_header"
+        android:layout_marginTop="@dimen/section_margin"
+        tools:listitem="@layout/candidate_list_item" />
+
+</RelativeLayout>

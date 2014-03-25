@@ -19,6 +19,7 @@
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
     <string name="party_action_invite">Invite</string>
+    <string name="party_action_cancel_invite">@android:string/cancel</string>
     <string name="party_partner_status_invited">Invited</string>
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
