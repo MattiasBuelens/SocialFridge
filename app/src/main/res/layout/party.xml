@@ -21,13 +21,14 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/section_margin"
-        android:layout_marginBottom="@dimen/section_margin">
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginTop="@dimen/section_margin">
 
         <org.lucasr.twowayview.TwoWayView
             android:id="@+id/party_partners_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:listSelector="@android:color/transparent"
             android:orientation="horizontal" />
 
     </ScrollView>
