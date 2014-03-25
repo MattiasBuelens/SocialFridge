@@ -13,20 +13,20 @@
 
     <TextView
         android:id="@+id/party_partners_header"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/party_partners"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin">
 
         <org.lucasr.twowayview.TwoWayView
             android:id="@+id/party_partners_list"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:listSelector="@android:color/transparent"
             android:orientation="horizontal" />
@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/party_candidates_header"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/party_candidates"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
