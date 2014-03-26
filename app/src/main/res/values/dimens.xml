@@ -7,6 +7,9 @@
     <!-- Vertical margin around section headers -->
     <dimen name="section_margin">10dp</dimen>
 
+    <!-- Vertical margin around list items -->
+    <dimen name="list_item_margin">10dp</dimen>
+
     <!-- Margin dividing text and other elements -->
     <dimen name="text_divider_margin">10dp</dimen>
 

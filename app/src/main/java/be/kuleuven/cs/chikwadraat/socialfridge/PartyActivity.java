@@ -6,18 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 
-import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
-import org.lucasr.twowayview.TwoWayView;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,15 +22,16 @@ import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
  * <p/>
  * Invite partners
  */
-public class PartyActivity extends BaseActivity {
+public class PartyActivity extends ListActivity {
 
     private static final String TAG = "PartyActivity";
 
     @Override
     protected void onAfterCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.party);
+        View header = getLayoutInflater().inflate(R.layout.party, getListView());
+        getListView().addHeaderView(header);
 
-        TwoWayView partnersList = (TwoWayView) findViewById(R.id.party_partners_list);
+        GridView partnersGrid = (GridView) header.findViewById(R.id.party_partners_list);
 
         // TODO Replace dummy data
         User user1 = new User();
@@ -48,13 +43,11 @@ public class PartyActivity extends BaseActivity {
         User user3 = new User();
         user3.setId("740193939");
         user3.setName("Milan Samyn");
-        List<User> users = ImmutableList.of(user1, user2, user3);
+        List<User> users = ImmutableList.of(user1, user2, user3, user1, user2, user3, user1, user2, user3);
 
-        partnersList.setAdapter(new PartnersListAdapter(this, users));
+        partnersGrid.setAdapter(new PartnersListAdapter(this, users));
 
-        ListView candidatesList = (ListView) findViewById(R.id.party_candidates_list);
-
-        candidatesList.setAdapter(new CandidatesListAdapter(this, users));
+        setListAdapter(new CandidatesListAdapter(this, users));
     }
 
     public static class PartnersListAdapter extends ArrayAdapter<User> {
@@ -110,7 +103,7 @@ public class PartyActivity extends BaseActivity {
             nameView.setText(user.getName());
 
             // TODO Dummy condition
-            if((user.hashCode() & 1) == 1) {
+            if ((user.hashCode() & 1) == 1) {
                 inviteButton.setText(R.string.party_partner_status_invited);
                 inviteButton.setEnabled(false);
                 cancelInviteButton.setVisibility(View.VISIBLE);

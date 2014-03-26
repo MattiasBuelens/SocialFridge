@@ -50,7 +50,6 @@ dependencies {
     compile "be.kuleuven.cs.chikwadraat:socialfridge-users:+"
 
     // Widgets
-    compile project(':twoway-view:library')
 
     /*
      * Google APIs
