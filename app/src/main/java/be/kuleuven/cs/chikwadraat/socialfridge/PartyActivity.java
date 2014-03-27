@@ -28,7 +28,7 @@ public class PartyActivity extends ListActivity {
 
     @Override
     protected void onAfterCreate(Bundle savedInstanceState) {
-        View header = getLayoutInflater().inflate(R.layout.party, getListView());
+        View header = getLayoutInflater().inflate(R.layout.party, null);
         getListView().addHeaderView(header);
 
         GridView partnersGrid = (GridView) header.findViewById(R.id.party_partners_list);
@@ -96,7 +96,7 @@ public class PartyActivity extends ListActivity {
             ProfilePictureView pictureView = (ProfilePictureView) view.findViewById(R.id.candidate_pic);
             TextView nameView = (TextView) view.findViewById(R.id.candidate_name);
             Button inviteButton = (Button) view.findViewById(R.id.candidate_invite);
-            Button cancelInviteButton = (Button) view.findViewById(R.id.candidate_cancel_invite);
+            //Button cancelInviteButton = (Button) view.findViewById(R.id.candidate_cancel_invite);
 
             User user = getItem(position);
             pictureView.setProfileId(user.getId());
@@ -106,11 +106,11 @@ public class PartyActivity extends ListActivity {
             if ((user.hashCode() & 1) == 1) {
                 inviteButton.setText(R.string.party_partner_status_invited);
                 inviteButton.setEnabled(false);
-                cancelInviteButton.setVisibility(View.VISIBLE);
+                //cancelInviteButton.setVisibility(View.VISIBLE);
             } else {
                 inviteButton.setText(R.string.party_action_invite);
                 inviteButton.setEnabled(true);
-                cancelInviteButton.setVisibility(View.INVISIBLE);
+                //cancelInviteButton.setVisibility(View.INVISIBLE);
             }
 
             return view;

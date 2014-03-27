@@ -60,13 +60,13 @@
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <Button
+        <!--<Button
             android:id="@+id/candidate_cancel_invite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/party_action_cancel_invite"
             android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />-->
 
     </LinearLayout>
 
