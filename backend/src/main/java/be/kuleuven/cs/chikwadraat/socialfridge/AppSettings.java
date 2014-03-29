@@ -22,7 +22,7 @@ public final class AppSettings {
     private AppSettings() {
     }
 
-    public static String getFacebookAppId() {
+    public static String getFacebookAppID() {
         return properties.getProperty("fb_app_id");
     }
 

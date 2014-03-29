@@ -11,6 +11,19 @@
     <string name="start_action_create_party">Create Cooking Party</string>
     <string name="start_action_manage_fridge">Manage Fridge</string>
 
+    <!-- Dishes -->
+    <string name="dishes_title">Dishes</string>
+
+    <!-- Party -->
+    <string name="party_title">Party</string>
+    <string name="party_partners">Partners</string>
+    <string name="party_candidates">Candidates</string>
+    <string name="party_action_invite">Invite</string>
+    <string name="party_action_cancel_invite">@android:string/cancel</string>
+    <string name="party_partner_status_invited">Invited</string>
+    <string name="party_partner_status_accepted">Accepted</string>
+    <string name="party_partner_status_declined">Declined</string>
+
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>
     <string name="error_dialog_default_text">No response from server.</string>
