@@ -41,11 +41,11 @@ public class NotificationService extends IntentService {
     }
 
     private void issueNotification(Intent intent, String msg) {
-        // Sets up the Accept and Decline action buttons that will appear in the
+        // Sets up the Choose slots and Decline action buttons that will appear in the
         // expanded view of the notification.
-        Intent acceptIntent = new Intent(this, NotificationService.class);
-        acceptIntent.setAction(NotificationConstants.ACTION_CHOOSE_SLOTS);
-        PendingIntent piChooseSlots = PendingIntent.getService(this, 0, acceptIntent, 0);
+        Intent chooseSlotsIntent = new Intent(this, NotificationService.class);
+        chooseSlotsIntent.setAction(NotificationConstants.ACTION_CHOOSE_SLOTS);
+        PendingIntent piChooseSlots = PendingIntent.getService(this, 0, chooseSlotsIntent, 0);
 
         Intent declineIntent = new Intent(this, NotificationService.class);
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
@@ -56,7 +56,7 @@ public class NotificationService extends IntentService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(null) //TODO: klein icoontje instellen (fotootje van gerecht?)
                         .setContentTitle(NotificationConstants.CONTENT_TITLE)
-                        .setContentText("Somebody" + NotificationConstants.CONTENT_TEXT_POSTFIX) //TODO: naam van inviter invoegen
+                        .setContentText("The Italian Prime Minister" + NotificationConstants.CONTENT_TEXT_POSTFIX) //TODO: naam van inviter invoegen
                         .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
                 /*
                  * Sets the big view "big text" style and supplies the
@@ -73,11 +73,11 @@ public class NotificationService extends IntentService {
                                 NotificationConstants.BUTTON_DECLINE, piDecline);
 
         /*
-         * Clicking the notification itself displays ResultActivity, which provides
+         * Clicking the notification itself displays ChooseSlotsActivity, which provides
          * UI for choosing time slots or declining the notification.
          * This is available through either the normal view or big view.
          */
-        Intent resultIntent = new Intent(this, ResultActivity.class);
+        Intent resultIntent = new Intent(this, ChooseSlotsActivity.class);
         resultIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, msg);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //TODO: klopt dit? wat doet die | ?
 

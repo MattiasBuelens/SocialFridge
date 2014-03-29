@@ -9,9 +9,9 @@ import android.view.View;
  * Created by vital.dhaveloose on 29/03/2014.
  *
  * This Activity is displayed when users click the notification itself. It provides
- * UI for accepting and declining the invitation.
+ * UI for choosing time slots or as yet declining the invitation.
  */
-public class ResultActivity extends Activity {
+public class ChooseSlotsActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
