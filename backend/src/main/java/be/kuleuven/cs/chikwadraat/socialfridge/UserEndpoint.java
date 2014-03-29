@@ -4,6 +4,7 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.ConflictException;
 
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
@@ -53,7 +54,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
         EntityManager mgr = getEntityManager();
         try {
             if (containsUser(mgr, user)) {
-                throw new EntityExistsException("User already registered");
+                throw new ConflictException(new EntityExistsException("User already registered"));
             }
             mgr.persist(user);
         } finally {

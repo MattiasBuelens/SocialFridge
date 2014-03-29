@@ -108,10 +108,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         @Override
         protected User doInBackground(User... users) {
             User user = users[0];
-            Users endpoint = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null)
-                    .setApplicationName(context.getString(R.string.app_name))
-                            //.setRootUrl("http://192.168.0.100:8080/_ah/api/") // TODO uncomment and replace with own IP for testing
-                    .build();
+
+            Users.Builder builder = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
+            Users endpoint = Endpoints.prepare(builder, context).build();
+
             try {
                 return endpoint.updateUser(session.getAccessToken(), user).execute();
             } catch (IOException e) {
@@ -150,16 +150,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void requestUserProfile(final Session session) {
-        Request.newMeRequest(session, new Request.GraphUserCallback() {
+        newMeRequest(session, new Request.GraphUserCallback() {
             @Override
             public void onCompleted(GraphUser user, Response response) {
-                if (session == Session.getActiveSession()) {
-                    if (user != null) {
-                        userProfileReceived(session, user);
-                    }
-                    if (response.getError() != null) {
-                        handleError(response.getError());
-                    }
+                if (user != null) {
+                    userProfileReceived(session, user);
+                }
+                if (response.getError() != null) {
+                    handleError(response.getError());
                 }
             }
         }).executeAsync();

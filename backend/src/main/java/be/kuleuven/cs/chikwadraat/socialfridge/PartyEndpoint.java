@@ -7,6 +7,10 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.UnauthorizedException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -14,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 @Api(
@@ -40,16 +45,20 @@ public class PartyEndpoint extends FacebookAuthEndpoint {
     }
 
     /**
-     * Inserts a party.
-     * It uses HTTP POST method.
+     * Insert a party.
      *
-     * @param party       The user to be updated.
+     * @param party       The party to be inserted.
      * @param accessToken The access token for authorization.
      * @return The inserted party.
      */
     @ApiMethod(name = "insertParty", path = "party")
     public Party insertParty(Party party, @Named("accessToken") String accessToken) throws ServiceException {
-        checkAccess(accessToken, party.getHostID());
+        String userID = party.getHostID();
+        checkAccess(accessToken, userID);
+        // Configure the host
+        User user = getUser(userID);
+        party.setHost(user);
+        // Store party
         EntityManager mgr = getEntityManager();
         try {
             if (containsParty(mgr, party)) {
@@ -104,6 +113,43 @@ public class PartyEndpoint extends FacebookAuthEndpoint {
         // TODO Send update to all party members
     }
 
+    /**
+     * Retrieve candidates for a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     * @return The list of candidates.
+     */
+    @ApiMethod(name = "getCandidates", path = "party/{partyID}/candidates")
+    public List<PartyMember> getCandidates(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        // Check if party exists
+        Party party = getParty(partyID);
+        if (party == null) {
+            throw new ConflictException(new EntityNotFoundException("Party not found"));
+        }
+        // User must be host
+        if (!userID.equals(party.getHostID())) {
+            throw new UnauthorizedException("User must be party host to invite friends");
+        }
+        // Retrieve current members
+        Map<String, PartyMember> members = party.getMembersMap();
+        // Retrieve friends using our application
+        List<User> friends = getAppUsers(getAPI().getFriends(accessToken));
+        List<PartyMember> candidates = new ArrayList<PartyMember>();
+        for (User friend : friends) {
+            PartyMember member = members.get(friend.getID());
+            if (member == null) {
+                // Not yet invited
+                candidates.add(new PartyMember(party, friend, PartyMember.Status.CANDIDATE));
+            } else if (member.canInvite() || member.isInvited()) {
+                // Can invite or already invited
+                candidates.add(member);
+            }
+        }
+        return candidates;
+    }
+
     protected Party getParty(long partyID) {
         EntityManager mgr = getEntityManager();
         try {
@@ -114,10 +160,17 @@ public class PartyEndpoint extends FacebookAuthEndpoint {
     }
 
     protected Party getParty(EntityManager mgr, long partyID) {
-        return mgr.find(Party.class, Party.getKey(partyID));
+        Party party = mgr.find(Party.class, Party.getKey(partyID));
+        for (PartyMember member : party.getMembers()) {
+            // Need to eagerly loaded these
+        }
+        return party;
     }
 
     protected boolean containsParty(EntityManager mgr, Party party) {
+        if (party.getID() == null) {
+            return false;
+        }
         Party item = mgr.find(Party.class, party.getKey());
         return item != null;
     }
@@ -133,6 +186,22 @@ public class PartyEndpoint extends FacebookAuthEndpoint {
 
     protected boolean isBefriendedWith(String friendID, String userAccessToken) {
         return getAPI().isBefriendedWith(friendID, userAccessToken);
+    }
+
+    protected List<User> getAppUsers(Iterable<com.restfb.types.User> facebookUsers) {
+        List<String> facebookIDs = new ArrayList<String>();
+        for (com.restfb.types.User facebookUser : facebookUsers) {
+            facebookIDs.add(facebookUser.getId());
+        }
+
+        EntityManager mgr = getEntityManager();
+        try {
+            return mgr.createNamedQuery("User.byID", User.class)
+                    .setParameter("id", facebookIDs)
+                    .getResultList();
+        } finally {
+            mgr.close();
+        }
     }
 
     protected static EntityManager getEntityManager() {

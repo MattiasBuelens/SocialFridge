@@ -48,6 +48,7 @@ dependencies {
 
     // Client libraries
     compile "be.kuleuven.cs.chikwadraat:socialfridge-users:+"
+    compile "be.kuleuven.cs.chikwadraat:socialfridge-parties:+"
 
     // Widgets
 

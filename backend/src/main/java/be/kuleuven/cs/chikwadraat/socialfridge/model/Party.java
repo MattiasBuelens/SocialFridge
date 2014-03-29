@@ -7,10 +7,17 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * Party.
@@ -21,16 +28,21 @@ public class Party {
     public static final String KIND = "Party";
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private User host;
+
+    private String hostID;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "party")
     private List<PartyMember> members;
 
     public Party() {
+        this.members = new ArrayList<PartyMember>();
     }
 
-    public Party(long id, User host) {
+    public Party(Long id, User host) {
+        this();
         this.id = id;
-        this.members = new ArrayList<PartyMember>();
         setHost(host);
     }
 
@@ -57,17 +69,13 @@ public class Party {
     /**
      * Host.
      */
-    public User getHost() {
-        return host;
+    public String getHostID() {
+        return hostID;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public String getHostID() {
-        return getHost().getID();
-    }
-
-    protected void setHost(User host) {
-        this.host = host;
+    public void setHost(User host) {
+        this.hostID = host.getID();
         addMember(new PartyMember(this, host, PartyMember.Status.HOST));
     }
 
@@ -76,6 +84,15 @@ public class Party {
      */
     public List<PartyMember> getMembers() {
         return members;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Map<String, PartyMember> getMembersMap() {
+        Map<String, PartyMember> map = new HashMap<String, PartyMember>();
+        for (PartyMember member : getMembers()) {
+            map.put(member.getUserID(), member);
+        }
+        return map;
     }
 
     public PartyMember getMember(String userID) {

@@ -22,10 +22,13 @@ public class PartyMember {
 
     public static final String KIND = "PartyMember";
 
+    @Id
+    private Key key;
+
     /**
      * User ID.
      */
-    @Id
+    @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
     private String userID;
 
     /**
@@ -57,6 +60,7 @@ public class PartyMember {
         checkNotNull(party);
         checkNotNull(user);
         checkNotNull(status);
+        this.key = getKey(party, user.getID());
         this.party = party;
         this.partyKey = party.getKey();
         this.userName = user.getName();
@@ -211,12 +215,17 @@ public class PartyMember {
         return true;
     }
 
-    public enum Status {
+    public static enum Status {
 
         /**
          * Party host.
          */
         HOST,
+
+        /**
+         * Candidate for invitation. Should never be persisted.
+         */
+        CANDIDATE,
 
         /**
          * Invited to party, awaiting response.

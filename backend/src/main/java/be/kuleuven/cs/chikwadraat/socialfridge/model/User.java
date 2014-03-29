@@ -7,11 +7,16 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * User.
  */
 @Entity(name = User.KIND)
+@NamedQueries(
+        @NamedQuery(name="User.byID", query = "SELECT u FROM User u WHERE id = :id")
+)
 public class User {
 
     public static final String KIND = "User";

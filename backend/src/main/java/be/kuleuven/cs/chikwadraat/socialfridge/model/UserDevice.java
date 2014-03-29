@@ -20,10 +20,13 @@ public class UserDevice {
 
     public static final String KIND = "UserDevice";
 
+    @Id
+    private Key key;
+
     /**
      * Registration ID.
      */
-    @Id
+    @Extension(vendorName = "datanucleus", key = "gae.pk-name", value = "true")
     private String registrationID;
 
     /**
@@ -45,6 +48,7 @@ public class UserDevice {
     }
 
     public UserDevice(User user, String registrationID, String information, long timestamp) {
+        this.key = getKey(user, registrationID);
         this.user = user;
         this.userKey = user.getKey();
         this.registrationID = registrationID;
