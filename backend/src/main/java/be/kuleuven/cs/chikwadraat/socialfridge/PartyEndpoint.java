@@ -95,7 +95,7 @@ public class PartyEndpoint extends FacebookAuthEndpoint {
                 throw new UnauthorizedException("User must be party host to invite friends");
             }
             // Add to invitees
-            party.addInvitee(friend);
+            party.invite(friend);
             mgr.persist(party);
         } finally {
             mgr.close();

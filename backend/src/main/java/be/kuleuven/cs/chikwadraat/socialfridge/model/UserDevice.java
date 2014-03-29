@@ -58,7 +58,7 @@ public class UserDevice {
     }
 
     public static Key getKey(User user, String registrationID) {
-        return getKey(user.getID(), registrationID);
+        return getKey(user.getKey(), registrationID);
     }
 
     public static Key getKey(String userID, String registrationID) {
