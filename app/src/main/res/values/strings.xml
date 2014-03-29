@@ -24,6 +24,12 @@
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
 
+    <!-- TimeSlots -->
+    <string name="time_day">Day</string>
+    <string name="time_time_slots">Timeslots</string>
+    <string name="time_action_choose_today">Today</string>
+    <string name="times_action_choose_tomorrow">Tomorrow</string>
+
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>
     <string name="error_dialog_default_text">No response from server.</string>
