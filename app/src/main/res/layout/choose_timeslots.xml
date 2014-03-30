@@ -9,7 +9,6 @@
     android:layout_marginTop="@dimen/activity_horizontal_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotActivity">
 
-
     <TextView
         android:id="@+id/day_header"
         android:layout_width="match_parent"
@@ -19,38 +18,40 @@
         android:text="@string/time_day"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-    <Button
-        android:id="@+id/time_action_choose_today"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        android:text="@string/time_action_choose_today"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/day_header"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:layout_marginTop="@dimen/section_margin" />
-
-   <Button
-       android:id="@+id/time_action_choose_tomorrow"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:textAllCaps="true"
-       android:text="@string/times_action_choose_tomorrow"
-       android:layout_below="@+id/day_header"
-       android:layout_marginBottom="@dimen/section_margin"
-       android:layout_marginTop="@dimen/section_margin"
-       android:layout_toRightOf="@+id/time_action_choose_today" />
-
-    <TextView
-        android:id="@+id/party_candidates_header"
+    <LinearLayout
+        android:id="@+id/day_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/day_header"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginTop="@dimen/section_margin"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/time_action_choose_today"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/time_action_choose_today"
+            android:textAllCaps="true" />
+
+        <Button
+            android:id="@+id/time_action_choose_tomorrow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/times_action_choose_tomorrow"
+            android:textAllCaps="true" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/time_slots_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/day_options"
         android:text="@string/time_time_slots"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
-        android:layout_below="@+id/time_action_choose_today"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
 </RelativeLayout>
