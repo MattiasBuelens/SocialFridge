@@ -73,6 +73,10 @@ public class PartyMember {
         return userName;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
 
     /**
      * Member status.

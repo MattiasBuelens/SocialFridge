@@ -59,7 +59,7 @@ public class PartyEndpoint extends BaseEndpoint {
     public Party insertParty(final Party party, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = party.getHostID();
         checkAccess(accessToken, userID);
-        if(party.getID() != null) {
+        if (party.getID() != null) {
             throw new EntityExistsException("Party already exists");
         }
         final User user = getUser(userID);

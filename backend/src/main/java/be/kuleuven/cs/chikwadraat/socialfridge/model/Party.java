@@ -49,9 +49,8 @@ public class Party {
     public Party() {
     }
 
-    public Party(Long id, User host) {
+    public Party(Long id) {
         this.id = id;
-        setHost(host);
     }
 
     /**
@@ -76,8 +75,7 @@ public class Party {
     public PartyMember setHost(User host) {
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
-        addMember(member);
-        return member;
+        return updateMember(member);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -135,13 +133,19 @@ public class Party {
         return getMember(userID) != null;
     }
 
-    public Ref<PartyMember> addMember(PartyMember member) throws IllegalArgumentException {
-        if (hasMember(member.getUserID())) {
-            throw new IllegalArgumentException("Party member already exists");
+    public PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
+        Ref<PartyMember> ref = getMember(member.getUserID());
+        if (ref != null) {
+            // Copy to existing member
+            PartyMember existingMember = ref.get();
+            existingMember.setUserName(member.getUserName());
+            existingMember.setStatus(member.getStatus());
+            return existingMember;
+        } else {
+            // Add member
+            members.add(Ref.create(member));
+            return member;
         }
-        Ref<PartyMember> ref = Ref.create(member);
-        members.add(ref);
-        return ref;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -157,19 +161,20 @@ public class Party {
      * Invite a user to this party.
      *
      * @param invitee The user to invite.
-     * @return True iff the user was invited.
+     * @return The invited member.
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
      */
     public PartyMember invite(User invitee) throws IllegalArgumentException {
-        PartyMember member = getMember(invitee.getID()).get();
-        if (member != null) {
+        Ref<PartyMember> ref = getMember(invitee.getID());
+        if (ref != null) {
+            PartyMember member = ref.get();
             if (member.isInParty()) {
                 // Already in the party
-                return null;
+                return member;
             }
             if (member.isInvited()) {
                 // Already invited, don't re-invite
-                return null;
+                return member;
             }
             if (!member.canInvite()) {
                 // Previously declined
@@ -177,11 +182,12 @@ public class Party {
             }
             // Invite
             member.setStatus(PartyMember.Status.INVITED);
+            return member;
         } else {
             // Add invitee
-            member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
+            PartyMember member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
+            return updateMember(member);
         }
-        return member;
     }
 
 }
