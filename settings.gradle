@@ -1,1 +1,1 @@
-include ':app', ':backend', ':twoway-view:library'
+include ':app', ':backend'

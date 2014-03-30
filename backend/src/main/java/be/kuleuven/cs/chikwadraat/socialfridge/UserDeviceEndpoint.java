@@ -5,19 +5,24 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.ConflictException;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Work;
 
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 @Api(
         name = "users",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
-public class UserDeviceEndpoint extends FacebookAuthEndpoint {
+public class UserDeviceEndpoint extends BaseEndpoint {
 
     /**
      * Retrieves a user device.
@@ -30,14 +35,11 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
     @ApiMethod(name = "getUserDevice", path = "userDevice/{userID}/{registrationID}")
     public UserDevice getUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        EntityManager mgr = getEntityManager();
-        UserDevice userDevice = null;
         try {
-            userDevice = mgr.find(UserDevice.class, UserDevice.getKey(userID, registrationID));
-        } finally {
-            mgr.close();
+            return getUserDevice(userID, registrationID);
+        } catch (PersistenceException e) {
+            throw new ConflictException(e);
         }
-        return userDevice;
     }
 
     /**
@@ -50,18 +52,25 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
      * @return The newly registered user device.
      */
     @ApiMethod(name = "insertUserDevice", path = "userDevice")
-    public UserDevice insertUserDevice(UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
+    public UserDevice insertUserDevice(final UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
-        EntityManager mgr = getEntityManager();
         try {
-            if (containsUserDevice(mgr, userDevice)) {
-                throw new ConflictException(new EntityExistsException("User device already registered"));
-            }
-            mgr.persist(userDevice);
-        } finally {
-            mgr.close();
+            return ofy().transact(new Work<UserDevice>() {
+                @Override
+                public UserDevice run() {
+                    // Check if exists
+                    UserDevice existingDevice = ofy().load().entity(userDevice).now();
+                    if (existingDevice != null) {
+                        throw new EntityExistsException("User device already registered");
+                    }
+                    // Save
+                    ofy().save().entity(userDevice).now();
+                    return userDevice;
+                }
+            });
+        } catch (PersistenceException e) {
+            throw new ConflictException(e);
         }
-        return userDevice;
     }
 
     /**
@@ -75,12 +84,7 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
     @ApiMethod(name = "updateUserDevice", path = "userDevice")
     public UserDevice updateUserDevice(UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
-        EntityManager mgr = getEntityManager();
-        try {
-            mgr.persist(userDevice);
-        } finally {
-            mgr.close();
-        }
+        ofy().save().entity(userDevice).now();
         return userDevice;
     }
 
@@ -94,26 +98,31 @@ public class UserDeviceEndpoint extends FacebookAuthEndpoint {
      * @return The deleted user device.
      */
     @ApiMethod(name = "removeUserDevice", path = "userDevice/{userID}/{registrationID}")
-    public UserDevice removeUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
+    public UserDevice removeUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        EntityManager mgr = getEntityManager();
-        UserDevice userDevice = null;
         try {
-            userDevice = mgr.find(UserDevice.class, UserDevice.getKey(userID, registrationID));
-            mgr.remove(userDevice);
-        } finally {
-            mgr.close();
+            return ofy().transact(new Work<UserDevice>() {
+                @Override
+                public UserDevice run() {
+                    UserDevice device = getUserDevice(userID, registrationID);
+                    ofy().delete().entity(device).now();
+                    return device;
+                }
+            });
+        } catch (PersistenceException e) {
+            throw new ConflictException(e);
         }
-        return userDevice;
     }
 
-    private boolean containsUserDevice(EntityManager mgr, UserDevice userDevice) {
-        UserDevice item = mgr.find(UserDevice.class, userDevice.getKey());
-        return item != null;
-    }
-
-    private static EntityManager getEntityManager() {
-        return EMF.get().createEntityManager();
+    private UserDevice getUserDevice(String userID, String registrationID) throws EntityNotFoundException {
+        UserDevice device = ofy().load().type(UserDevice.class)
+                .parent(Key.create(User.class, userID))
+                .id(registrationID)
+                .now();
+        if (device == null) {
+            throw new EntityNotFoundException("User device not found.");
+        }
+        return device;
     }
 
 }

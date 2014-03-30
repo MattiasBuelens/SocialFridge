@@ -1,16 +1,21 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 
 /**
  * Base activity handling common things such as authentication.
@@ -20,6 +25,10 @@ public abstract class BaseActivity extends ActionBarActivity {
     public static final int REQUEST_LOGIN = RESULT_FIRST_USER + 1;
 
     private static final Uri M_FACEBOOK_URL = Uri.parse("http://m.facebook.com");
+
+    private static final String SESSION_CACHE_KEY = "session_cache";
+    private static final String SESSION_CACHE_USER_ID = "user_id";
+    private SharedPreferences cache;
 
     private boolean isResumed = false;
     private UiLifecycleHelper uiHelper;
@@ -31,18 +40,14 @@ public abstract class BaseActivity extends ActionBarActivity {
     };
 
     @Override
-    protected final void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         uiHelper = new UiLifecycleHelper(this, sessionCallback);
         uiHelper.onCreate(savedInstanceState);
 
-        onAfterCreate(savedInstanceState);
-
-        checkLoggedIn();
+        cache = getApplicationContext().getSharedPreferences(SESSION_CACHE_KEY, Context.MODE_PRIVATE);
     }
-
-    protected abstract void onAfterCreate(Bundle savedInstanceState);
 
     @Override
     protected void onResume() {
@@ -133,7 +138,7 @@ public abstract class BaseActivity extends ActionBarActivity {
      * @param session
      */
     protected void onLoggedIn(Session session) {
-
+        // TODO Perhaps register user here?
     }
 
     /**
@@ -141,6 +146,9 @@ public abstract class BaseActivity extends ActionBarActivity {
      * If this activity {@link #requiresLogin() requires login}, {@link #login()} is called.
      */
     protected void onLoggedOut() {
+        // Remove cached user ID
+        cacheUserID(null);
+        // Retry login
         if (requiresLogin()) login();
     }
 
@@ -156,6 +164,58 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
+    protected Request newMeRequest(final Session session, final Request.GraphUserCallback callback) {
+        return Request.newMeRequest(session, new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                if (session == Session.getActiveSession()) {
+                    if (user != null) {
+                        // Cache the user ID
+                        cacheUserID(user.getId());
+                    }
+                    callback.onCompleted(user, response);
+                }
+            }
+        });
+    }
+
+    protected void requestUserID(final Session session, final UserIDCallback callback) {
+        String userID = getCachedUserID();
+        if (userID != null) {
+            // From cache
+            callback.onSuccess(userID);
+        } else {
+            // Request
+            newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (user != null) {
+                        callback.onSuccess(user.getId());
+                    } else if (response.getError() != null) {
+                        callback.onError(response.getError());
+                    }
+                }
+            }).executeAsync();
+        }
+    }
+
+    public interface UserIDCallback {
+
+        void onSuccess(String userID);
+
+        void onError(FacebookRequestError error);
+
+    }
+
+    private String getCachedUserID() {
+        return cache.getString(SESSION_CACHE_USER_ID, null);
+    }
+
+    private void cacheUserID(String userID) {
+        SharedPreferences.Editor editor = cache.edit();
+        editor.putString(SESSION_CACHE_USER_ID, userID);
+        editor.commit();
+    }
 
     /**
      * Handles errors from Facebook sessions and requests.

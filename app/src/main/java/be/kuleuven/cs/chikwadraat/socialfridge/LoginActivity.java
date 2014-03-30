@@ -12,8 +12,8 @@ public class LoginActivity extends BaseActivity {
 
     private static final String TAG = "LoginActivity";
 
-    @Override
-    protected void onAfterCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);

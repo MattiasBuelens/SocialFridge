@@ -48,9 +48,9 @@ dependencies {
 
     // Client libraries
     compile "be.kuleuven.cs.chikwadraat:socialfridge-users:+"
+    compile "be.kuleuven.cs.chikwadraat:socialfridge-parties:+"
 
     // Widgets
-    compile project(':twoway-view:library')
 
     /*
      * Google APIs

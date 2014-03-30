@@ -20,7 +20,9 @@ public class DishesActivity extends ListActivity {
     private static final String TAG = "DishesActivity";
 
     @Override
-    protected void onAfterCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         List<Dish> dishes = new ArrayList<Dish>();
         dishes.add(new Dish("Spaghetti Bolognaise", "Blablabla", R.drawable.spaghetti));
 
