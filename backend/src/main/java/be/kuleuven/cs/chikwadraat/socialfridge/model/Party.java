@@ -2,21 +2,22 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.repackaged.com.google.common.base.Function;
-import com.google.appengine.repackaged.com.google.common.collect.Collections2;
-import com.google.appengine.repackaged.com.google.common.collect.Iterables;
-import com.google.common.collect.ImmutableList;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.annotation.Nullable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 
 /**
  * Party.
@@ -26,27 +27,31 @@ public class Party {
 
     public static final String KIND = "Party";
 
+    /*
+     * Load groups.
+     */
+
+    public static class Everything extends Partial {
+    }
+
+    public static class Partial {
+    }
+
     @Id
     private Long id;
-    private User host;
-    private List<User> partners = new ArrayList<>();
-    private List<User> invitees = new ArrayList<>();
+
+    @Load(Everything.class)
+    private Ref<User> host;
+
+    @Load(Everything.class)
+    private Set<Ref<PartyMember>> members = new HashSet<Ref<PartyMember>>();
 
     public Party() {
     }
 
-    public Party(long id, User host) {
+    public Party(Long id, User host) {
         this.id = id;
-        this.host = host;
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Key getKey() {
-        return getKey(getID());
-    }
-
-    public static Key getKey(long id) {
-        return KeyFactory.createKey(KIND, id);
+        setHost(host);
     }
 
     /**
@@ -56,89 +61,127 @@ public class Party {
         return id;
     }
 
-    public static long getID(Key partyKey) {
-        return partyKey.getId();
-    }
-
     /**
      * Host.
      */
-    public User getHost() {
-        return host;
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public String getHostID() {
-        return getHost().getID();
+        return host.getKey().getName();
+    }
+
+    public void setHostID(String hostID) {
+        host = Ref.create(Key.create(User.class, hostID));
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public PartyMember setHost(User host) {
+        this.host = Ref.create(host);
+        PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
+        addMember(member);
+        return member;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<PartyMember> getHostMember() {
+        return getMember(getHostID());
     }
 
     /**
-     * Partners.
-     */
-    public List<User> getPartners() {
-        return partners;
-    }
-
-    public void setPartners(List<User> partners) {
-        this.partners = partners;
-    }
-
-    public void addPartner(User partner) {
-        // Add to partners
-        List<User> partners = getPartners();
-        if (!partners.contains(partner)) {
-            partners.add(partner);
-        }
-        // Remove from invitees
-        removeInvitee(partner);
-    }
-
-    public void removePartner(User partner) {
-        getPartners().remove(partner);
-    }
-
-    /**
-     * Invitees.
-     */
-    public List<User> getInvitees() {
-        return invitees;
-    }
-
-    public void setInvitees(List<User> invitees) {
-        this.invitees = invitees;
-    }
-
-    public void addInvitee(User invitee) {
-        List<User> invitees = getInvitees();
-        if (!invitees.contains(invitee)) {
-            invitees.add(invitee);
-        }
-    }
-
-    public void removeInvitee(User invitee) {
-        getInvitees().remove(invitee);
-    }
-
-    /**
-     * Members: host, partners and invitees.
+     * Members.
      */
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public ImmutableList<User> getMembers() {
-        return ImmutableList.<User>builder()
-                .add(getHost())
-                .addAll(getPartners())
-                .addAll(getInvitees())
-                .build();
+    public Set<Ref<PartyMember>> getMemberKeys() {
+        return members;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Map<String, PartyMember> getMembersMap() {
+        Map<String, PartyMember> map = new HashMap<String, PartyMember>();
+        for (PartyMember member : getMembers()) {
+            map.put(member.getUserID(), member);
+        }
+        return map;
+    }
+
+    public Collection<PartyMember> getMembers() {
+        return ofy().load().refs(getMemberKeys()).values();
+    }
+
+    public void setMembers(Collection<PartyMember> members) {
+        Set<Ref<PartyMember>> refs = getMemberKeys();
+        refs.clear();
+        for (PartyMember member : members) {
+            refs.add(Ref.create(member));
+        }
+    }
+
+    public Ref<PartyMember> getMember(User user) {
+        return getMember(Ref.create(user));
+    }
+
+    public Ref<PartyMember> getMember(Ref<User> userRef) {
+        return getMember(userRef.getKey().getName());
+    }
+
+    public Ref<PartyMember> getMember(String userID) {
+        for (Ref<PartyMember> ref : getMemberKeys()) {
+            if (userID.equals(ref.getKey().getName())) {
+                return ref;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasMember(String userID) {
+        return getMember(userID) != null;
+    }
+
+    public Ref<PartyMember> addMember(PartyMember member) throws IllegalArgumentException {
+        if (hasMember(member.getUserID())) {
+            throw new IllegalArgumentException("Party member already exists");
+        }
+        Ref<PartyMember> ref = Ref.create(member);
+        members.add(ref);
+        return ref;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<String> getMemberIDs() {
-        return Collections2.transform(getMembers(), new Function<User, String>() {
-            @Override
-            public String apply(User user) {
-                return user.getID();
+        List<String> memberIDs = new ArrayList<String>(getMemberKeys().size());
+        for (Ref<PartyMember> ref : getMemberKeys()) {
+            memberIDs.add(ref.getKey().getName());
+        }
+        return memberIDs;
+    }
+
+    /**
+     * Invite a user to this party.
+     *
+     * @param invitee The user to invite.
+     * @return True iff the user was invited.
+     * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
+     */
+    public PartyMember invite(User invitee) throws IllegalArgumentException {
+        PartyMember member = getMember(invitee.getID()).get();
+        if (member != null) {
+            if (member.isInParty()) {
+                // Already in the party
+                return null;
             }
-        });
+            if (member.isInvited()) {
+                // Already invited, don't re-invite
+                return null;
+            }
+            if (!member.canInvite()) {
+                // Previously declined
+                throw new IllegalArgumentException("Cannot invite user, declined an earlier invite.");
+            }
+            // Invite
+            member.setStatus(PartyMember.Status.INVITED);
+        } else {
+            // Add invitee
+            member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
+        }
+        return member;
     }
 
 }
