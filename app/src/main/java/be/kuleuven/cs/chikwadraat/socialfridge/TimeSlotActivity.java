@@ -7,10 +7,9 @@ import android.os.Bundle;
  */
 public class TimeSlotActivity extends BaseActivity {
 
-
     @Override
-    protected void onAfterCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
 }

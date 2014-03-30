@@ -40,20 +40,14 @@ public abstract class BaseActivity extends ActionBarActivity {
     };
 
     @Override
-    protected final void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         uiHelper = new UiLifecycleHelper(this, sessionCallback);
         uiHelper.onCreate(savedInstanceState);
 
         cache = getApplicationContext().getSharedPreferences(SESSION_CACHE_KEY, Context.MODE_PRIVATE);
-
-        onAfterCreate(savedInstanceState);
-
-        checkLoggedIn();
     }
-
-    protected abstract void onAfterCreate(Bundle savedInstanceState);
 
     @Override
     protected void onResume() {

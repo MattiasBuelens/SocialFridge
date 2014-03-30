@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,7 +45,9 @@ public class PartyActivity extends ListActivity {
     private CandidatesListAdapter candidatesAdapter;
 
     @Override
-    protected void onAfterCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         View header = getLayoutInflater().inflate(R.layout.party, null);
         getListView().addHeaderView(header);
 

@@ -34,7 +34,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView userNameView;
 
     @Override
-    public void onAfterCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.start);
 
         userPictureView = (ProfilePictureView) findViewById(R.id.current_user_pic);
