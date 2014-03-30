@@ -2,15 +2,10 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-
-import org.datanucleus.api.jpa.annotations.Extension;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Parent;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,13 +17,10 @@ public class PartyMember {
 
     public static final String KIND = "PartyMember";
 
-    @Id
-    private Key key;
-
     /**
      * User ID.
      */
-    @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
+    @Id
     private String userID;
 
     /**
@@ -39,19 +31,13 @@ public class PartyMember {
     /**
      * Party.
      */
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Party.class)
-    private Party party;
+    @Parent
+    private Ref<Party> party;
 
     /**
      * Member status.
      */
     private Status status;
-
-    /**
-     * Key of parent party.
-     */
-    @Extension(vendorName = "datanucleus", key = "gae.parent-pk", value = "true")
-    private Key partyKey;
 
     public PartyMember() {
     }
@@ -60,36 +46,17 @@ public class PartyMember {
         checkNotNull(party);
         checkNotNull(user);
         checkNotNull(status);
-        this.key = getKey(party, user.getID());
-        this.party = party;
-        this.partyKey = party.getKey();
-        this.userName = user.getName();
+        this.party = Ref.create(party);
         this.userID = user.getID();
+        this.userName = user.getName();
         this.status = status;
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Key getKey() {
-        return getKey(getParty(), getUserID());
-    }
-
-    public static Key getKey(Party party, String userID) {
-        return getKey(party.getKey(), userID);
-    }
-
-    public static Key getKey(long partyID, String userID) {
-        return getKey(Party.getKey(partyID), userID);
-    }
-
-    public static Key getKey(Key partyKey, String userID) {
-        return KeyFactory.createKey(partyKey, KIND, userID);
     }
 
     /**
      * Party.
      */
-    public Party getParty() {
-        return party;
+    public long getPartyID() {
+        return party.getKey().getId();
     }
 
     /**

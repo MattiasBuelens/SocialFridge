@@ -2,22 +2,22 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 
 /**
  * Party.
@@ -27,32 +27,31 @@ public class Party {
 
     public static final String KIND = "Party";
 
+    /*
+     * Load groups.
+     */
+
+    public static class Everything extends Partial {
+    }
+
+    public static class Partial {
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String hostID;
+    @Load(Everything.class)
+    private Ref<User> host;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "party")
-    private List<PartyMember> members;
+    @Load(Everything.class)
+    private Set<Ref<PartyMember>> members = new HashSet<Ref<PartyMember>>();
 
     public Party() {
-        this.members = new ArrayList<PartyMember>();
     }
 
     public Party(Long id, User host) {
-        this();
         this.id = id;
         setHost(host);
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Key getKey() {
-        return getKey(getID());
-    }
-
-    public static Key getKey(long id) {
-        return KeyFactory.createKey(KIND, id);
     }
 
     /**
@@ -62,27 +61,35 @@ public class Party {
         return id;
     }
 
-    public static long getID(Key partyKey) {
-        return partyKey.getId();
-    }
-
     /**
      * Host.
      */
     public String getHostID() {
-        return hostID;
+        return host.getKey().getName();
+    }
+
+    public void setHostID(String hostID) {
+        host = Ref.create(Key.create(User.class, hostID));
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public void setHost(User host) {
-        this.hostID = host.getID();
-        addMember(new PartyMember(this, host, PartyMember.Status.HOST));
+    public PartyMember setHost(User host) {
+        this.host = Ref.create(host);
+        PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
+        addMember(member);
+        return member;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<PartyMember> getHostMember() {
+        return getMember(getHostID());
     }
 
     /**
      * Members.
      */
-    public List<PartyMember> getMembers() {
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Set<Ref<PartyMember>> getMemberKeys() {
         return members;
     }
 
@@ -95,10 +102,31 @@ public class Party {
         return map;
     }
 
-    public PartyMember getMember(String userID) {
-        for (PartyMember member : getMembers()) {
-            if (userID.equals(member.getUserID()))
-                return member;
+    public Collection<PartyMember> getMembers() {
+        return ofy().load().refs(getMemberKeys()).values();
+    }
+
+    public void setMembers(Collection<PartyMember> members) {
+        Set<Ref<PartyMember>> refs = getMemberKeys();
+        refs.clear();
+        for (PartyMember member : members) {
+            refs.add(Ref.create(member));
+        }
+    }
+
+    public Ref<PartyMember> getMember(User user) {
+        return getMember(Ref.create(user));
+    }
+
+    public Ref<PartyMember> getMember(Ref<User> userRef) {
+        return getMember(userRef.getKey().getName());
+    }
+
+    public Ref<PartyMember> getMember(String userID) {
+        for (Ref<PartyMember> ref : getMemberKeys()) {
+            if (userID.equals(ref.getKey().getName())) {
+                return ref;
+            }
         }
         return null;
     }
@@ -107,18 +135,20 @@ public class Party {
         return getMember(userID) != null;
     }
 
-    public void addMember(PartyMember member) throws IllegalArgumentException {
+    public Ref<PartyMember> addMember(PartyMember member) throws IllegalArgumentException {
         if (hasMember(member.getUserID())) {
             throw new IllegalArgumentException("Party member already exists");
         }
-        getMembers().add(member);
+        Ref<PartyMember> ref = Ref.create(member);
+        members.add(ref);
+        return ref;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<String> getMemberIDs() {
-        List<String> memberIDs = new ArrayList<String>(getMembers().size());
-        for (PartyMember member : getMembers()) {
-            memberIDs.add(member.getUserID());
+        List<String> memberIDs = new ArrayList<String>(getMemberKeys().size());
+        for (Ref<PartyMember> ref : getMemberKeys()) {
+            memberIDs.add(ref.getKey().getName());
         }
         return memberIDs;
     }
@@ -130,16 +160,16 @@ public class Party {
      * @return True iff the user was invited.
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
      */
-    public boolean invite(User invitee) throws IllegalArgumentException {
-        PartyMember member = getMember(invitee.getID());
+    public PartyMember invite(User invitee) throws IllegalArgumentException {
+        PartyMember member = getMember(invitee.getID()).get();
         if (member != null) {
             if (member.isInParty()) {
                 // Already in the party
-                return false;
+                return null;
             }
             if (member.isInvited()) {
                 // Already invited, don't re-invite
-                return false;
+                return null;
             }
             if (!member.canInvite()) {
                 // Previously declined
@@ -150,9 +180,8 @@ public class Party {
         } else {
             // Add invitee
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
-            addMember(member);
         }
-        return true;
+        return member;
     }
 
 }

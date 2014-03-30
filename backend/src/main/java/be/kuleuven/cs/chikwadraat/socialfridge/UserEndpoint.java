@@ -5,19 +5,21 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.ConflictException;
+import com.googlecode.objectify.Work;
 
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 @Api(
         name = "users",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
-public class UserEndpoint extends FacebookAuthEndpoint {
+public class UserEndpoint extends BaseEndpoint {
 
     /**
      * Retrieves a user by user ID.
@@ -29,14 +31,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
     @ApiMethod(name = "getUser", path = "user/{id}")
     public User getUser(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
-        EntityManager mgr = getEntityManager();
-        User user = null;
-        try {
-            user = mgr.find(User.class, User.getKey(id));
-        } finally {
-            mgr.close();
-        }
-        return user;
+        return getUser(id);
     }
 
     /**
@@ -49,18 +44,25 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The newly inserted user.
      */
     @ApiMethod(name = "insertUser", path = "user")
-    public User insertUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
+    public User insertUser(final User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
-        EntityManager mgr = getEntityManager();
         try {
-            if (containsUser(mgr, user)) {
-                throw new ConflictException(new EntityExistsException("User already registered"));
-            }
-            mgr.persist(user);
-        } finally {
-            mgr.close();
+            return ofy().transact(new Work<User>() {
+                @Override
+                public User run() {
+                    // Check if exists
+                    User existingUser = ofy().load().entity(user).now();
+                    if (existingUser != null) {
+                        throw new EntityExistsException("User already registered");
+                    }
+                    // Save
+                    ofy().save().entity(user).now();
+                    return user;
+                }
+            });
+        } catch (EntityExistsException e) {
+            throw new ConflictException(e);
         }
-        return user;
     }
 
     /**
@@ -74,12 +76,7 @@ public class UserEndpoint extends FacebookAuthEndpoint {
     @ApiMethod(name = "updateUser", path = "user")
     public User updateUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
-        EntityManager mgr = getEntityManager();
-        try {
-            mgr.persist(user);
-        } finally {
-            mgr.close();
-        }
+        ofy().save().entity(user).now();
         return user;
     }
 
@@ -92,26 +89,24 @@ public class UserEndpoint extends FacebookAuthEndpoint {
      * @return The deleted user.
      */
     @ApiMethod(name = "removeUser", path = "user/{id}")
-    public User removeUserDevice(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
+    public User removeUser(final @Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
-        EntityManager mgr = getEntityManager();
-        User user = null;
-        try {
-            user = mgr.find(User.class, User.getKey(id));
-            mgr.remove(user);
-        } finally {
-            mgr.close();
+        return ofy().transact(new Work<User>() {
+            @Override
+            public User run() {
+                User user = getUser(id);
+                ofy().delete().entity(user).now();
+                return user;
+            }
+        });
+    }
+
+    private User getUser(String id) {
+        User user = ofy().load().type(User.class).id(id).now();
+        if(user == null) {
+            throw new EntityNotFoundException("User not found.");
         }
         return user;
-    }
-
-    private boolean containsUser(EntityManager mgr, User user) {
-        User item = mgr.find(User.class, user.getKey());
-        return item != null;
-    }
-
-    private static EntityManager getEntityManager() {
-        return EMF.get().createEntityManager();
     }
 
 }

@@ -2,15 +2,11 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Parent;
 
-import org.datanucleus.api.jpa.annotations.Extension;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 /**
  * Device of a registered user.
@@ -20,26 +16,17 @@ public class UserDevice {
 
     public static final String KIND = "UserDevice";
 
-    @Id
-    private Key key;
+    /**
+     * Parent user.
+     */
+    @Parent
+    private Ref<User> user;
 
     /**
      * Registration ID.
      */
-    @Extension(vendorName = "datanucleus", key = "gae.pk-name", value = "true")
+    @Id
     private String registrationID;
-
-    /**
-     * Parent user.
-     */
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    private User user;
-
-    /**
-     * Key of parent user.
-     */
-    @Extension(vendorName = "datanucleus", key = "gae.parent-pk", value = "true")
-    private Key userKey;
 
     private String information;
     private long timestamp;
@@ -48,41 +35,27 @@ public class UserDevice {
     }
 
     public UserDevice(User user, String registrationID, String information, long timestamp) {
-        this.key = getKey(user, registrationID);
-        this.user = user;
-        this.userKey = user.getKey();
+        this.user = Ref.create(user);
         this.registrationID = registrationID;
         this.information = information;
         this.timestamp = timestamp;
     }
 
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Key getKey() {
-        return getKey(getUser(), getRegistrationID());
-    }
-
-    public static Key getKey(User user, String registrationID) {
-        return getKey(user.getKey(), registrationID);
-    }
-
-    public static Key getKey(String userID, String registrationID) {
-        return getKey(User.getKey(userID), registrationID);
-    }
-
-    public static Key getKey(Key userKey, String registrationID) {
-        return KeyFactory.createKey(userKey, KIND, registrationID);
-    }
-
     /**
-     * The parent user.
+     * Parent user.
      */
     public User getUser() {
+        return getUserRef().get();
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<User> getUserRef() {
         return user;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public String getUserID() {
-        return getUser().getID();
+        return getUserRef().getKey().getName();
     }
 
     /*
