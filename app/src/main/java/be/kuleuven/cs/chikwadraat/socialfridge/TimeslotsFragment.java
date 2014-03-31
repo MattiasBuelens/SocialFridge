@@ -28,6 +28,7 @@ public class TimeSlotsFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private ArrayList<TimeSlotSelection> timeSlotSelections;
+    private GridView timeSlotGrid;
     private TimeSlotSelectionArrayAdapter timeSlotAdapter;
     private OnFragmentInteractionListener mListener;
 
@@ -35,14 +36,14 @@ public class TimeSlotsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param timeslotsSelections Time slot selections.
+     * @param timeSlotsSelections Time slot selections.
      * @return A new instance of fragment TimeSlotsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TimeSlotsFragment newInstance(List<TimeSlotSelection> timeslotsSelections) {
+    public static TimeSlotsFragment newInstance(List<TimeSlotSelection> timeSlotsSelections) {
         TimeSlotsFragment fragment = new TimeSlotsFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_TIME_SLOTS, new ArrayList<TimeSlotSelection>(timeslotsSelections));
+        args.putParcelableArrayList(ARG_TIME_SLOTS, new ArrayList<TimeSlotSelection>(timeSlotsSelections));
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +56,13 @@ public class TimeSlotsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        timeSlotSelections = getArguments().getParcelableArrayList(ARG_TIME_SLOTS);
+        if (savedInstanceState != null) {
+            timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
+        } else if (getArguments() != null) {
+            timeSlotSelections = getArguments().getParcelableArrayList(ARG_TIME_SLOTS);
+        } else {
+            timeSlotSelections = new ArrayList<TimeSlotSelection>();
+        }
     }
 
     @Override
@@ -64,12 +71,24 @@ public class TimeSlotsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_timeslots, container, false);
 
-        timeSlotAdapter = new TimeSlotSelectionArrayAdapter(inflater.getContext(), timeSlotSelections);
-
-        GridView grid = (GridView) view.findViewById(R.id.time_slot_grid);
-        grid.setAdapter(timeSlotAdapter);
+        timeSlotGrid = (GridView) view.findViewById(R.id.time_slot_grid);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        timeSlotAdapter = new TimeSlotSelectionArrayAdapter(getActivity(), timeSlotSelections);
+        timeSlotGrid.setAdapter(timeSlotAdapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(ARG_TIME_SLOTS, timeSlotSelections);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
