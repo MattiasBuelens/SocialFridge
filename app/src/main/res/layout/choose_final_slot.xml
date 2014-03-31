@@ -89,7 +89,6 @@
         android:layout_below="@+id/time_slot_options"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        <!-- android:layout_marginTop="@dimen/section_margin" -->
         android:layout_marginBottom="@dimen/section_margin"
         android:checked="false" />
 
