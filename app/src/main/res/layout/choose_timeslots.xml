@@ -64,94 +64,12 @@
         android:orientation="horizontal">
 
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="0dp"
+        <fragment
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/times_slot1"
-            android:id="@+id/slot1"
-            android:layout_below="@+id/time_slots_header"
-            android:layout_alignParentLeft="true"
-            android:clickable="false"
-            android:textAllCaps="true" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/times_slot2"
-            android:id="@+id/slot2"
-            android:layout_below="@+id/time_slots_header"
-            android:layout_alignParentLeft="true"
-            android:clickable="false"
-            android:textAllCaps="true" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/times_slot3"
-            android:id="@+id/slot3"
-            android:layout_below="@+id/time_slots_header"
-            android:layout_alignParentLeft="true"
-            android:clickable="false"
-            android:textAllCaps="true" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/times_slot4"
-            android:id="@+id/slot4"
-            android:layout_below="@+id/time_slots_header"
-            android:layout_alignParentLeft="true"
-            android:clickable="false"
-            android:textAllCaps="true" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/time_slot_checks"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/time_slot_options"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/check_slot1"
-            android:layout_weight="1"
-            android:checked="true"
-            android:enabled="true"
-            android:longClickable="false" />
-
-        <CheckBox
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/check_slot2"
-            android:layout_weight="1"
-            android:checked="true" />
-
-        <CheckBox
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/check_slot3"
-            android:layout_weight="1"
-            android:checked="true" />
-
-        <CheckBox
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/check_slot4"
-            android:layout_weight="1"
-            android:checked="true" />
-
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
+            android:id="@+id/fragment"
+            tools:layout="@layout/fragment_timeslots" />
     </LinearLayout>
 
     <Button
