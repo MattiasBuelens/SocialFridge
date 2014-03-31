@@ -26,6 +26,8 @@
 
     <!-- Lobby -->
     <string name="lobby_tiltle">Lobby</string>
+    <string name="lobby_join">Join</string>
+    <string name="lobby_decline">Decline</string>
 
     <!-- Time slots -->
     <string name="time_slots_title">Choose time slots</string>

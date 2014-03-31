@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
@@ -12,13 +16,53 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/time_time_slots"
-            android:id="@+id/textView" />
+            android:id="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp" />
 
         <fragment
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
             android:id="@+id/fragment"
-            tools:layout="@layout/fragment_timeslots" />
+            tools:layout="@layout/fragment_timeslots"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-</LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/fragment">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/lobby_join"
+            android:id="@+id/button"
+            android:layout_below="@+id/fragment"
+            android:layout_toRightOf="@+id/button2"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:layout_gravity="bottom" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/lobby_decline"
+            android:id="@+id/button2"
+            android:layout_below="@+id/fragment"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:layout_gravity="bottom" />
+    </LinearLayout>
+
+</RelativeLayout>
