@@ -1,7 +1,9 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,9 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_timeslots);
+
+        Button findPartnersButton = (Button) findViewById(R.id.time_action_find_partners);
+        findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
         slots.add(new TimeSlotSelection(17, 18, TimeSlotToggleState.UNSPECIFIED));
@@ -32,8 +37,10 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.time_action_find_partners:
-
-
+                Intent intent = new Intent(this, PartyActivity.class);
+                // TODO Pass data in intent!
+                startActivity(intent);
+                break;
         }
     }
 
