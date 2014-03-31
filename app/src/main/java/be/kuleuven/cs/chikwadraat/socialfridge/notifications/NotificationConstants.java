@@ -18,7 +18,7 @@ public abstract class NotificationConstants {
     public static final String EXTRA_MESSAGE = NOTIFICATION_ADDRESS + ".EXTRA_MESSAGE";
 
     // text in notification
-    public static final String CONTENT_TITLE = "New SocialFridge invitation"
+    public static final String CONTENT_TITLE = "New SocialFridge invitation";
     public static final String CONTENT_TEXT_POSTFIX = " invited you to eat spaghetti together.";
 
     public static final String BUTTON_CHOOSE_SLOTS = "Choose time slots";

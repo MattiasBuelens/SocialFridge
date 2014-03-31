@@ -24,6 +24,9 @@
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
 
+    <!-- Lobby -->
+    <string name="lobby_tiltle">Lobby</string>
+
     <!-- TimeSlots -->
     <string name="time_day">Day</string>
     <string name="time_time_slots">Timeslots</string>
@@ -38,5 +41,6 @@
     <string name="error_server">The server is busy, please retry later.</string>
     <string name="error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string>
     <string name="error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

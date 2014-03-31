@@ -54,7 +54,7 @@ public class NotificationService extends IntentService {
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(null) //TODO: klein icoontje instellen (fotootje van gerecht?)
+                        .setSmallIcon(0) //TODO: klein icoontje instellen (fotootje van gerecht?)
                         .setContentTitle(NotificationConstants.CONTENT_TITLE)
                         .setContentText("The Italian Prime Minister" + NotificationConstants.CONTENT_TEXT_POSTFIX) //TODO: naam van inviter invoegen
                         .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
@@ -67,9 +67,9 @@ public class NotificationService extends IntentService {
                  */
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg)) //TODO: msg is hier een extra string van de intent, wat doen we hiermee?
-                        .addAction (null,   //TODO: choose slots icoontje invoegen
+                        .addAction (0,   //TODO: choose slots icoontje invoegen
                                 NotificationConstants.BUTTON_CHOOSE_SLOTS, piChooseSlots)
-                        .addAction (null,   //TODO: decline icoontje invoegen
+                        .addAction (0,   //TODO: decline icoontje invoegen
                                 NotificationConstants.BUTTON_DECLINE, piDecline);
 
         /*
