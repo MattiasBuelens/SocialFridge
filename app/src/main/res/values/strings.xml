@@ -24,14 +24,10 @@
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
 
-<<<<<<< HEAD
     <!-- Lobby -->
     <string name="lobby_tiltle">Lobby</string>
 
-    <!-- TimeSlots -->
-=======
     <!-- Time slots -->
->>>>>>> Time Slots
     <string name="time_day">Day</string>
     <string name="time_time_slots">Time slots</string>
     <string name="time_choose_today">Today</string>
