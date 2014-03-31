@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_horizontal_margin"
-    android:layout_marginBottom="@dimen/activity_horizontal_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotActivity">
 
     <TextView
-        android:id="@+id/day_header"
+        android:id="@+id/time_text_day"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -19,42 +19,45 @@
         android:text="@string/time_day"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-    <LinearLayout
-        android:id="@+id/day_options"
+    <RadioGroup
+        android:id="@+id/time_day_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/day_header"
+        android:layout_below="@+id/time_text_day"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin"
         android:orientation="horizontal">
 
-        <Button
+        <RadioButton
             android:id="@+id/time_action_choose_today"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/time_action_choose_today"
-            android:textAllCaps="true" />
+            android:text="@string/time_choose_today"
+            android:textAllCaps="true"
+            android:checked="true" />
 
-        <Button
+        <RadioButton
             android:id="@+id/time_action_choose_tomorrow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/times_action_choose_tomorrow"
-            android:textAllCaps="true" />
+            android:text="@string/time_choose_tomorrow"
+            android:textAllCaps="true"
+            android:checked="false" />
 
-    </LinearLayout>
+    </RadioGroup>
 
     <TextView
-        android:id="@+id/time_slots_header"
+        android:id="@+id/time_text_slots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/day_options"
+        android:layout_below="@+id/time_day_options"
         android:text="@string/time_time_slots"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
+<<<<<<< HEAD
     <LinearLayout
         android:id="@+id/time_slot_options"
         android:layout_width="match_parent"
@@ -71,16 +74,17 @@
             android:id="@+id/fragment"
             tools:layout="@layout/fragment_timeslots" />
     </LinearLayout>
+=======
+>>>>>>> Time Slots
 
     <Button
+        android:id="@+id/time_action_find_partners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/times_action_find_partners"
-        android:id="@+id/find_partners"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:text="@string/time_find_partners"
         android:textAllCaps="true" />
-
 
 
 </RelativeLayout>

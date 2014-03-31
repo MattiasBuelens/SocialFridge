@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotActivity">
+
+    <TextView
+        android:id="@+id/final_partners_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/party_partners"
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableGridView
+        android:id="@+id/final_partners_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="@integer/party_partners_grid_column_count"
+        tools:listitem="@layout/partner_list_item"
+        android:layout_below="@+id/final_partners_header"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginTop="@dimen/section_margin" />
+
+    <TextView
+        android:id="@+id/final_time_slot_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/final_screen_time_slot"
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
+        android:layout_below="@+id/final_partners_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/final_place_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/final_screen_place"
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
+        android:layout_below="@+id/final_time_slot_header"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/final_bring_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/final_screen_bring"
+        android:textAppearance="?android:attr/listSeparatorTextViewStyle"
+        android:layout_below="@+id/final_place_header"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/final_action_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/final_screen_done"
+        android:textAllCaps="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/final_screen_calendar"
+        android:id="@+id/checkBox"
+        android:layout_below="@+id/final_bring_header"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="false" />
+
+
+</RelativeLayout>

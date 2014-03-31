@@ -24,19 +24,26 @@
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
 
+<<<<<<< HEAD
     <!-- Lobby -->
     <string name="lobby_tiltle">Lobby</string>
 
     <!-- TimeSlots -->
+=======
+    <!-- Time slots -->
+>>>>>>> Time Slots
     <string name="time_day">Day</string>
-    <string name="time_time_slots">Timeslots</string>
-    <string name="time_action_choose_today">Today</string>
-    <string name="times_action_choose_tomorrow">Tomorrow</string>
-    <string name="times_action_find_partners">Find partners</string>
-    <string name="times_slot1">17h - 18h</string>
-    <string name="times_slot2">18h - 19h</string>
-    <string name="times_slot3">19h - 20h</string>
-    <string name="times_slot4">20h - 21h</string>
+    <string name="time_time_slots">Time slots</string>
+    <string name="time_choose_today">Today</string>
+    <string name="time_choose_tomorrow">Tomorrow</string>
+    <string name="time_find_partners">Find partners</string>
+
+    <!-- Final screen -->
+    <string name="final_screen_done">Done</string>
+    <string name="final_screen_time_slot">Final time slot</string>
+    <string name="final_screen_place">Place</string>
+    <string name="final_screen_bring">Bring</string>
+    <string name="final_screen_calendar">Add to calendar</string>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>
