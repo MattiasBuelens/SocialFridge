@@ -34,8 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/time_choose_today"
-            android:textAllCaps="true" />
+            android:text="@string/time_choose_today" />
 
         <RadioButton
             android:id="@+id/time_action_choose_tomorrow"
@@ -43,8 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="false"
-            android:text="@string/time_choose_tomorrow"
-            android:textAllCaps="true" />
+            android:text="@string/time_choose_tomorrow" />
 
     </RadioGroup>
 
