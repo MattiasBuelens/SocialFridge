@@ -84,7 +84,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_create_party:
-                Intent intent = new Intent(this, PartyActivity.class);
+                //Intent intent = new Intent(this, PartyActivity.class);
+                Intent intent = new Intent(this, TimeSlotActivity.class);
                 startActivity(intent);
                 break;
         }

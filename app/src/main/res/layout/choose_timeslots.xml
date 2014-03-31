@@ -33,18 +33,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="true"
             android:text="@string/time_choose_today"
-            android:textAllCaps="true"
-            android:checked="true" />
+            android:textAllCaps="true" />
 
         <RadioButton
             android:id="@+id/time_action_choose_tomorrow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="false"
             android:text="@string/time_choose_tomorrow"
-            android:textAllCaps="true"
-            android:checked="false" />
+            android:textAllCaps="true" />
 
     </RadioGroup>
 
@@ -57,22 +57,13 @@
         android:text="@string/time_time_slots"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-    <LinearLayout
-        android:id="@+id/time_slot_options"
+    <fragment
+        android:id="@+id/time_slots_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/time_text_slots"
-        android:layout_marginTop="@dimen/section_margin"
-        android:orientation="horizontal">
-
-
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
-            android:id="@+id/fragment"
-            tools:layout="@layout/fragment_timeslots" />
-    </LinearLayout>
+        tools:layout="@layout/fragment_timeslots" />
 
     <Button
         android:id="@+id/time_action_find_partners"

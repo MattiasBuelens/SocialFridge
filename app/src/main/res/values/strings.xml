@@ -28,6 +28,7 @@
     <string name="lobby_tiltle">Lobby</string>
 
     <!-- Time slots -->
+    <string name="time_slots_title">Choose time slots</string>
     <string name="time_day">Day</string>
     <string name="time_time_slots">Time slots</string>
     <string name="time_choose_today">Today</string>

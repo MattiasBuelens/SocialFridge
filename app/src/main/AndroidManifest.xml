@@ -28,6 +28,10 @@
             android:label="@string/dishes_title" />
 
         <activity
+            android:name=".TimeSlotActivity"
+            android:label="@string/time_slots_title" />
+
+        <activity
             android:name=".PartyActivity"
             android:label="@string/party_title" />
 

@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,43 +25,36 @@ import java.util.List;
 public class TimeSlotsFragment extends Fragment {
     private static final String ARG_TIME_SLOTS = "time_slots";
 
-    // TODO: Rename and change types of parameters
+    private ArrayList<TimeSlotSelection> defaultTimeSlotSelections;
     private ArrayList<TimeSlotSelection> timeSlotSelections;
+
     private GridView timeSlotGrid;
     private TimeSlotSelectionArrayAdapter timeSlotAdapter;
     private OnFragmentInteractionListener mListener;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Create a new time slots fragment.
      *
-     * @param timeSlotsSelections Time slot selections.
+     * @param defaultTimeSlotSelections Default time slot selections.
      * @return A new instance of fragment TimeSlotsFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static TimeSlotsFragment newInstance(List<TimeSlotSelection> timeSlotsSelections) {
+    public static TimeSlotsFragment newInstance(List<TimeSlotSelection> defaultTimeSlotSelections) {
         TimeSlotsFragment fragment = new TimeSlotsFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_TIME_SLOTS, new ArrayList<TimeSlotSelection>(timeSlotsSelections));
-        fragment.setArguments(args);
+        fragment.setDefaultTimeSlots(defaultTimeSlotSelections);
         return fragment;
+    }
+
+    /**
+     * Set the default time slot selections.
+     *
+     * @param defaultTimeSlotSelections The default time slot selections.
+     */
+    public void setDefaultTimeSlots(List<TimeSlotSelection> defaultTimeSlotSelections) {
+        this.defaultTimeSlotSelections = new ArrayList<TimeSlotSelection>(defaultTimeSlotSelections);
     }
 
     public TimeSlotsFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
-        } else if (getArguments() != null) {
-            timeSlotSelections = getArguments().getParcelableArrayList(ARG_TIME_SLOTS);
-        } else {
-            timeSlotSelections = new ArrayList<TimeSlotSelection>();
-        }
     }
 
     @Override
@@ -80,6 +72,20 @@ public class TimeSlotsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            // Restore
+            timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
+        }
+
+        if (timeSlotSelections == null) {
+            // Initialize from defaults
+            if (defaultTimeSlotSelections != null) {
+                timeSlotSelections = new ArrayList<TimeSlotSelection>(defaultTimeSlotSelections);
+            } else {
+                timeSlotSelections = new ArrayList<TimeSlotSelection>();
+            }
+        }
+
         timeSlotAdapter = new TimeSlotSelectionArrayAdapter(getActivity(), timeSlotSelections);
         timeSlotGrid.setAdapter(timeSlotAdapter);
     }
@@ -93,26 +99,26 @@ public class TimeSlotsFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+//        try {
+//            mListener = (OnFragmentInteractionListener) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+//        mListener = null;
     }
 
     /**
