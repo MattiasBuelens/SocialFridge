@@ -57,12 +57,11 @@
         android:text="@string/time_time_slots"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-<<<<<<< HEAD
     <LinearLayout
         android:id="@+id/time_slot_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/time_slots_header"
+        android:layout_below="@+id/time_text_slots"
         android:layout_marginTop="@dimen/section_margin"
         android:orientation="horizontal">
 
@@ -74,8 +73,6 @@
             android:id="@+id/fragment"
             tools:layout="@layout/fragment_timeslots" />
     </LinearLayout>
-=======
->>>>>>> Time Slots
 
     <Button
         android:id="@+id/time_action_find_partners"
