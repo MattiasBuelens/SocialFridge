@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.facebook.FacebookRequestError;
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 
@@ -22,6 +20,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
  * Party activity.
@@ -78,18 +77,8 @@ public class PartyActivity extends ListActivity {
     }
 
     @Override
-    protected void onLoggedIn(final Session session) {
-        requestUserID(session, new UserIDCallback() {
-            @Override
-            public void onSuccess(String userID) {
-                loadParty(partyID, userID);
-            }
-
-            @Override
-            public void onError(FacebookRequestError error) {
-                handleError(error);
-            }
-        });
+    protected void onLoggedIn(Session session, User user) {
+        loadParty(partyID, user.getId());
     }
 
     @Override

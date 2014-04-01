@@ -1,21 +1,18 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 import com.facebook.FacebookRequestError;
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
  * Base activity handling common things such as authentication.
@@ -26,9 +23,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     private static final Uri M_FACEBOOK_URL = Uri.parse("http://m.facebook.com");
 
-    private static final String SESSION_CACHE_KEY = "session_cache";
-    private static final String SESSION_CACHE_USER_ID = "user_id";
-    private SharedPreferences cache;
+    private AppSession appSession;
 
     private boolean isResumed = false;
     private UiLifecycleHelper uiHelper;
@@ -46,13 +41,14 @@ public abstract class BaseActivity extends ActionBarActivity {
         uiHelper = new UiLifecycleHelper(this, sessionCallback);
         uiHelper.onCreate(savedInstanceState);
 
-        cache = getApplicationContext().getSharedPreferences(SESSION_CACHE_KEY, Context.MODE_PRIVATE);
+        appSession = new AppSession(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         uiHelper.onResume();
+        appSession.onResume();
         isResumed = true;
 
         checkLoggedIn();
@@ -62,6 +58,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
         uiHelper.onPause();
+        appSession.onPause();
         isResumed = false;
     }
 
@@ -102,6 +99,13 @@ public abstract class BaseActivity extends ActionBarActivity {
      * Check if logged in.
      */
     protected boolean isLoggedIn() {
+        return isFacebookLoggedIn() && appSession.isActive();
+    }
+
+    /**
+     * Check if logged in on Facebook.
+     */
+    protected boolean isFacebookLoggedIn() {
         Session session = Session.getActiveSession();
         return session != null && session.isOpened();
     }
@@ -118,27 +122,42 @@ public abstract class BaseActivity extends ActionBarActivity {
      * Log out.
      */
     public void logout() {
+        appSession.clear();
         Session session = Session.getActiveSession();
         if (session != null && !session.isClosed()) {
             session.closeAndClearTokenInformation();
         }
     }
 
-    protected void checkLoggedIn() {
-        if (isLoggedIn()) {
-            onLoggedIn(Session.getActiveSession());
+    private void checkLoggedIn() {
+        if (isFacebookLoggedIn()) {
+            if (isLoggedIn()) {
+                onLoggedIn(Session.getActiveSession(), appSession.getUser());
+            } else {
+                onFacebookLoggedIn(Session.getActiveSession());
+            }
         } else {
             onLoggedOut();
         }
     }
 
     /**
-     * Called when user is logged in.
+     * Called when user is logged in on our app.
+     *
+     * @param session
+     * @param user
+     */
+    protected void onLoggedIn(Session session, User user) {
+        // TODO Perhaps register user here?
+    }
+
+    /**
+     * Called when user is logged in on Facebook.
      *
      * @param session
      */
-    protected void onLoggedIn(Session session) {
-        // TODO Perhaps register user here?
+    protected void onFacebookLoggedIn(Session session) {
+        appSession.clear();
     }
 
     /**
@@ -146,8 +165,8 @@ public abstract class BaseActivity extends ActionBarActivity {
      * If this activity {@link #requiresLogin() requires login}, {@link #login()} is called.
      */
     protected void onLoggedOut() {
-        // Remove cached user ID
-        cacheUserID(null);
+        // Clear session
+        appSession.clear();
         // Retry login
         if (requiresLogin()) login();
     }
@@ -157,64 +176,11 @@ public abstract class BaseActivity extends ActionBarActivity {
             // check for the OPENED state instead of session.isOpened() since for the
             // OPENED_TOKEN_UPDATED state, the start fragment should already be showing.
             if (state.equals(SessionState.OPENED)) {
-                onLoggedIn(session);
+                onFacebookLoggedIn(session);
             } else if (state.isClosed()) {
                 onLoggedOut();
             }
         }
-    }
-
-    protected Request newMeRequest(final Session session, final Request.GraphUserCallback callback) {
-        return Request.newMeRequest(session, new Request.GraphUserCallback() {
-            @Override
-            public void onCompleted(GraphUser user, Response response) {
-                if (session == Session.getActiveSession()) {
-                    if (user != null) {
-                        // Cache the user ID
-                        cacheUserID(user.getId());
-                    }
-                    callback.onCompleted(user, response);
-                }
-            }
-        });
-    }
-
-    protected void requestUserID(final Session session, final UserIDCallback callback) {
-        String userID = getCachedUserID();
-        if (userID != null) {
-            // From cache
-            callback.onSuccess(userID);
-        } else {
-            // Request
-            newMeRequest(session, new Request.GraphUserCallback() {
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    if (user != null) {
-                        callback.onSuccess(user.getId());
-                    } else if (response.getError() != null) {
-                        callback.onError(response.getError());
-                    }
-                }
-            }).executeAsync();
-        }
-    }
-
-    public interface UserIDCallback {
-
-        void onSuccess(String userID);
-
-        void onError(FacebookRequestError error);
-
-    }
-
-    private String getCachedUserID() {
-        return cache.getString(SESSION_CACHE_USER_ID, null);
-    }
-
-    private void cacheUserID(String userID) {
-        SharedPreferences.Editor editor = cache.edit();
-        editor.putString(SESSION_CACHE_USER_ID, userID);
-        editor.commit();
     }
 
     /**
