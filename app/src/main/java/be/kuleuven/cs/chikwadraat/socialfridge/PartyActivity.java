@@ -78,12 +78,15 @@ public class PartyActivity extends ListActivity {
 
     @Override
     protected void onLoggedIn(Session session, User user) {
+        super.onLoggedIn(session, user);
+
         loadParty(partyID, user.getId());
     }
 
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
+
         getSupportLoaderManager().destroyLoader(LOADER_PARTY);
         getSupportLoaderManager().destroyLoader(LOADER_CANDIDATES);
     }

@@ -21,7 +21,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
- * Login fragment.
+ * Login activity.
  */
 public class LoginActivity extends BaseActivity {
 
@@ -41,7 +41,7 @@ public class LoginActivity extends BaseActivity {
         // Re-attach to registration task
         task = (RegisterUserTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attach(this);
+            task.attachActivity(this);
         }
     }
 
@@ -52,19 +52,23 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onFacebookLoggedIn(Session session) {
+        super.onFacebookLoggedIn(session);
+
         // Logged in on Facebook, register
         registerUser(session);
     }
 
     @Override
     protected void onLoggedIn(Session session, User user) {
+        super.onLoggedIn(session, user);
+
         // Logged in on our app, done
         onRegisterSuccess(user);
     }
 
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
-        task.detach();
+        task.detachActivity();
         return task;
     }
 
@@ -80,25 +84,33 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    private void removeRegisterTask() {
+        if (task != null) {
+            task.detachActivity();
+            task = null;
+        }
+    }
+
     private void onRegisterSuccess(User user) {
         Log.d(TAG, "User successfully registered");
-        task = null;
+        removeRegisterTask();
 
         // Registered, finish
+        setLoggedInUser(user);
         setResult(RESULT_OK);
         finish();
     }
 
     private void onRegisterError(FacebookRequestError error) {
         Log.e(TAG, "Failed to register user: " + error.getErrorMessage());
-        task = null;
+        removeRegisterTask();
 
         handleError(error);
     }
 
     private void onRegisterFailed(Exception exception) {
         Log.e(TAG, "Failed to register user: " + exception.getMessage());
-        task = null;
+        removeRegisterTask();
 
         new AlertDialog.Builder(this)
                 .setPositiveButton(android.R.string.ok, null)
@@ -126,10 +138,11 @@ public class LoginActivity extends BaseActivity {
         protected RegisterUserTask(LoginActivity activity, Session session) {
             this.context = activity.getApplicationContext();
             this.session = session;
-            attach(activity);
+            this.state = RegisterUserState.WAITING;
+            attachActivity(activity);
         }
 
-        protected void attach(LoginActivity activity) {
+        protected void attachActivity(LoginActivity activity) {
             this.activity = activity;
             switch (state) {
                 case SUCCESS:
@@ -147,7 +160,7 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
-        protected void detach() {
+        protected void detachActivity() {
             this.activity = null;
         }
 
@@ -234,6 +247,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public static enum RegisterUserState {
+        WAITING,
         LOGIN,
         REGISTER,
         SUCCESS,

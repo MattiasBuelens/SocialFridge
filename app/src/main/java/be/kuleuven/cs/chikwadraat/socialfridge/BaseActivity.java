@@ -111,11 +111,21 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     /**
-     * Log in through the {@link be.kuleuven.cs.chikwadraat.socialfridge.LoginActivity}.
+     * Log in through the {@link LoginActivity}.
      */
     public void login() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, REQUEST_LOGIN);
+    }
+
+    /**
+     * Set the logged in user.
+     * Used by the {@link LoginActivity}.
+     *
+     * @param user The logged in user.
+     */
+    protected void setLoggedInUser(User user) {
+        appSession.setUser(user);
     }
 
     /**
@@ -144,20 +154,24 @@ public abstract class BaseActivity extends ActionBarActivity {
     /**
      * Called when user is logged in on our app.
      *
-     * @param session
-     * @param user
+     * @param session The Facebook session.
+     * @param user    The logged in user.
      */
     protected void onLoggedIn(Session session, User user) {
-        // TODO Perhaps register user here?
+
     }
 
     /**
      * Called when user is logged in on Facebook.
+     * If this activity {@link #requiresLogin() requires login}, {@link #login()} is called.
      *
-     * @param session
+     * @param session The Facebook session.
      */
     protected void onFacebookLoggedIn(Session session) {
+        // Clear session
         appSession.clear();
+        // Retry login
+        if (requiresLogin()) login();
     }
 
     /**
