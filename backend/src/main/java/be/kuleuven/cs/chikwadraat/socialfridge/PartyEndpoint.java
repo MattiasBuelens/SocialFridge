@@ -87,7 +87,6 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param friendID    The user ID of the friend to invite.
      * @param accessToken The access token for authorization.
-     * @return The inserted party.
      */
     @ApiMethod(name = "inviteToParty", path = "party/{partyID}/invite")
     public void inviteToParty(@Named("partyID") final long partyID, @Named("userID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
@@ -129,6 +128,29 @@ public class PartyEndpoint extends BaseEndpoint {
 
         // TODO Send invite to friend
         // TODO Send update to all party members
+    }
+
+    /**
+     * Accept an invite to a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite")
+    public void acceptInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        // TODO Add time slots parameter
+        // TODO Implement
+    }
+
+    /**
+     * Decline an invite to a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "declineInvite", path = "party/{partyID}/declineInvite")
+    public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        // TODO Implement
     }
 
     /**
