@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.facebook.FacebookRequestError;
@@ -19,6 +21,7 @@ import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
  * Login activity.
@@ -121,7 +124,38 @@ public class LoginActivity extends BaseActivity {
 
     private void onRegisterUpdateProgress(RegisterUserState state) {
         Log.d(TAG, "Registration progress: " + state);
-        // TODO Show progress
+
+        if (state.showProgress()) {
+            showProgressDialog();
+        } else {
+            hideProgressDialog();
+        }
+    }
+
+    private void showProgressDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
+        ProgressDialogFragment fragment;
+        if (current != null) {
+            fragment = (ProgressDialogFragment) current;
+        } else {
+            fragment = ProgressDialogFragment.newInstance(null);
+            ft.add(fragment, "dialog");
+            ft.addToBackStack(null);
+        }
+        String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
+        fragment.setMessage(progressMessage);
+        ft.show(fragment);
+        ft.commit();
+    }
+
+    private void hideProgressDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (current != null) {
+            ft.hide(current);
+        }
+        ft.commit();
     }
 
     protected static class RegisterUserTask extends AsyncTask<Void, RegisterUserState, Void> {
@@ -192,7 +226,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         protected Void doInBackground(Void... unused) {
             // Retrieve user information
-            setState(RegisterUserState.LOGIN);
+            setState(RegisterUserState.RETRIEVE_INFO);
             Response response = Request.newMeRequest(session, null).executeAndWait();
             if (response.getError() != null) {
                 setError(response.getError());
@@ -206,7 +240,7 @@ public class LoginActivity extends BaseActivity {
             user.setName(graphUser.getName());
 
             // Register user
-            setState(RegisterUserState.REGISTER);
+            setState(RegisterUserState.REGISTER_USER);
             Users.Builder builder = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
             Users endpoint = Endpoints.prepare(builder, context).build();
 
@@ -247,11 +281,21 @@ public class LoginActivity extends BaseActivity {
     }
 
     public static enum RegisterUserState {
-        WAITING,
-        LOGIN,
-        REGISTER,
-        SUCCESS,
-        FAILED
+        WAITING(false),
+        RETRIEVE_INFO(true),
+        REGISTER_USER(true),
+        SUCCESS(false),
+        FAILED(false);
+
+        private boolean showProgress;
+
+        private RegisterUserState(boolean showProgress) {
+            this.showProgress = showProgress;
+        }
+
+        public boolean showProgress() {
+            return showProgress;
+        }
     }
 
 }
