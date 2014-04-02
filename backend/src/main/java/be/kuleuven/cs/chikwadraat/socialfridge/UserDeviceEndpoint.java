@@ -5,13 +5,10 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.ConflictException;
+import com.google.api.server.spi.response.NotFoundException;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Work;
 
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
@@ -35,11 +32,7 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     @ApiMethod(name = "getUserDevice", path = "userDevice/{userID}/{registrationID}")
     public UserDevice getUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        try {
-            return getUserDevice(userID, registrationID);
-        } catch (PersistenceException e) {
-            throw new ConflictException(e);
-        }
+        return getUserDevice(userID, registrationID);
     }
 
     /**
@@ -54,23 +47,19 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     @ApiMethod(name = "insertUserDevice", path = "userDevice")
     public UserDevice insertUserDevice(final UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
-        try {
-            return ofy().transact(new Work<UserDevice>() {
-                @Override
-                public UserDevice run() {
-                    // Check if exists
-                    UserDevice existingDevice = ofy().load().entity(userDevice).now();
-                    if (existingDevice != null) {
-                        throw new EntityExistsException("User device already registered");
-                    }
-                    // Save
-                    ofy().save().entity(userDevice).now();
-                    return userDevice;
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                // Check if exists
+                UserDevice existingDevice = ofy().load().entity(userDevice).now();
+                if (existingDevice != null) {
+                    throw new ConflictException("User device already registered");
                 }
-            });
-        } catch (PersistenceException e) {
-            throw new ConflictException(e);
-        }
+                // Save
+                ofy().save().entity(userDevice).now();
+                return userDevice;
+            }
+        });
     }
 
     /**
@@ -100,27 +89,23 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     @ApiMethod(name = "removeUserDevice", path = "userDevice/{userID}/{registrationID}")
     public UserDevice removeUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        try {
-            return ofy().transact(new Work<UserDevice>() {
-                @Override
-                public UserDevice run() {
-                    UserDevice device = getUserDevice(userID, registrationID);
-                    ofy().delete().entity(device).now();
-                    return device;
-                }
-            });
-        } catch (PersistenceException e) {
-            throw new ConflictException(e);
-        }
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                UserDevice device = getUserDevice(userID, registrationID);
+                ofy().delete().entity(device).now();
+                return device;
+            }
+        });
     }
 
-    private UserDevice getUserDevice(String userID, String registrationID) throws EntityNotFoundException {
+    private UserDevice getUserDevice(String userID, String registrationID) throws ServiceException {
         UserDevice device = ofy().load().type(UserDevice.class)
                 .parent(Key.create(User.class, userID))
                 .id(registrationID)
                 .now();
         if (device == null) {
-            throw new EntityNotFoundException("User device not found.");
+            throw new NotFoundException("User device not found.");
         }
         return device;
     }

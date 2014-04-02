@@ -4,12 +4,9 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.ConflictException;
-import com.googlecode.objectify.Work;
+import com.google.api.server.spi.response.NotFoundException;
 
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
@@ -46,23 +43,19 @@ public class UserEndpoint extends BaseEndpoint {
     @ApiMethod(name = "insertUser", path = "user")
     public User insertUser(final User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
-        try {
-            return ofy().transact(new Work<User>() {
-                @Override
-                public User run() {
-                    // Check if exists
-                    User existingUser = ofy().load().entity(user).now();
-                    if (existingUser != null) {
-                        throw new EntityExistsException("User already registered");
-                    }
-                    // Save
-                    ofy().save().entity(user).now();
-                    return user;
+        return transact(new Work<User, ServiceException>() {
+            @Override
+            public User run() throws ServiceException {
+                // Check if exists
+                User existingUser = ofy().load().entity(user).now();
+                if (existingUser != null) {
+                    throw new NotFoundException("User already registered");
                 }
-            });
-        } catch (EntityExistsException e) {
-            throw new ConflictException(e);
-        }
+                // Save
+                ofy().save().entity(user).now();
+                return user;
+            }
+        });
     }
 
     /**
@@ -91,9 +84,9 @@ public class UserEndpoint extends BaseEndpoint {
     @ApiMethod(name = "removeUser", path = "user/{id}")
     public User removeUser(final @Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
-        return ofy().transact(new Work<User>() {
+        return transact(new Work<User, ServiceException>() {
             @Override
-            public User run() {
+            public User run() throws ServiceException {
                 User user = getUser(id);
                 ofy().delete().entity(user).now();
                 return user;
@@ -101,10 +94,10 @@ public class UserEndpoint extends BaseEndpoint {
         });
     }
 
-    private User getUser(String id) {
+    private User getUser(String id) throws ServiceException {
         User user = ofy().load().type(User.class).id(id).now();
-        if(user == null) {
-            throw new EntityNotFoundException("User not found.");
+        if (user == null) {
+            throw new NotFoundException("User not found.");
         }
         return user;
     }

@@ -4,10 +4,8 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.ConflictException;
+import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
-import com.googlecode.objectify.VoidWork;
-import com.googlecode.objectify.Work;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,9 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
@@ -41,9 +36,6 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "getParty", path = "party/{partyID}")
     public Party getParty(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         Party party = getParty(partyID, true);
-        if (party == null) {
-            throw new ConflictException(new EntityNotFoundException("Party not found"));
-        }
         checkAccess(accessToken, party.getMemberIDs());
         return party;
     }
@@ -60,25 +52,21 @@ public class PartyEndpoint extends BaseEndpoint {
         String userID = party.getHostID();
         checkAccess(accessToken, userID);
         if (party.getID() != null) {
-            throw new EntityExistsException("Party already exists");
+            throw new NotFoundException("Party already exists");
         }
         final User user = getUser(userID);
-        try {
-            return ofy().transact(new Work<Party>() {
-                @Override
-                public Party run() {
-                    // Save party
-                    ofy().save().entity(party).now();
-                    // Configure the host
-                    PartyMember hostMember = party.setHost(user);
-                    // Save again
-                    ofy().save().entities(party, hostMember).now();
-                    return party;
-                }
-            });
-        } catch (EntityExistsException e) {
-            throw new ConflictException(e);
-        }
+        return transact(new Work<Party, ServiceException>() {
+            @Override
+            public Party run() throws ServiceException {
+                // Save party
+                ofy().save().entity(party).now();
+                // Configure the host
+                PartyMember hostMember = party.setHost(user);
+                // Save again
+                ofy().save().entities(party, hostMember).now();
+                return party;
+            }
+        });
     }
 
     /**
@@ -93,38 +81,28 @@ public class PartyEndpoint extends BaseEndpoint {
         // Check if friend exists
         final User friend = getUser(friendID);
         if (friend == null) {
-            throw new ConflictException(new EntityNotFoundException("Friend not found"));
+            throw new NotFoundException("Friend not found");
         }
         // Check if user is befriended with friend
         final String userID = getUserID(accessToken);
         if (!isBefriendedWith(friendID, accessToken)) {
-            throw new ConflictException(new EntityNotFoundException("User must be befriended with friend"));
+            throw new UnauthorizedException("User must be befriended with friend");
         }
-
-        try {
-            ofy().transact(new VoidWork() {
-                @Override
-                public void vrun() {
-                    // Check if exists
-                    Party party = getParty(partyID, true);
-                    if (party == null) {
-                        throw new EntityExistsException("Party not found");
-                    }
-                    // User must be host
-                    if (!userID.equals(party.getHostID())) {
-                        throw new IllegalStateException("User must be party host to invite friends");
-                    }
-                    // Add to invitees
-                    PartyMember member = party.invite(friend);
-                    // Save
-                    ofy().save().entities(party, member).now();
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                // Check if exists
+                Party party = getParty(partyID, true);
+                // User must be host
+                if (!userID.equals(party.getHostID())) {
+                    throw new UnauthorizedException("User must be party host to invite friends");
                 }
-            });
-        } catch (EntityExistsException e) {
-            throw new ConflictException(e);
-        } catch (IllegalStateException e) {
-            throw new UnauthorizedException(e);
-        }
+                // Add to invitees
+                PartyMember member = party.invite(friend);
+                // Save
+                ofy().save().entities(party, member).now();
+            }
+        });
 
         // TODO Send invite to friend
         // TODO Send update to all party members
@@ -166,7 +144,7 @@ public class PartyEndpoint extends BaseEndpoint {
         // Check if party exists
         Party party = getParty(partyID, true);
         if (party == null) {
-            throw new ConflictException(new EntityNotFoundException("Party not found"));
+            throw new NotFoundException("Party not found");
         }
         // User must be host
         if (!userID.equals(party.getHostID())) {
@@ -190,14 +168,14 @@ public class PartyEndpoint extends BaseEndpoint {
         return candidates;
     }
 
-    protected Party getParty(long partyID, boolean full) throws PersistenceException {
+    protected Party getParty(long partyID, boolean full) throws ServiceException {
         Party party = ofy().load()
                 .group(full ? Party.Everything.class : Party.Partial.class)
                 .type(Party.class)
                 .id(partyID)
                 .now();
         if (party == null) {
-            throw new EntityNotFoundException("Party not found.");
+            throw new NotFoundException("Party not found.");
         }
         return party;
     }
