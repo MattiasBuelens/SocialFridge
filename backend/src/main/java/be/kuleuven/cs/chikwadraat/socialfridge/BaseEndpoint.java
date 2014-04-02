@@ -1,30 +1,17 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
 
 import java.util.ConcurrentModificationException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.auth.FacebookAuthEndpoint;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * Base class for endpoints.
  */
 public abstract class BaseEndpoint extends FacebookAuthEndpoint {
-
-    /**
-     * Register the entity classes.
-     */
-    static {
-        ObjectifyService.register(User.class);
-        ObjectifyService.register(UserDevice.class);
-        ObjectifyService.register(Party.class);
-        ObjectifyService.register(PartyMember.class);
-    }
 
     /**
      * Like {@link com.googlecode.objectify.Objectify#transact(com.googlecode.objectify.Work)},
@@ -69,7 +56,7 @@ public abstract class BaseEndpoint extends FacebookAuthEndpoint {
      * @see {@link #transact(com.googlecode.objectify.Objectify, be.kuleuven.cs.chikwadraat.socialfridge.BaseEndpoint.Work)}
      */
     protected <R, E extends Exception> R transact(final Work<R, E> work) throws E {
-        return transact(ObjectifyService.ofy(), work);
+        return transact(ofy(), work);
     }
 
     /**

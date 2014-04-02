@@ -13,7 +13,8 @@ import javax.inject.Named;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
+
 
 @Api(
         name = "users",
