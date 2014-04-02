@@ -31,7 +31,6 @@ dependencies {
 
     // App Engine
     compile "javax.servlet:servlet-api:2.5"
-    compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
     compile "com.ganyo:gcm-server:1.0.2"
 
     compile "com.google.appengine:appengine-endpoints:${appengineVersion}"
@@ -40,11 +39,7 @@ dependencies {
     testCompile "com.google.appengine:appengine-testing:${appengineVersion}"
     testCompile "com.google.appengine:appengine-api-stubs:${appengineVersion}"
 
-    // Seems to be required by appengineEndpointsGetClientLibs...
-    compile 'javax.jdo:jdo-api:3.0.1'
-
     // ORM
-    //compile "org.datanucleus:datanucleus-api-jpa:3.1.3"
     compile "com.googlecode.objectify:objectify:4.+"
 
     // Facebook
