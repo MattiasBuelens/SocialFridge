@@ -25,15 +25,15 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     /**
      * Retrieves a user device.
      *
-     * @param userID         The user ID of the device owner.
-     * @param registrationID The registration ID of the device.
-     * @param accessToken    The access token for authorization.
+     * @param userID      The user ID of the device owner.
+     * @param deviceID    The ID of the device.
+     * @param accessToken The access token for authorization.
      * @return The retrieved user device.
      */
-    @ApiMethod(name = "getUserDevice", path = "userDevice/{userID}/{registrationID}")
-    public UserDevice getUserDevice(@Named("userID") String userID, @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
+    @ApiMethod(name = "getUserDevice", path = "userDevice/{userID}/{deviceID}")
+    public UserDevice getUserDevice(@Named("userID") String userID, @Named("deviceID") String deviceID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        return getUserDevice(userID, registrationID);
+        return getUserDevice(userID, deviceID);
     }
 
     /**
@@ -48,19 +48,7 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     @ApiMethod(name = "insertUserDevice", path = "userDevice")
     public UserDevice insertUserDevice(final UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
-        return transact(new Work<UserDevice, ServiceException>() {
-            @Override
-            public UserDevice run() throws ServiceException {
-                // Check if exists
-                UserDevice existingDevice = ofy().load().entity(userDevice).now();
-                if (existingDevice != null) {
-                    throw new ConflictException("User device already registered");
-                }
-                // Save
-                ofy().save().entity(userDevice).now();
-                return userDevice;
-            }
-        });
+        return insertUserDevice(userDevice);
     }
 
     /**
@@ -74,41 +62,105 @@ public class UserDeviceEndpoint extends BaseEndpoint {
     @ApiMethod(name = "updateUserDevice", path = "userDevice")
     public UserDevice updateUserDevice(UserDevice userDevice, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userDevice.getUserID());
-        ofy().save().entity(userDevice).now();
-        return userDevice;
+        return updateUserDevice(userDevice);
     }
 
     /**
      * Removes a user device.
      * It uses HTTP DELETE method.
      *
-     * @param userID         The user ID of the device owner.
-     * @param registrationID The registration ID of the device.
-     * @param accessToken    The access token for authorization.
+     * @param userID      The user ID of the device owner.
+     * @param deviceID    The ID of the device.
+     * @param accessToken The access token for authorization.
      * @return The deleted user device.
      */
     @ApiMethod(name = "removeUserDevice", path = "userDevice/{userID}/{registrationID}")
-    public UserDevice removeUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
+    public UserDevice removeUserDevice(final @Named("userID") String userID, final @Named("deviceID") String deviceID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        return transact(new Work<UserDevice, ServiceException>() {
-            @Override
-            public UserDevice run() throws ServiceException {
-                UserDevice device = getUserDevice(userID, registrationID);
-                ofy().delete().entity(device).now();
-                return device;
-            }
-        });
+        return removeUserDevice(userID, deviceID);
     }
 
-    private UserDevice getUserDevice(String userID, String registrationID) throws ServiceException {
+    private UserDevice getUserDevice(String userID, String deviceID) throws ServiceException {
         UserDevice device = ofy().load().type(UserDevice.class)
                 .parent(Key.create(User.class, userID))
-                .id(registrationID)
+                .id(deviceID)
                 .now();
         if (device == null) {
             throw new NotFoundException("User device not found.");
         }
         return device;
+    }
+
+    private UserDevice insertUserDevice(final UserDevice userDevice) throws ServiceException {
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                // Check if exists
+                UserDevice existingDevice = ofy().load().entity(userDevice).now();
+                if (existingDevice != null) {
+                    throw new ConflictException("User device already registered");
+                }
+                // Save device
+                updateUserDevice(userDevice);
+                return userDevice;
+            }
+        });
+    }
+
+    private UserDevice updateUserDevice(final UserDevice userDevice) throws ServiceException {
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                // Update user
+                User user = userDevice.getUser();
+                user.updateDevice(userDevice);
+                // Save user and device
+                ofy().save().entities(user, userDevice).now();
+                return userDevice;
+            }
+        });
+    }
+
+    private UserDevice moveUserDevice(final UserDevice userDevice, final String newRegID) throws ServiceException {
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                // Update in parent user
+                User user = userDevice.getUser();
+                user.moveDevice(userDevice, newRegID);
+                // Save user and device
+                ofy().save().entities(user, userDevice).now();
+                return userDevice;
+            }
+        });
+    }
+
+    private UserDevice removeUserDevice(final String userID, final String deviceID) throws ServiceException {
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                UserDevice userDevice = getUserDevice(userID, deviceID);
+                return removeUserDevice(userDevice);
+            }
+        });
+    }
+
+    private UserDevice removeUserDevice(final UserDevice userDevice) throws ServiceException {
+        return transact(new Work<UserDevice, ServiceException>() {
+            @Override
+            public UserDevice run() throws ServiceException {
+                if (userDevice == null) {
+                    return null;
+                }
+                // Delete device
+                ofy().delete().entity(userDevice);
+                // Update user
+                User user = userDevice.getUser();
+                user.removeDevice(userDevice);
+                ofy().save().entity(user).now();
+                return userDevice;
+            }
+        });
     }
 
 }

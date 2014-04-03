@@ -30,4 +30,8 @@ public final class AppSettings {
         return properties.getProperty("fb_app_secret");
     }
 
+    public static String getCloudMessagingApiKey() {
+        return properties.getProperty("gcm_api_key");
+    }
+
 }

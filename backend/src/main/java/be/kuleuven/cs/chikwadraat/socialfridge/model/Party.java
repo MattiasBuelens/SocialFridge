@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 /**
@@ -104,11 +104,10 @@ public class Party {
         return ofy().load().refs(getMemberKeys()).values();
     }
 
-    public void setMembers(Collection<PartyMember> members) {
-        Set<Ref<PartyMember>> refs = getMemberKeys();
-        refs.clear();
-        for (PartyMember member : members) {
-            refs.add(Ref.create(member));
+    public void setMembers(Collection<PartyMember> newMembers) {
+        members.clear();
+        for (PartyMember member : newMembers) {
+            members.add(Ref.create(member));
         }
     }
 

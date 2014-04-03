@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Parent;
 
 
@@ -23,9 +24,15 @@ public class UserDevice {
     private Ref<User> user;
 
     /**
-     * Registration ID.
+     * Device identifier.
      */
     @Id
+    private Long id;
+
+    /**
+     * Registration ID.
+     */
+    @Index
     private String registrationID;
 
     private String information;
@@ -48,14 +55,30 @@ public class UserDevice {
         return getUserRef().get();
     }
 
+    public void setUser(User user) {
+        setUserRef(Ref.create(user));
+    }
+
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Ref<User> getUserRef() {
         return user;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public void setUserRef(Ref<User> userRef) {
+        this.user = userRef;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public String getUserID() {
         return getUserRef().getKey().getName();
+    }
+
+    /**
+     * Device identifier.
+     */
+    public Long getID() {
+        return id;
     }
 
     /*
@@ -64,6 +87,10 @@ public class UserDevice {
      */
     public String getRegistrationID() {
         return registrationID;
+    }
+
+    public void setRegistrationID(String registrationID) {
+        this.registrationID = registrationID;
     }
 
     /*
