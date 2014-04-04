@@ -174,7 +174,7 @@ public class Party {
      * Invite a user to this party.
      *
      * @param invitee The user to invite.
-     * @return The invited member.
+     * @return The member to be saved.
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
      */
     public PartyMember invite(User invitee) throws IllegalArgumentException {
@@ -182,20 +182,14 @@ public class Party {
         PartyMember member;
         if (ref != null) {
             member = ref.get();
-            if (member.isInParty()) {
-                // Already in the party
+            if (!member.needsInvite()) {
+                // Already in party or invited, don't re-invite
                 return member;
             }
-            if (member.isInvited()) {
-                // Already invited, don't re-invite
-                return member;
-            }
-            if (!member.canInvite()) {
-                // Previously declined
+            if (!member.invite()) {
+                // Could not invite, previously declined
                 throw new IllegalArgumentException("Cannot invite user, declined an earlier invite.");
             }
-            // Invite
-            member.setStatus(PartyMember.Status.INVITED);
         } else {
             // Add invitee
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
@@ -203,6 +197,94 @@ public class Party {
         }
         // Add to party
         invitee.addParty(this);
+        return member;
+    }
+
+    /**
+     * Cancel an invite for a user.
+     *
+     * @param invitee The user of whom to cancel the invite.
+     * @return The member to be saved.
+     * @throws IllegalArgumentException If the user is already in the party or was not invited.
+     */
+    public PartyMember cancelInvite(User invitee) throws IllegalArgumentException {
+        Ref<PartyMember> ref = getMember(invitee.getID());
+        if (ref == null) {
+            throw new IllegalArgumentException("Cannot cancel user's invite, was not invited.");
+        }
+        PartyMember member = ref.get();
+        if (!member.cancelInvite()) {
+            throw new IllegalArgumentException("Cannot cancel user's invite, was not invited or is already in the party.");
+        }
+        // Remove from party
+        invitee.removeParty(this);
+        return member;
+    }
+
+    /**
+     * Accept a user's invite.
+     *
+     * @param invitee The user of whom to accept the invite.
+     * @return The member to be saved.
+     * @throws IllegalArgumentException If the user is already in the party or was not invited.
+     */
+    public PartyMember acceptInvite(User invitee) throws IllegalArgumentException {
+        Ref<PartyMember> ref = getMember(invitee.getID());
+        if (ref == null) {
+            throw new IllegalArgumentException("Cannot accept invite, was not invited.");
+        }
+        PartyMember member = ref.get();
+        if (!member.acceptInvite()) {
+            throw new IllegalArgumentException("Cannot accept invite, was not invited or is already in the party.");
+        }
+        // Add to party (should already be added though)
+        invitee.addParty(this);
+        return member;
+    }
+
+    /**
+     * Decline a user's invite.
+     *
+     * @param invitee The user of whom to decline the invite.
+     * @return The member to be saved.
+     * @throws IllegalArgumentException If the user is already in the party or was not invited.
+     */
+    public PartyMember declineInvite(User invitee) throws IllegalArgumentException {
+        Ref<PartyMember> ref = getMember(invitee.getID());
+        if (ref == null) {
+            throw new IllegalArgumentException("Cannot decline invite, was not invited.");
+        }
+        PartyMember member = ref.get();
+        if (!member.declineInvite()) {
+            throw new IllegalArgumentException("Cannot decline invite, was not invited or is already in the party.");
+        }
+        // Remove from party
+        invitee.removeParty(this);
+        /*
+         * Note: Do NOT remove from members!
+         * We should never allow a user to be re-invited after he declined.
+         */
+        return member;
+    }
+
+    /**
+     * Make a user leave the party.
+     *
+     * @param invitee The user to leave.
+     * @return The member to be saved.
+     * @throws IllegalArgumentException If the user is the host or was not in the party.
+     */
+    public PartyMember leave(User invitee) throws IllegalArgumentException {
+        Ref<PartyMember> ref = getMember(invitee.getID());
+        if (ref == null) {
+            throw new IllegalArgumentException("Cannot leave, was not in the party.");
+        }
+        PartyMember member = ref.get();
+        if (!member.leave()) {
+            throw new IllegalArgumentException("Cannot leave, is host or was not in the party.");
+        }
+        // Remove from party
+        invitee.removeParty(this);
         return member;
     }
 

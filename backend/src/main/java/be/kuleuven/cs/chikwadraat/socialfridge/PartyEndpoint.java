@@ -77,22 +77,21 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param friendID    The user ID of the friend to invite.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "inviteToParty", path = "party/{partyID}/invite")
-    public void inviteToParty(@Named("partyID") final long partyID, @Named("userID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
+    @ApiMethod(name = "invite", path = "party/{partyID}/invite/{friendID}")
+    public void invite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
         // Check if friend exists
         final User friend = getUser(friendID);
         if (friend == null) {
             throw new NotFoundException("Friend not found");
         }
         // Check if user is befriended with friend
-        final String userID = getUserID(accessToken);
         if (!isBefriendedWith(friendID, accessToken)) {
             throw new UnauthorizedException("User must be befriended with friend");
         }
         transact(new VoidWork<ServiceException>() {
             @Override
             public void vrun() throws ServiceException {
-                // Check if exists
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
@@ -110,6 +109,37 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     /**
+     * Cancel a user's invite to a party.
+     *
+     * @param partyID     The party ID.
+     * @param friendID    The user ID of the friend to invite.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "cancelInvite", path = "party/{partyID}/cancelInvite/{friendID}")
+    public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        // Check if friend exists
+        final User friend = getUser(friendID);
+        if (friend == null) {
+            throw new NotFoundException("Friend not found");
+        }
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                Party party = getParty(partyID, true);
+                // User must be host
+                if (!userID.equals(party.getHostID())) {
+                    throw new UnauthorizedException("User must be party host to manage invites");
+                }
+                // Cancel invite
+                PartyMember member = party.cancelInvite(friend);
+                // Save
+                ofy().save().entities(party, member, friend).now();
+            }
+        });
+    }
+
+    /**
      * Accept an invite to a party.
      *
      * @param partyID     The party ID.
@@ -118,7 +148,22 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite")
     public void acceptInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         // TODO Add time slots parameter
-        // TODO Implement
+        final String userID = getUserID(accessToken);
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                User user = getUser(userID);
+                if (user == null) {
+                    throw new NotFoundException("User not found");
+                }
+                Party party = getParty(partyID, true);
+                // Accept invite
+                PartyMember member = party.acceptInvite(user);
+                // TODO Update time slots
+                // Save
+                ofy().save().entities(party, member, user).now();
+            }
+        });
     }
 
     /**
@@ -129,7 +174,46 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "declineInvite", path = "party/{partyID}/declineInvite")
     public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        // TODO Implement
+        final String userID = getUserID(accessToken);
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                User user = getUser(userID);
+                if (user == null) {
+                    throw new NotFoundException("User not found");
+                }
+                Party party = getParty(partyID, true);
+                // Decline invite
+                PartyMember member = party.declineInvite(user);
+                // Save
+                ofy().save().entities(party, member, user).now();
+            }
+        });
+    }
+
+    /**
+     * Leave a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "leaveParty", path = "party/{partyID}/leave")
+    public void leaveParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                User user = getUser(userID);
+                if (user == null) {
+                    throw new NotFoundException("User not found");
+                }
+                Party party = getParty(partyID, true);
+                // Leave
+                PartyMember member = party.leave(user);
+                // Save
+                ofy().save().entities(party, member, user).now();
+            }
+        });
     }
 
     /**
@@ -142,11 +226,7 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "getCandidates", path = "party/{partyID}/candidates")
     public List<PartyMember> getCandidates(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
-        // Check if party exists
         Party party = getParty(partyID, true);
-        if (party == null) {
-            throw new NotFoundException("Party not found");
-        }
         // User must be host
         if (!userID.equals(party.getHostID())) {
             throw new UnauthorizedException("User must be party host to invite friends");

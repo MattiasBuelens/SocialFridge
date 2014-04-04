@@ -101,13 +101,34 @@ public class PartyMember {
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isInParty() {
-        Status status = getStatus();
-        return status == Status.HOST || status == Status.ACCEPTED;
+        return getStatus().isInParty();
     }
 
     public boolean canInvite() {
-        Status status = getStatus();
-        return !isInParty() && status != Status.DECLINED;
+        return getStatus().canInvite();
+    }
+
+    public boolean needsInvite() {
+        return !(isInParty() || isInvited());
+    }
+
+    /**
+     * Invite this member.
+     *
+     * @return True iff invited.
+     */
+    public boolean invite() {
+        if (!needsInvite()) {
+            // Already in party or invited
+            return false;
+        }
+        if (!canInvite()) {
+            // Cannot invite
+            return false;
+        }
+        // Invite
+        setStatus(Status.INVITED);
+        return true;
     }
 
     /**
@@ -191,37 +212,53 @@ public class PartyMember {
         /**
          * Party host.
          */
-        HOST,
+        HOST(true, false),
 
         /**
          * Candidate for invitation. Should never be persisted.
          */
-        CANDIDATE,
+        CANDIDATE(false, true),
 
         /**
          * Invited to party, awaiting response.
          */
-        INVITED,
+        INVITED(false, false),
 
         /**
          * Invite cancelled.
          */
-        INVITE_CANCELLED,
+        INVITE_CANCELLED(false, true),
 
         /**
          * Invite accepted, active member.
          */
-        ACCEPTED,
+        ACCEPTED(true, false),
 
         /**
          * Invite declined.
          */
-        DECLINED,
+        DECLINED(false, false),
 
         /**
          * Left the party.
          */
-        LEFT
+        LEFT(false, true);
+
+        private boolean inParty;
+        private boolean canInvite;
+
+        private Status(boolean inParty, boolean canInvite) {
+            this.inParty = inParty;
+            this.canInvite = canInvite;
+        }
+
+        public boolean isInParty() {
+            return inParty;
+        }
+
+        public boolean canInvite() {
+            return canInvite;
+        }
 
     }
 
