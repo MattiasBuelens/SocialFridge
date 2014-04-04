@@ -5,7 +5,7 @@ apply plugin: 'appengine'
 def appId = "socialfridge"
 def appVersion = "0.1"
 
-def appengineVersion = "1.9.1"
+def appengineVersion = "1.9.2"
 
 buildscript {
     repositories {
