@@ -8,6 +8,8 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Parent;
 
+import java.util.Date;
+
 
 /**
  * Device of a registered user.
@@ -35,16 +37,14 @@ public class UserDevice {
     @Index
     private String registrationID;
 
-    private String information;
-    private long timestamp;
+    private Date timestamp;
 
     public UserDevice() {
     }
 
-    public UserDevice(User user, String registrationID, String information, long timestamp) {
+    public UserDevice(User user, String registrationID, Date timestamp) {
         this.user = Ref.create(user);
         this.registrationID = registrationID;
-        this.information = information;
         this.timestamp = timestamp;
     }
 
@@ -94,25 +94,13 @@ public class UserDevice {
     }
 
     /*
-     * Some identifying information about the device, such as its manufacturer
-     * and product name.
-     */
-    public String getInformation() {
-        return this.information;
-    }
-
-    public void setInformation(String information) {
-        this.information = information;
-    }
-
-    /*
      * Timestamp indicating when this device registered with the application.
      */
-    public long getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 }

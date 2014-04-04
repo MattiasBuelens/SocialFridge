@@ -33,33 +33,6 @@ public class UserEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Inserts a user. If the user already
-     * exists, an exception is thrown.
-     * It uses HTTP POST method.
-     *
-     * @param user        The user to be inserted.
-     * @param accessToken The access token for authorization.
-     * @return The newly inserted user.
-     */
-    @ApiMethod(name = "insertUser", path = "user")
-    public User insertUser(final User user, @Named("accessToken") String accessToken) throws ServiceException {
-        checkAccess(accessToken, user.getID());
-        return transact(new Work<User, ServiceException>() {
-            @Override
-            public User run() throws ServiceException {
-                // Check if exists
-                User existingUser = ofy().load().entity(user).now();
-                if (existingUser != null) {
-                    throw new NotFoundException("User already registered");
-                }
-                // Save
-                ofy().save().entity(user).now();
-                return user;
-            }
-        });
-    }
-
-    /**
      * Inserts or updates a user.
      * It uses HTTP PUT method.
      *
