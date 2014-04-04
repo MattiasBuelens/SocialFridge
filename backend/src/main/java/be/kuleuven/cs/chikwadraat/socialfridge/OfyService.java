@@ -7,7 +7,6 @@ import com.googlecode.objectify.ObjectifyService;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
 
 /**
  * Created by Mattias on 2/04/2014.
@@ -19,7 +18,6 @@ public class OfyService {
      */
     static {
         ObjectifyService.register(User.class);
-        ObjectifyService.register(UserDevice.class);
         ObjectifyService.register(Party.class);
         ObjectifyService.register(PartyMember.class);
     }

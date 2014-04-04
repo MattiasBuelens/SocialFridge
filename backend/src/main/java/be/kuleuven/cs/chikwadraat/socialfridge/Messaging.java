@@ -11,9 +11,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
-
-import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * Created by Mattias on 3/04/2014.
@@ -25,45 +22,44 @@ public class Messaging {
     private static final int NUM_RETRIES = 5;
 
     /**
-     * Send to the first 10 devices (You can modify this to send to any number of devices or a specific device)
+     * Sends a message to the given recipients.
      *
      * @param collapseKey The collapse key for the message.
      * @param data        The message data.
      * @param recipients  The message recipients.
      */
-    public void sendMessage(String collapseKey, Map<String, String> data, List<UserDevice> recipients) throws IOException {
+    public void sendMessage(String collapseKey, Map<String, String> data, List<User> recipients) throws IOException {
         Sender sender = new Sender(AppSettings.getCloudMessagingApiKey());
         Message msg = new Message.Builder()
                 .collapseKey(collapseKey)
                 .setData(data)
                 .build();
-        for (UserDevice device : recipients) {
-            String regID = device.getRegistrationID();
-            Result result = sender.send(msg, regID, NUM_RETRIES);
-            if (result.getMessageId() != null) {
-                log.fine("Message sent to " + regID);
-                String canonicalRegID = result.getCanonicalRegistrationId();
-                if (canonicalRegID != null) {
-                    // If the regId changed, move the device
-                    log.info("Registration ID changed for " + regID + " updating to " + canonicalRegID);
-                    // TODO Use UserDeviceEndpoint.moveUserDevice
-                    User user = device.getUser();
-                    user.moveDevice(device, canonicalRegID);
-                    ofy().save().entities(user, device).now();
-                }
+
+        for (User user : recipients) {
+            for (String regID : user.getDevices()) {
+                sendMessage(sender, msg, user, regID);
+            }
+        }
+    }
+
+    protected void sendMessage(Sender sender, Message msg, User user, String regID) throws IOException {
+        Result result = sender.send(msg, regID, NUM_RETRIES);
+        if (result.getMessageId() != null) {
+            log.fine("Message sent to " + regID);
+            String canonicalRegID = result.getCanonicalRegistrationId();
+            if (canonicalRegID != null) {
+                // If the regId changed, move the device
+                log.info("Registration ID changed for " + regID + " updating to " + canonicalRegID);
+                new UserDeviceEndpoint().moveUserDevice(user, regID, canonicalRegID);
+            }
+        } else {
+            String error = result.getErrorCodeName();
+            if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
+                log.warning("Registration Id " + regID + " no longer registered with GCM, removing");
+                // If the device is no longer registered with GCM, remove it
+                new UserDeviceEndpoint().unregisterUserDevice(user, regID);
             } else {
-                String error = result.getErrorCodeName();
-                if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                    log.warning("Registration Id " + regID + " no longer registered with GCM, removing");
-                    // If the device is no longer registered with GCM, remove it
-                    // TODO Use UserDeviceEndpoint.removeUserDevice
-                    ofy().delete().entity(device);
-                    User user = device.getUser();
-                    user.removeDevice(device);
-                    ofy().save().entity(user).now();
-                } else {
-                    log.warning("Error when sending message: " + error);
-                }
+                log.warning("Error when sending message: " + error);
             }
         }
     }

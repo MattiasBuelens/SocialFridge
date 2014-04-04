@@ -41,10 +41,21 @@ public class UserEndpoint extends BaseEndpoint {
      * @return The updated user.
      */
     @ApiMethod(name = "updateUser", path = "user")
-    public User updateUser(User user, @Named("accessToken") String accessToken) throws ServiceException {
+    public User updateUser(final User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
-        ofy().save().entity(user).now();
-        return user;
+        return transact(new Work<User, ServiceException>() {
+            @Override
+            public User run() throws ServiceException {
+                User storedUser = getUser(user.getID());
+                if (storedUser != null) {
+                    storedUser.setName(user.getName());
+                } else {
+                    storedUser = user;
+                }
+                ofy().save().entity(storedUser).now();
+                return storedUser;
+            }
+        });
     }
 
     /**

@@ -4,16 +4,11 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
-import com.googlecode.objectify.Key;
-
-import java.util.Date;
 
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserDevice;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
@@ -62,71 +57,60 @@ public class UserDeviceEndpoint extends BaseEndpoint {
         return user;
     }
 
-    private UserDevice getUserDevice(Key<User> userKey, String registrationID) throws ServiceException {
-        UserDevice device = ofy().load().type(UserDevice.class)
-                .filter("registrationID", registrationID)
-                .ancestor(userKey)
-                .limit(1)
-                .first()
-                .now();
-        if (device == null) {
-            throw new NotFoundException("User device not found.");
-        }
-        return device;
-    }
-
-    private UserDevice getUserDevice(String userID, String registrationID) throws ServiceException {
-        return getUserDevice(Key.create(User.class, userID), registrationID);
-    }
-
-    private UserDevice registerUserDevice(final String userID, final String registrationID) throws ServiceException {
-        return transact(new Work<UserDevice, ServiceException>() {
+    protected void registerUserDevice(final User user, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
             @Override
-            public UserDevice run() throws ServiceException {
-                UserDevice userDevice = getUserDevice(userID, registrationID);
-                if (userDevice == null) {
-                    // Insert device
-                    User user = getUser(userID);
-                    userDevice = new UserDevice(user, registrationID, new Date());
-                    ofy().save().entity(userDevice).now();
-                }
-                // Update user
-                User user = userDevice.getUser();
-                user.updateDevice(userDevice);
-                // Save user and device
-                ofy().save().entities(user, userDevice).now();
-                return userDevice;
-            }
-        });
-    }
-
-    private UserDevice unregisterUserDevice(final String userID, final String registrationID) throws ServiceException {
-        return transact(new Work<UserDevice, ServiceException>() {
-            @Override
-            public UserDevice run() throws ServiceException {
-                UserDevice userDevice = getUserDevice(userID, registrationID);
-                if (userDevice == null) return null;
-                // Delete device
-                ofy().delete().entity(userDevice);
-                // Update user
-                User user = userDevice.getUser();
-                user.removeDevice(userDevice);
+            public void vrun() {
+                user.addDevice(registrationID);
                 ofy().save().entity(user).now();
-                return userDevice;
             }
         });
     }
 
-    private UserDevice moveUserDevice(final UserDevice userDevice, final String newRegID) throws ServiceException {
-        return transact(new Work<UserDevice, ServiceException>() {
+    protected void registerUserDevice(final String userID, final String registrationID) throws ServiceException {
+        transact(new VoidWork<ServiceException>() {
             @Override
-            public UserDevice run() throws ServiceException {
-                // Update in parent user
-                User user = userDevice.getUser();
-                user.moveDevice(userDevice, newRegID);
-                // Save user and device
-                ofy().save().entities(user, userDevice).now();
-                return userDevice;
+            public void vrun() throws ServiceException {
+                registerUserDevice(getUser(userID), registrationID);
+            }
+        });
+    }
+
+    protected void unregisterUserDevice(final User user, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                user.removeDevice(registrationID);
+                ofy().save().entity(user).now();
+            }
+        });
+    }
+
+    protected void unregisterUserDevice(final String userID, final String registrationID) throws ServiceException {
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                unregisterUserDevice(getUser(userID), registrationID);
+            }
+        });
+    }
+
+    protected void moveUserDevice(final User user, final String oldRegID, final String newRegID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                user.removeDevice(oldRegID);
+                user.addDevice(newRegID);
+                ofy().save().entity(user).now();
+            }
+        });
+    }
+
+    protected void moveUserDevice(final String userID, final String oldRegID, final String newRegID) throws ServiceException {
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                moveUserDevice(getUser(userID), oldRegID, newRegID);
             }
         });
     }
