@@ -59,12 +59,12 @@ public class PartyEndpoint extends BaseEndpoint {
         return transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
-                // Save party
+                // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host
-                PartyMember hostMember = party.setHost(user);
+                PartyMember member = party.setHost(user);
                 // Save again
-                ofy().save().entities(party, hostMember).now();
+                ofy().save().entities(party, member, user).now();
                 return party;
             }
         });
@@ -101,7 +101,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Add to invitees
                 PartyMember member = party.invite(friend);
                 // Save
-                ofy().save().entities(party, member).now();
+                ofy().save().entities(party, member, friend).now();
             }
         });
 

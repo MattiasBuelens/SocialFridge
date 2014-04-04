@@ -73,9 +73,13 @@ public class Party {
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public PartyMember setHost(User host) {
+        // Set as host
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
-        return updateMember(member);
+        member = updateMember(member);
+        // Add to party
+        host.addParty(this);
+        return member;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -132,7 +136,7 @@ public class Party {
         return getMember(userID) != null;
     }
 
-    public PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
+    protected PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(member.getUserID());
         if (ref != null) {
             // Copy to existing member
@@ -145,6 +149,16 @@ public class Party {
             members.add(Ref.create(member));
             return member;
         }
+    }
+
+    protected void removeMember(User user) throws IllegalArgumentException {
+        // Remove from party
+        Ref<PartyMember> ref = getMember(user);
+        if (ref != null) {
+            members.remove(ref);
+        }
+        // Remove from user
+        user.removeParty(this);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -165,8 +179,9 @@ public class Party {
      */
     public PartyMember invite(User invitee) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
+        PartyMember member;
         if (ref != null) {
-            PartyMember member = ref.get();
+            member = ref.get();
             if (member.isInParty()) {
                 // Already in the party
                 return member;
@@ -181,12 +196,14 @@ public class Party {
             }
             // Invite
             member.setStatus(PartyMember.Status.INVITED);
-            return member;
         } else {
             // Add invitee
-            PartyMember member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
-            return updateMember(member);
+            member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
+            member = updateMember(member);
         }
+        // Add to party
+        invitee.addParty(this);
+        return member;
     }
 
 }
