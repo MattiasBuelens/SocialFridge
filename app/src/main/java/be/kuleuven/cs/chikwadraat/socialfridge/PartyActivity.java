@@ -2,9 +2,11 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,11 +15,16 @@ import android.widget.TextView;
 
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
@@ -112,7 +119,12 @@ public class PartyActivity extends ListActivity {
         getSupportLoaderManager().restartLoader(LOADER_CANDIDATES, args, new CandidatesLoaderCallbacks());
     }
 
-    public static class PartnersListAdapter extends ArrayAdapter<PartyMember> {
+    private Parties getEndpoint() {
+        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
+        return Endpoints.prepare(builder, this).build();
+    }
+
+    public class PartnersListAdapter extends ArrayAdapter<PartyMember> {
 
         public PartnersListAdapter(Context context) {
             super(context, R.layout.partner_list_item);
@@ -134,7 +146,7 @@ public class PartyActivity extends ListActivity {
         }
     }
 
-    public static class CandidatesListAdapter extends ArrayAdapter<PartyMember> {
+    public class CandidatesListAdapter extends ArrayAdapter<PartyMember> implements View.OnClickListener {
 
         public CandidatesListAdapter(Context context) {
             super(context, R.layout.candidate_list_item);
@@ -146,6 +158,7 @@ public class PartyActivity extends ListActivity {
             if (view == null) {
                 view = View.inflate(getContext(), R.layout.candidate_list_item, null);
             }
+            view.setTag(position);
 
             ProfilePictureView pictureView = (ProfilePictureView) view.findViewById(R.id.candidate_pic);
             TextView nameView = (TextView) view.findViewById(R.id.candidate_name);
@@ -155,9 +168,9 @@ public class PartyActivity extends ListActivity {
             PartyMember candidate = getItem(position);
             pictureView.setProfileId(candidate.getUserID());
             nameView.setText(candidate.getUserName());
+            inviteButton.setOnClickListener(this);
 
-            // TODO Improve API for condition?
-            if (candidate.getStatus().equals("INVITED")) {
+            if (candidate.getInvited()) {
                 inviteButton.setText(R.string.party_partner_status_invited);
                 inviteButton.setEnabled(false);
                 //cancelInviteButton.setVisibility(View.VISIBLE);
@@ -168,6 +181,77 @@ public class PartyActivity extends ListActivity {
             }
 
             return view;
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = (Integer) ((View) v.getParent()).getTag();
+            PartyMember candidate = getItem(position);
+            switch (v.getId()) {
+                case R.id.candidate_invite:
+                    new InviteTask(candidate).execute();
+                    break;
+//                case R.id.candidate_cancel_invite:
+//                    new CancelInviteTask(candidate).execute();
+//                    break;
+            }
+        }
+
+    }
+
+    private class InviteTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final PartyMember candidate;
+
+        private InviteTask(PartyMember candidate) {
+            this.candidate = candidate;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                getEndpoint().invite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Error while inviting: " + e.getMessage());
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                candidate.setInvited(true);
+                partnersAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    private class CancelInviteTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final PartyMember candidate;
+
+        private CancelInviteTask(PartyMember candidate) {
+            this.candidate = candidate;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                getEndpoint().cancelInvite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Error while canceling invite: " + e.getMessage());
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                candidate.setInvited(false);
+                partnersAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -191,13 +275,23 @@ public class PartyActivity extends ListActivity {
             // Store party ID
             setPartyID(party.getId());
 
-            // TODO Filter on actual partners?
-            partnersAdapter.setData(party.getMembers());
+            // Filter on partners
+            partnersAdapter.setData(getPartners(party.getMembers()));
 
             // Load candidates if host
             if (userID.equals(party.getHostID())) {
                 loadCandidates(party.getId());
             }
+        }
+
+        private List<PartyMember> getPartners(List<PartyMember> members) {
+            List<PartyMember> partners = new ArrayList<PartyMember>(members.size());
+            for (PartyMember member : members) {
+                if (member.getInParty()) {
+                    partners.add(member);
+                }
+            }
+            return partners;
         }
 
         @Override

@@ -89,17 +89,14 @@ public class PartyMember {
         this.status = checkNotNull(status);
     }
 
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isHost() {
         return getStatus() == Status.HOST;
     }
 
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isInvited() {
         return getStatus() == Status.INVITED;
     }
 
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isInParty() {
         return getStatus().isInParty();
     }

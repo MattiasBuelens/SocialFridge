@@ -106,7 +106,7 @@ public abstract class BaseActivity extends ActionBarActivity {
      * Check if logged in on Facebook.
      */
     protected boolean isFacebookLoggedIn() {
-        Session session = Session.getActiveSession();
+        Session session = getSession();
         return session != null && session.isOpened();
     }
 
@@ -133,18 +133,22 @@ public abstract class BaseActivity extends ActionBarActivity {
      */
     public void logout() {
         appSession.clear();
-        Session session = Session.getActiveSession();
+        Session session = getSession();
         if (session != null && !session.isClosed()) {
             session.closeAndClearTokenInformation();
         }
     }
 
+    protected Session getSession() {
+        return Session.getActiveSession();
+    }
+
     private void checkLoggedIn() {
         if (isFacebookLoggedIn()) {
             if (isLoggedIn()) {
-                onLoggedIn(Session.getActiveSession(), appSession.getUser());
+                onLoggedIn(getSession(), appSession.getUser());
             } else {
-                onFacebookLoggedIn(Session.getActiveSession());
+                onFacebookLoggedIn(getSession());
             }
         } else {
             onLoggedOut();
@@ -230,7 +234,7 @@ public abstract class BaseActivity extends ActionBarActivity {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Session session = Session.getActiveSession();
+                        Session session = getSession();
                         if (session != null && !session.isClosed()) {
                             session.closeAndClearTokenInformation();
                         }
