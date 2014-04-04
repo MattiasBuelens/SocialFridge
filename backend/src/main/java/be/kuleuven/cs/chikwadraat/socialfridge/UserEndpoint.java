@@ -46,9 +46,12 @@ public class UserEndpoint extends BaseEndpoint {
         return transact(new Work<User, ServiceException>() {
             @Override
             public User run() throws ServiceException {
-                User storedUser = getUser(user.getID());
+                User storedUser = getUserUnsafe(user.getID());
                 if (storedUser != null) {
+                    // Manually copy to stored user
+                    // We don't want to remove devices here, only add
                     storedUser.setName(user.getName());
+                    storedUser.addDevices(user.getDevices());
                 } else {
                     storedUser = user;
                 }
@@ -80,11 +83,15 @@ public class UserEndpoint extends BaseEndpoint {
     }
 
     private User getUser(String id) throws ServiceException {
-        User user = ofy().load().type(User.class).id(id).now();
+        User user = getUserUnsafe(id);
         if (user == null) {
             throw new NotFoundException("User not found.");
         }
         return user;
+    }
+
+    private User getUserUnsafe(String id) {
+        return ofy().load().type(User.class).id(id).now();
     }
 
 }

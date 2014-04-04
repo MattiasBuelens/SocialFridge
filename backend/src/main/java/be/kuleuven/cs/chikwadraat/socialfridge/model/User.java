@@ -64,17 +64,24 @@ public class User {
     /**
      * Device registration IDs.
      */
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<String> getDevices() {
+    public Set<String> getDevices() {
         return devices;
     }
 
-    public void addDevice(String registrationID) {
-        devices.add(registrationID);
+    public void setDevices(Set<String> devices) {
+        this.devices = devices;
     }
 
-    public void removeDevice(String registrationID) {
-        devices.remove(registrationID);
+    public void addDevice(String device) {
+        devices.add(device);
+    }
+
+    public void addDevices(Collection<String> newDevices) {
+        this.devices.addAll(newDevices);
+    }
+
+    public void removeDevice(String device) {
+        devices.remove(device);
     }
 
     /**

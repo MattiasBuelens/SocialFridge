@@ -258,17 +258,13 @@ public class LoginActivity extends BaseActivity {
                 User user = retrieveUserInfo();
                 if (user == null) return null;
 
+                // Register on GCM
+                setState(RegisterUserState.REGISTER_GCM);
+                user = registerGCM(user);
+
                 // Register user
                 setState(RegisterUserState.REGISTER_USER);
                 user = registerUser(user);
-
-                // Register on GCM
-                setState(RegisterUserState.REGISTER_GCM);
-                String registrationID = registerGCM();
-
-                // Register device
-                setState(RegisterUserState.REGISTER_DEVICE);
-                registerDevice(user, registrationID);
 
                 // Success
                 setResult(user);
@@ -294,16 +290,16 @@ public class LoginActivity extends BaseActivity {
             return user;
         }
 
+        private User registerGCM(User user) throws IOException {
+            // Register on GCM
+            String registrationID = new GcmHelper(context).register();
+            // Add registration ID to user's devices
+            user.getDevices().add(registrationID);
+            return user;
+        }
+
         private User registerUser(User user) throws IOException {
             return getUsersEndpoint().updateUser(session.getAccessToken(), user).execute();
-        }
-
-        private String registerGCM() throws IOException {
-            return new GcmHelper(context).register();
-        }
-
-        private void registerDevice(User user, String registrationID) throws IOException {
-            getUsersEndpoint().updateUserDevice(user.getId(), registrationID, session.getAccessToken()).execute();
         }
 
         private Users getUsersEndpoint() {
@@ -340,7 +336,6 @@ public class LoginActivity extends BaseActivity {
         RETRIEVE_INFO(true),
         REGISTER_USER(true),
         REGISTER_GCM(true),
-        REGISTER_DEVICE(true),
         SUCCESS(false),
         FAILED(false);
 

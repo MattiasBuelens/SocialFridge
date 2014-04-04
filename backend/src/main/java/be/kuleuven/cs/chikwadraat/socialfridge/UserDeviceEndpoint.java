@@ -21,14 +21,14 @@ public class UserDeviceEndpoint extends BaseEndpoint {
 
     /**
      * Inserts or updates a user device.
-     * It uses HTTP PUT method.
+     * It uses HTTP GET method. (POST/PUT throws EOF without content)
      *
      * @param userID         The user ID of the device owner.
      * @param registrationID The registration ID of the device.
      * @param accessToken    The access token for authorization.
      * @return The updated user device.
      */
-    @ApiMethod(name = "updateUserDevice", path = "userDevice/{userID}/{registrationID}")
+    @ApiMethod(name = "updateUserDevice", path = "userDevice/{userID}/{registrationID}", httpMethod = ApiMethod.HttpMethod.GET)
     public void updateUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
         registerUserDevice(userID, registrationID);
