@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.facebook.Session;
@@ -17,14 +16,12 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 /**
  * Retrieves or creates a party.
  */
-public class PartyLoader extends AsyncTaskLoader<Party> {
+public class PartyLoader extends BaseLoader<Party> {
 
     private static final String TAG = "PartyLoader";
 
     private Long partyID;
     private final String userID;
-
-    private Party party;
 
     public PartyLoader(Context context, Long partyID, String userID) {
         super(context);
@@ -70,47 +67,6 @@ public class PartyLoader extends AsyncTaskLoader<Party> {
         }
 
         return party;
-    }
-
-    @Override
-    protected void onStartLoading() {
-        if (party != null) {
-            deliverResult(party);
-        }
-        if (takeContentChanged() || party == null) {
-            forceLoad();
-        }
-    }
-
-    @Override
-    public void deliverResult(Party party) {
-        if (isReset()) {
-            // An async query came in while the loader is stopped
-            return;
-        }
-
-        Party oldParty = this.party;
-        this.party = party;
-
-        if (isStarted()) {
-            super.deliverResult(party);
-        }
-    }
-
-    @Override
-    protected void onStopLoading() {
-        // Attempt to cancel the current load task if possible.
-        cancelLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-
-        // Ensure the loader is stopped
-        onStopLoading();
-
-        this.party = null;
     }
 
 }

@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.facebook.Session;
@@ -18,13 +17,11 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 /**
  * Retrieves candidates for a party.
  */
-public class PartyCandidatesLoader extends AsyncTaskLoader<List<PartyMember>> {
+public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
 
     private static final String TAG = "PartyCandidatesLoader";
 
     private final long partyID;
-
-    private List<PartyMember> candidates;
 
     public PartyCandidatesLoader(Context context, long partyID) {
         super(context);
@@ -47,47 +44,6 @@ public class PartyCandidatesLoader extends AsyncTaskLoader<List<PartyMember>> {
             Log.e(TAG, e.getMessage());
             return null;
         }
-    }
-
-    @Override
-    protected void onStartLoading() {
-        if (candidates != null) {
-            deliverResult(candidates);
-        }
-        if (takeContentChanged() || candidates == null) {
-            forceLoad();
-        }
-    }
-
-    @Override
-    public void deliverResult(List<PartyMember> candidates) {
-        if (isReset()) {
-            // An async query came in while the loader is stopped
-            return;
-        }
-
-        List<PartyMember> oldCandidates = this.candidates;
-        this.candidates = candidates;
-
-        if (isStarted()) {
-            super.deliverResult(candidates);
-        }
-    }
-
-    @Override
-    protected void onStopLoading() {
-        // Attempt to cancel the current load task if possible.
-        cancelLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-
-        // Ensure the loader is stopped
-        onStopLoading();
-
-        this.candidates = null;
     }
 
 }
