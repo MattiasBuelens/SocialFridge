@@ -140,6 +140,7 @@ public class CandidatesFragment extends ListFragment implements PartyListener {
             }
 
             PartyMember candidate = getItem(position);
+            vh.position = position;
             vh.pictureView.setProfileId(candidate.getUserID());
             vh.nameView.setText(candidate.getUserName());
             vh.inviteButton.setOnClickListener(this);

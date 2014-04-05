@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/section_margin"
+    android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -15,32 +13,36 @@
         android:id="@+id/party_partners_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:text="@string/party_partners"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <fragment
         android:id="@+id/party_partners_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/party_partners_header"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
         tools:layout="@layout/partner_list_item" />
 
     <TextView
         android:id="@+id/party_candidates_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/party_partners_fragment"
         android:text="@string/party_candidates"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <fragment
         android:id="@+id/party_candidates_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/party_candidates_header"
         android:layout_marginTop="@dimen/section_margin"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment"
         tools:layout="@layout/candidate_list_item" />
 
-</LinearLayout>
+</RelativeLayout>

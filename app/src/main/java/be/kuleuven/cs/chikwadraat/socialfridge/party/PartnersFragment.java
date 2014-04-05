@@ -27,6 +27,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
  */
 public class PartnersFragment extends Fragment implements PartyListener {
 
+    private GridView partnersGrid;
     private PartnersListAdapter partnersAdapter;
 
     /**
@@ -45,22 +46,22 @@ public class PartnersFragment extends Fragment implements PartyListener {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        partnersAdapter = new PartnersListAdapter(getActivity());
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_party_partners, container, false);
 
-        GridView partnersGrid = (GridView) view.findViewById(R.id.party_partners_list);
-        partnersGrid.setAdapter(partnersAdapter);
+        partnersGrid = (GridView) view.findViewById(R.id.party_partners_list);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        partnersAdapter = new PartnersListAdapter(getActivity());
+        partnersGrid.setAdapter(partnersAdapter);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class PartnersFragment extends Fragment implements PartyListener {
             }
 
             PartyMember partner = getItem(position);
+            vh.position = position;
             vh.pictureView.setProfileId(partner.getUserID());
 
             return v;

@@ -1,15 +1,12 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 import com.facebook.Session;
 import com.google.api.client.extensions.android.http.AndroidHttp;
