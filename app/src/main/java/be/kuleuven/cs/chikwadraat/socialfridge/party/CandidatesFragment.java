@@ -3,12 +3,14 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
@@ -27,21 +29,21 @@ import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
  * Use the {@link be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CandidatesFragment extends ListFragment implements PartyListener {
+public class CandidatesFragment extends Fragment implements PartyListener {
 
     private static final String TAG = "CandidatesFragment";
 
     private static final int LOADER_CANDIDATES = 1;
     private static final String LOADER_ARGS_PARTY_ID = "party_id";
 
+    private ListView candidatesList;
     private CandidatesListAdapter candidatesAdapter;
     private CandidateListener listener;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Create a new candidates fragment.
      *
-     * @return A new instance of fragment PartnersFragment.
+     * @return A new instance of fragment CandidatesFragment.
      */
     public static CandidatesFragment newInstance() {
         CandidatesFragment fragment = new CandidatesFragment();
@@ -53,11 +55,22 @@ public class CandidatesFragment extends ListFragment implements PartyListener {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_party_candidates, container, false);
+
+        candidatesList = (ListView) view.findViewById(R.id.party_candidates_list);
+
+        return view;
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         candidatesAdapter = new CandidatesListAdapter(getActivity());
-        setListAdapter(candidatesAdapter);
+        candidatesList.setAdapter(candidatesAdapter);
     }
 
     @Override

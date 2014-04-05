@@ -31,8 +31,7 @@ public class PartnersFragment extends Fragment implements PartyListener {
     private PartnersListAdapter partnersAdapter;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Create a new partners fragment.
      *
      * @return A new instance of fragment PartnersFragment.
      */

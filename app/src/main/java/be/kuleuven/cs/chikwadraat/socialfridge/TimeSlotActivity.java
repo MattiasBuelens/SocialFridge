@@ -8,7 +8,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity;
 
 /**
  * Time slot activity.
@@ -39,7 +39,7 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.time_action_find_partners:
-                Intent intent = new Intent(this, PartyActivity.class);
+                Intent intent = new Intent(this, PartyInviteActivity.class);
                 // TODO Pass data in intent!
                 startActivity(intent);
                 break;

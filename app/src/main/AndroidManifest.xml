@@ -41,8 +41,8 @@
             android:label="@string/time_slots_title" />
 
         <activity
-            android:name=".party.PartyActivity"
-            android:label="@string/party_title" />
+            android:name=".party.PartyInviteActivity"
+            android:label="@string/party_invite_title" />
 
         <!-- Facebook -->
 

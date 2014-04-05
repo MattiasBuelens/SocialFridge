@@ -7,33 +7,16 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyActivity">
-
-    <TextView
-        android:id="@+id/party_partners_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:text="@string/party_partners"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity">
 
     <fragment
         android:id="@+id/party_partners_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/party_partners_header"
+        android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/section_margin"
-        android:layout_marginTop="@dimen/section_margin"
-        tools:layout="@layout/partner_list_item" />
-
-    <TextView
-        android:id="@+id/party_candidates_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/party_partners_fragment"
-        android:text="@string/party_candidates"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+        tools:layout="@layout/fragment_party_partners" />
 
     <fragment
         android:id="@+id/party_candidates_fragment"
@@ -41,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/party_candidates_header"
+        android:layout_below="@+id/party_partners_fragment"
         android:layout_marginTop="@dimen/section_margin"
-        tools:layout="@layout/candidate_list_item" />
+        tools:layout="@layout/fragment_party_candidates" />
 
 </RelativeLayout>

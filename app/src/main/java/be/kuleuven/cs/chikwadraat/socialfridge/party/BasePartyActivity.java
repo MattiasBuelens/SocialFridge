@@ -1,36 +1,28 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
 import com.facebook.Session;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
- * Party activity.
+ * Base activity for parties.
  */
-public class PartyActivity extends BaseActivity implements CandidatesFragment.CandidateListener {
+public abstract class BasePartyActivity extends BaseActivity implements PartyListener {
 
-    private static final String TAG = "PartyActivity";
+    private static final String TAG = "BasePartyActivity";
 
     private static final String EXTRA_PARTY_ID = "party_id";
 
@@ -43,7 +35,6 @@ public class PartyActivity extends BaseActivity implements CandidatesFragment.Ca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.party);
 
         Intent intent = getIntent();
         if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_PARTY_ID)) {
@@ -53,6 +44,10 @@ public class PartyActivity extends BaseActivity implements CandidatesFragment.Ca
         } else {
             partyID = null;
         }
+    }
+
+    protected Long getPartyID() {
+        return partyID;
     }
 
     protected void setPartyID(long partyID) {
@@ -94,40 +89,44 @@ public class PartyActivity extends BaseActivity implements CandidatesFragment.Ca
     }
 
     private void firePartyLoaded(Party party) {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null) return;
+        User user = getLoggedInUser();
+        if (user == null) return;
 
-        for (Fragment fragment : fragments) {
-            if (fragment != null && fragment.isAdded() && fragment instanceof PartyListener) {
-                ((PartyListener) fragment).onPartyLoaded(party, getLoggedInUser());
+        // Call own listener
+        onPartyLoaded(party, user);
+
+        // Call fragment listeners
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isAdded() && fragment instanceof PartyListener) {
+                    ((PartyListener) fragment).onPartyLoaded(party, user);
+                }
             }
         }
     }
 
     private void firePartyUnloaded() {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null) return;
+        // Call own listener
+        onPartyUnloaded();
 
-        for (Fragment fragment : fragments) {
-            if (fragment != null && fragment.isAdded() && fragment instanceof PartyListener) {
-                ((PartyListener) fragment).onPartyUnloaded();
+        // Call fragment listeners
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isAdded() && fragment instanceof PartyListener) {
+                    ((PartyListener) fragment).onPartyUnloaded();
+                }
             }
         }
     }
 
     @Override
-    public void onCandidateInvited(PartyMember candidate) {
-        new InviteTask(candidate).execute();
+    public void onPartyLoaded(Party party, User user) {
     }
 
     @Override
-    public void onCandidateInviteCanceled(PartyMember candidate) {
-        new CancelInviteTask(candidate).execute();
-    }
-
-    private Parties getEndpoint() {
-        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
-        return Endpoints.prepare(builder, this).build();
+    public void onPartyUnloaded() {
     }
 
     private class PartyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Party> {
@@ -139,7 +138,7 @@ public class PartyActivity extends BaseActivity implements CandidatesFragment.Ca
                 partyID = args.getLong(LOADER_ARGS_PARTY_ID);
             }
             String userID = args.getString(LOADER_ARGS_USER_ID);
-            return new PartyLoader(PartyActivity.this, partyID, userID);
+            return new PartyLoader(BasePartyActivity.this, partyID, userID);
         }
 
         @Override
@@ -167,60 +166,6 @@ public class PartyActivity extends BaseActivity implements CandidatesFragment.Ca
         public void onLoaderReset(Loader<Party> loader) {
             // Fire listeners
             firePartyUnloaded();
-        }
-    }
-
-    private class InviteTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final PartyMember candidate;
-
-        private InviteTask(PartyMember candidate) {
-            this.candidate = candidate;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                getEndpoint().invite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Error while inviting: " + e.getMessage());
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                candidate.setInvited(true);
-            }
-        }
-    }
-
-    private class CancelInviteTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final PartyMember candidate;
-
-        private CancelInviteTask(PartyMember candidate) {
-            this.candidate = candidate;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                getEndpoint().cancelInvite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Error while canceling invite: " + e.getMessage());
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                candidate.setInvited(false);
-            }
         }
     }
 

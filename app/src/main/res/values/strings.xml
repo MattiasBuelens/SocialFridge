@@ -21,7 +21,7 @@
     <string name="dishes_title">Dishes</string>
 
     <!-- Party -->
-    <string name="party_title">Party</string>
+    <string name="party_invite_title">Invite to party</string>
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
     <string name="party_action_invite">Invite</string>
