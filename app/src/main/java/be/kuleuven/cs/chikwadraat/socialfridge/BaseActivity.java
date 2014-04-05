@@ -119,6 +119,15 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     /**
+     * Get the logged in user.
+     *
+     * @return The logged in user.
+     */
+    protected User getLoggedInUser() {
+        return appSession.getUser();
+    }
+
+    /**
      * Set the logged in user.
      * Used by the {@link LoginActivity}.
      *
@@ -146,7 +155,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private void checkLoggedIn() {
         if (isFacebookLoggedIn()) {
             if (isLoggedIn()) {
-                onLoggedIn(getSession(), appSession.getUser());
+                onLoggedIn(getSession(), getLoggedInUser());
             } else {
                 onFacebookLoggedIn(getSession());
             }

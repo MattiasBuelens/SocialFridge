@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment">
+
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableGridView
+        android:id="@+id/party_partners_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="@integer/party_partners_grid_column_count"
+        tools:listitem="@layout/partner_list_item" />
+
+</FrameLayout>

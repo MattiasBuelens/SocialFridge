@@ -8,6 +8,8 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyActivity;
+
 /**
  * Time slot activity.
  * Choose time slots.

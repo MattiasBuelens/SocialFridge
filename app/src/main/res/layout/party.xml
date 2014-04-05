@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.PartyActivity">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyActivity">
 
     <TextView
         android:id="@+id/party_partners_header"
@@ -18,15 +18,14 @@
         android:text="@string/party_partners"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-    <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableGridView
-        android:id="@+id/party_partners_list"
+    <fragment
+        android:id="@+id/party_partners_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin"
-        android:listSelector="@android:color/transparent"
-        android:numColumns="@integer/party_partners_grid_column_count"
-        tools:listitem="@layout/partner_list_item" />
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
+        tools:layout="@layout/partner_list_item" />
 
     <TextView
         android:id="@+id/party_candidates_header"
@@ -34,5 +33,14 @@
         android:layout_height="wrap_content"
         android:text="@string/party_candidates"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+
+    <fragment
+        android:id="@+id/party_candidates_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginTop="@dimen/section_margin"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment"
+        tools:layout="@layout/candidate_list_item" />
 
 </LinearLayout>

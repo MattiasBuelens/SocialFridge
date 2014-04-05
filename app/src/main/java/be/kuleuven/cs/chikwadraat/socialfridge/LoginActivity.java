@@ -20,6 +20,8 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
@@ -294,7 +296,12 @@ public class LoginActivity extends BaseActivity {
             // Register on GCM
             String registrationID = new GcmHelper(context).register();
             // Add registration ID to user's devices
-            user.getDevices().add(registrationID);
+            List<String> devices = user.getDevices();
+            if(devices == null) {
+                devices = new ArrayList<String>();
+                user.setDevices(devices);
+            }
+            devices.add(registrationID);
             return user;
         }
 
