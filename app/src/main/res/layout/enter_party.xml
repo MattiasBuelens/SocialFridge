@@ -42,7 +42,7 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/lobby_join"
+            android:text="@string/party_join"
             android:id="@+id/button"
             android:layout_below="@+id/time_slots_fragment"
             android:layout_toRightOf="@+id/button2"
@@ -53,7 +53,7 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/lobby_decline"
+            android:text="@string/party_decline"
             android:id="@+id/button2"
             android:layout_below="@+id/time_slots_fragment"
             android:layout_alignParentLeft="true"

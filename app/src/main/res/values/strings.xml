@@ -21,7 +21,7 @@
     <string name="dishes_title">Dishes</string>
 
     <!-- Party -->
-    <string name="party_title">Party</string>
+    <string name="party_invite_title">Party</string>
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
     <string name="party_action_invite">Invite</string>
@@ -29,11 +29,8 @@
     <string name="party_partner_status_invited">Invited</string>
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
-
-    <!-- Lobby -->
-    <string name="lobby_tiltle">Lobby</string>
-    <string name="lobby_join">Join</string>
-    <string name="lobby_decline">Decline</string>
+    <string name="party_join">Join</string>
+    <string name="party_decline">Decline</string>
 
     <!-- Time slots -->
     <string name="time_slots_title">Time slots</string>
