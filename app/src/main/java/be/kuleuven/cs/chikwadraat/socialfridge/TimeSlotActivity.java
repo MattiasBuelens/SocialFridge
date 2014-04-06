@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,10 @@ import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity;
  * Choose time slots.
  */
 public class TimeSlotActivity extends BaseActivity implements View.OnClickListener {
+
+    private static final String TAG = "TimeSlotActivity";
+
+    private static final String DayStateKey = "DayState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,12 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.time_action_find_partners:
                 Intent intent = new Intent(this, PartyInviteActivity.class);
-                // TODO Pass data in intent!
+                RadioGroup dayGroup = (RadioGroup) findViewById(R.id.time_day_options);
+                int checkedDayId = dayGroup.getCheckedRadioButtonId();
+                DayState day = DayState.TODAY;
+                if (checkedDayId == R.id.time_action_choose_tomorrow) day = DayState.TOMORROW;
+                else {}; // -1 or today
+                intent.putExtra(DayStateKey, day);
                 startActivity(intent);
                 break;
         }
