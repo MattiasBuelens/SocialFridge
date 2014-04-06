@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
@@ -72,6 +74,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent(this, TimeSlotActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.action_test_notification:
+                Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
+                startService(serviceIntent);
         }
     }
 
