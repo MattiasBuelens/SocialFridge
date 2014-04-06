@@ -17,6 +17,9 @@ public class TimeSlot {
     private int endHour;
     private boolean available;
 
+    public TimeSlot() {
+    }
+
     public TimeSlot(int beginHour, int endHour, boolean available) {
         this.beginHour = beginHour;
         this.endHour = endHour;
