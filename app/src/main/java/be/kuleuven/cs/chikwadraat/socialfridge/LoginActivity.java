@@ -96,7 +96,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
-        task.detachActivity();
+        if (task != null) {
+            task.detachActivity();
+        }
         return task;
     }
 
@@ -180,12 +182,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void hideProgressDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (current != null) {
-            ft.hide(current);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (fragment != null) {
+            ((ProgressDialogFragment) fragment).dismiss();
         }
-        ft.commit();
     }
 
     protected static class RegisterUserTask extends AsyncTask<Void, RegisterUserState, Void> {
