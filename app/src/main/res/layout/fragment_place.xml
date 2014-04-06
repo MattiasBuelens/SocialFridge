@@ -1,29 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
-    android:rowCount="1"
-    android:columnCount="1">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PlaceFragment">
 
     <TextView
         android:id="@+id/party_partners_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/time_slots_title"
+        android:text="@string/final_screen_place"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-
-    <GridView
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/time_slot_grid"
-        tools:listitem="@layout/timeslot"
-        android:numColumns="4"
-        android:layout_gravity="left|top" />
+        android:text="@ Vital"
+        android:id="@+id/textView" />
 
 </LinearLayout>

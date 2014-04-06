@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
-            android:id="@+id/fragment"
+            android:id="@+id/place_fragment"
             tools:layout="@layout/fragment_timeslots" />
     </LinearLayout>
 

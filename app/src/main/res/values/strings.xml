@@ -21,7 +21,7 @@
     <string name="dishes_title">Dishes</string>
 
     <!-- Party -->
-    <string name="party_invite_title">Invite to party</string>
+    <string name="party_title">Party</string>
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
     <string name="party_action_invite">Invite</string>
@@ -36,7 +36,7 @@
     <string name="lobby_decline">Decline</string>
 
     <!-- Time slots -->
-    <string name="time_slots_title">Choose time slots</string>
+    <string name="time_slots_title">Time slots</string>
     <string name="time_day">Day</string>
     <string name="time_time_slots">Time slots</string>
     <string name="time_choose_today">Today</string>
