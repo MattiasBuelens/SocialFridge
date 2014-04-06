@@ -24,7 +24,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.party);
+        setContentView(R.layout.party_invite);
     }
 
     @Override
