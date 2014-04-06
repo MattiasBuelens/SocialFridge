@@ -16,6 +16,8 @@ import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
@@ -36,7 +38,7 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "getParty", path = "party/{partyID}", httpMethod = ApiMethod.HttpMethod.GET)
     public Party getParty(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        Party party = getParty(partyID, true);
+        Party party = getParty(partyID, false);
         checkAccess(accessToken, party.getMemberIDs());
         return party;
     }
@@ -145,8 +147,8 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.GET)
-    public void acceptInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+    @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
+    public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
         // TODO Add time slots parameter
         final String userID = getUserID(accessToken);
         transact(new VoidWork<ServiceException>() {
@@ -158,8 +160,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // Accept invite
-                PartyMember member = party.acceptInvite(user);
-                // TODO Update time slots
+                PartyMember member = party.acceptInvite(user, timeSlots.getList());
                 // Save
                 ofy().save().entities(party, member, user).now();
             }

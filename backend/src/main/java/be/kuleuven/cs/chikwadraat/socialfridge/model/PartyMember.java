@@ -7,6 +7,9 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -38,6 +41,11 @@ public class PartyMember {
      * Member status.
      */
     private Status status;
+
+    /**
+     * Chosen time slots.
+     */
+    private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
     public PartyMember() {
     }
@@ -107,6 +115,26 @@ public class PartyMember {
 
     public boolean needsInvite() {
         return !(isInParty() || isInvited());
+    }
+
+    /**
+     * Time slots.
+     */
+    public List<TimeSlot> getTimeSlots() {
+        return timeSlots;
+    }
+
+    public void setTimeSlots(List<TimeSlot> timeSlots) {
+        this.timeSlots = timeSlots;
+    }
+
+    public TimeSlot getTimeSlot(int beginHour, int endHour) {
+        for(TimeSlot slot : getTimeSlots()) {
+            if(slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+                return slot;
+            }
+        }
+        return null;
     }
 
     /**

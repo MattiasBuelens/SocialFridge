@@ -17,6 +17,7 @@ public class OfyService {
      * Register the entity classes.
      */
     static {
+        factory().setSaveWithNewEmbedFormat(true);
         ObjectifyService.register(User.class);
         ObjectifyService.register(Party.class);
         ObjectifyService.register(PartyMember.class);

@@ -46,7 +46,7 @@ public class Party {
     /**
      * Host.
      */
-    @Load(Everything.class)
+    @Load(Partial.class)
     private Ref<User> host;
 
     /**
@@ -63,8 +63,13 @@ public class Party {
     /**
      * Partners.
      */
-    @Load(Everything.class)
+    @Load(Partial.class)
     private Set<Ref<PartyMember>> partners = new HashSet<Ref<PartyMember>>();
+
+    /**
+     * Merged time slots from partners.
+     */
+    private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
     public Party() {
     }
@@ -159,18 +164,23 @@ public class Party {
 
     protected PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(member.getUserID());
+        boolean wasInParty = false;
         if (ref != null) {
             // Copy to existing member
             PartyMember existingMember = ref.get();
+            wasInParty = existingMember.isInParty();
             existingMember.setUserName(member.getUserName());
             existingMember.setStatus(member.getStatus());
+            existingMember.setTimeSlots(member.getTimeSlots());
             member = existingMember;
         } else {
             // Add member
             members.add(Ref.create(member));
         }
-        // Update partners
-        updatePartner(member);
+        // Update partners if needed
+        if (wasInParty != member.isInParty()) {
+            updatePartner(member);
+        }
         return member;
     }
 
@@ -212,6 +222,27 @@ public class Party {
         } else {
             partners.remove(ref);
         }
+        updateTimeSlots();
+    }
+
+    /**
+     * Merged time slots from partners.
+     */
+    public List<TimeSlot> getTimeSlots() {
+        return timeSlots;
+    }
+
+    protected void updateTimeSlots() {
+        // Collect time slots from all partners
+        List<TimeSlot> allSlots = new ArrayList<TimeSlot>();
+        for (PartyMember partner : getPartners()) {
+            allSlots.addAll(partner.getTimeSlots());
+        }
+        // Merge time slots
+        Collection<TimeSlot> mergedSlots = TimeSlot.merge(allSlots);
+        // Replace time slots
+        timeSlots.clear();
+        timeSlots.addAll(mergedSlots);
     }
 
     /**
@@ -268,11 +299,12 @@ public class Party {
     /**
      * Accept a user's invite.
      *
-     * @param invitee The user of whom to accept the invite.
+     * @param invitee   The user of whom to accept the invite.
+     * @param timeSlots The time slots chosen by the user.
      * @return The member to be saved.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
-    public PartyMember acceptInvite(User invitee) throws IllegalArgumentException {
+    public PartyMember acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot accept invite, was not invited.");
@@ -283,6 +315,9 @@ public class Party {
         }
         // Add to party (should already be added though)
         invitee.addParty(this);
+        // Set time slots
+        member.setTimeSlots(timeSlots);
+        updatePartner(member);
         return member;
     }
 
@@ -329,6 +364,7 @@ public class Party {
         }
         // Remove from party
         invitee.removeParty(this);
+        updatePartner(member);
         return member;
     }
 
