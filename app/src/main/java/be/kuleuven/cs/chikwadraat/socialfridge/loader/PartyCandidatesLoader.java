@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.facebook.Session;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,12 +32,10 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
 
     @Override
     public List<PartyMember> loadInBackground() {
-        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
-        Parties endpoint = Endpoints.prepare(builder, getContext()).build();
-
+        Parties parties = Endpoints.parties(getContext());
         Session session = Session.getActiveSession();
         try {
-            return endpoint.getCandidates(partyID, session.getAccessToken()).execute().getItems();
+            return parties.getCandidates(partyID, session.getAccessToken()).execute().getItems();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             return null;

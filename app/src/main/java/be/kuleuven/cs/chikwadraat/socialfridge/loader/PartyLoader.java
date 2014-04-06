@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.facebook.Session;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
 
@@ -39,9 +37,7 @@ public class PartyLoader extends BaseLoader<Party> {
 
     @Override
     public Party loadInBackground() {
-        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
-        Parties endpoint = Endpoints.prepare(builder, getContext()).build();
-
+        Parties parties = Endpoints.parties(getContext());
         Session session = Session.getActiveSession();
         Party party;
 
@@ -50,7 +46,7 @@ public class PartyLoader extends BaseLoader<Party> {
             party = new Party();
             party.setHostID(getUserID());
             try {
-                party = endpoint.insertParty(session.getAccessToken(), party).execute();
+                party = parties.insertParty(session.getAccessToken(), party).execute();
                 partyID = party.getId();
             } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
@@ -59,7 +55,7 @@ public class PartyLoader extends BaseLoader<Party> {
         } else {
             // Get party
             try {
-                party = endpoint.getParty(partyID, session.getAccessToken()).execute();
+                party = parties.getParty(partyID, session.getAccessToken()).execute();
             } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
                 return null;

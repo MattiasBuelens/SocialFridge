@@ -37,9 +37,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         new CancelInviteTask(candidate).execute();
     }
 
-    private Parties getEndpoint() {
-        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
-        return Endpoints.prepare(builder, this).build();
+    private Parties parties() {
+        return Endpoints.parties(this);
     }
 
     private class InviteTask extends AsyncTask<Void, Void, Boolean> {
@@ -53,7 +52,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                getEndpoint().invite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
+                parties().invite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
                 return true;
             } catch (IOException e) {
                 Log.e(TAG, "Error while inviting: " + e.getMessage());
@@ -80,7 +79,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                getEndpoint().cancelInvite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
+                parties().cancelInvite(candidate.getPartyID(), candidate.getUserID(), getSession().getAccessToken()).execute();
                 return true;
             } catch (IOException e) {
                 Log.e(TAG, "Error while canceling invite: " + e.getMessage());

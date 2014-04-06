@@ -16,8 +16,6 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -306,12 +304,11 @@ public class LoginActivity extends BaseActivity {
         }
 
         private User registerUser(User user) throws IOException {
-            return getUsersEndpoint().updateUser(session.getAccessToken(), user).execute();
+            return users().updateUser(session.getAccessToken(), user).execute();
         }
 
-        private Users getUsersEndpoint() {
-            Users.Builder builder = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
-            return Endpoints.prepare(builder, context).build();
+        private Users users() {
+            return Endpoints.users(context);
         }
 
         @Override
