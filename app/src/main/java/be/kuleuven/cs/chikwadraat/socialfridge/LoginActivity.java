@@ -124,6 +124,7 @@ public class LoginActivity extends BaseActivity {
     protected void onRegisterSuccess(User user) {
         Log.d(TAG, "User successfully registered");
         removeRegisterTask();
+        hideProgressDialog();
 
         // Registered, finish
         setLoggedInUser(user);
@@ -134,6 +135,7 @@ public class LoginActivity extends BaseActivity {
     protected void onRegisterError(FacebookRequestError error) {
         Log.e(TAG, "Failed to register user: " + error.getErrorMessage());
         removeRegisterTask();
+        hideProgressDialog();
 
         handleError(error);
     }
@@ -141,6 +143,7 @@ public class LoginActivity extends BaseActivity {
     protected void onRegisterFailed(Exception exception) {
         Log.e(TAG, "Failed to register user: " + exception.getMessage());
         removeRegisterTask();
+        hideProgressDialog();
 
         new AlertDialog.Builder(this)
                 .setPositiveButton(android.R.string.ok, null)
@@ -166,12 +169,12 @@ public class LoginActivity extends BaseActivity {
         if (current != null) {
             fragment = (ProgressDialogFragment) current;
         } else {
-            fragment = ProgressDialogFragment.newInstance(null);
+            String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
+            fragment = ProgressDialogFragment.newInstance(progressMessage);
+            fragment.setCancelable(false);
             ft.add(fragment, "dialog");
             ft.addToBackStack(null);
         }
-        String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
-        fragment.setMessage(progressMessage);
         ft.show(fragment);
         ft.commit();
     }
@@ -295,7 +298,7 @@ public class LoginActivity extends BaseActivity {
             String registrationID = new GcmHelper(context).register();
             // Add registration ID to user's devices
             List<String> devices = user.getDevices();
-            if(devices == null) {
+            if (devices == null) {
                 devices = new ArrayList<String>();
                 user.setDevices(devices);
             }
