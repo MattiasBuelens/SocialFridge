@@ -37,14 +37,34 @@ public class Party {
     public static class Partial {
     }
 
+    /**
+     * Party ID.
+     */
     @Id
     private Long id;
 
+    /**
+     * Host.
+     */
     @Load(Everything.class)
     private Ref<User> host;
 
+    /**
+     * Party status.
+     */
+    private Status status = Status.INVITING;
+
+    /**
+     * Members.
+     */
     @Load(Everything.class)
     private Set<Ref<PartyMember>> members = new HashSet<Ref<PartyMember>>();
+
+    /**
+     * Partners.
+     */
+    @Load(Everything.class)
+    private Set<Ref<PartyMember>> partners = new HashSet<Ref<PartyMember>>();
 
     public Party() {
     }
@@ -88,6 +108,17 @@ public class Party {
     }
 
     /**
+     * Party status.
+     */
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    /**
      * Members.
      */
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -104,15 +135,9 @@ public class Party {
         return map;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<PartyMember> getMembers() {
         return ofy().load().refs(getMemberKeys()).values();
-    }
-
-    public void setMembers(Collection<PartyMember> newMembers) {
-        members.clear();
-        for (PartyMember member : newMembers) {
-            members.add(Ref.create(member));
-        }
     }
 
     public Ref<PartyMember> getMember(User user) {
@@ -132,10 +157,6 @@ public class Party {
         return null;
     }
 
-    public boolean hasMember(String userID) {
-        return getMember(userID) != null;
-    }
-
     protected PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(member.getUserID());
         if (ref != null) {
@@ -143,12 +164,14 @@ public class Party {
             PartyMember existingMember = ref.get();
             existingMember.setUserName(member.getUserName());
             existingMember.setStatus(member.getStatus());
-            return existingMember;
+            member = existingMember;
         } else {
             // Add member
             members.add(Ref.create(member));
-            return member;
         }
+        // Update partners
+        updatePartner(member);
+        return member;
     }
 
     protected void removeMember(User user) throws IllegalArgumentException {
@@ -168,6 +191,27 @@ public class Party {
             memberIDs.add(ref.getKey().getName());
         }
         return memberIDs;
+    }
+
+    /**
+     * Partners.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Set<Ref<PartyMember>> getPartnerKeys() {
+        return partners;
+    }
+
+    public Collection<PartyMember> getPartners() {
+        return ofy().load().refs(getPartnerKeys()).values();
+    }
+
+    protected void updatePartner(PartyMember member) {
+        Ref<PartyMember> ref = Ref.create(member);
+        if (member.isInParty()) {
+            partners.add(ref);
+        } else {
+            partners.remove(ref);
+        }
     }
 
     /**
@@ -286,6 +330,30 @@ public class Party {
         // Remove from party
         invitee.removeParty(this);
         return member;
+    }
+
+    public static enum Status {
+
+        /**
+         * Inviting partners to party.
+         */
+        INVITING,
+
+        /**
+         * Arranging a time for the party.
+         */
+        ARRANGING,
+
+        /**
+         * Party arranged.
+         */
+        DONE;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+
     }
 
 }

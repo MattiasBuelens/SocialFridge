@@ -11,9 +11,6 @@ import android.widget.GridView;
 
 import com.facebook.widget.ProfilePictureView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
@@ -77,24 +74,12 @@ public class PartnersFragment extends Fragment implements PartyListener {
 
     @Override
     public void onPartyLoaded(Party party, User user) {
-        // Filter on partners
-        List<PartyMember> partners = getPartners(party.getMembers());
-        partnersAdapter.setData(partners);
+        partnersAdapter.setData(party.getPartners());
     }
 
     @Override
     public void onPartyUnloaded() {
         partnersAdapter.clear();
-    }
-
-    private List<PartyMember> getPartners(List<PartyMember> members) {
-        List<PartyMember> partners = new ArrayList<PartyMember>(members.size());
-        for (PartyMember member : members) {
-            if (member.getInParty()) {
-                partners.add(member);
-            }
-        }
-        return partners;
     }
 
     public class PartnersListAdapter extends ArrayAdapter<PartyMember> {
