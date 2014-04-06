@@ -19,6 +19,11 @@ public class NotificationService extends IntentService {
 
     public NotificationService() {
         super(NotificationConstants.NOTIFICATION_ADDRESS);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -29,12 +34,12 @@ public class NotificationService extends IntentService {
         String action = intent.getAction();
         // this section handles three different actions:
         // receive invite, accept and decline
-        if(action.equals(NotificationConstants.ACTION_RECEIVE_INVITE)) {
-            issueNotification(intent,message);
-        } else if(action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
+        if (action.equals(NotificationConstants.ACTION_RECEIVE_INVITE)) {
+            issueNotification(intent, message);
+        } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO: send accept message
-        } else if(action.equals(NotificationConstants.ACTION_DECLINE)) {
+        } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO: send decline message
         }
@@ -54,7 +59,7 @@ public class NotificationService extends IntentService {
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(0) //TODO: klein icoontje instellen (fotootje van gerecht?)
+                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht?)
                         .setContentTitle(NotificationConstants.CONTENT_TITLE)
                         .setContentText("The Italian Prime Minister" + NotificationConstants.CONTENT_TEXT_POSTFIX) //TODO: naam van inviter invoegen
                         .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
@@ -67,9 +72,9 @@ public class NotificationService extends IntentService {
                  */
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg)) //TODO: msg is hier een extra string van de intent, wat doen we hiermee?
-                        .addAction (0,   //TODO: choose slots icoontje invoegen
+                        .addAction(0,   //TODO: choose slots icoontje invoegen
                                 NotificationConstants.BUTTON_CHOOSE_SLOTS, piChooseSlots)
-                        .addAction (0,   //TODO: decline icoontje invoegen
+                        .addAction(0,   //TODO: decline icoontje invoegen
                                 NotificationConstants.BUTTON_DECLINE, piDecline);
 
         /*
