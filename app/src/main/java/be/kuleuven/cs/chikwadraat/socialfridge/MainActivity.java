@@ -1,28 +1,17 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import java.io.IOException;
-
+import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
@@ -45,6 +34,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         userNameView = (TextView) findViewById(R.id.current_user_name);
 
         findViewById(R.id.action_create_party).setOnClickListener(this);
+        findViewById(R.id.action_test_notification).setOnClickListener(this);
 
         if (savedInstanceState != null) {
             // TODO Initialize stuff
@@ -75,8 +65,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_test_notification:
-                Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
+                Intent serviceIntent = new Intent(this, NotificationService.class);
+                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
+                serviceIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, "Hello world!");
                 startService(serviceIntent);
+                break;
         }
     }
 

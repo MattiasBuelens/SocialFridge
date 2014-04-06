@@ -44,6 +44,8 @@
             android:name=".party.PartyInviteActivity"
             android:label="@string/party_invite_title" />
 
+        <service android:name=".notifications.NotificationService" />
+
         <!-- Facebook -->
 
         <meta-data
