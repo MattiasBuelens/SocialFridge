@@ -138,6 +138,7 @@ public class LoginActivity extends BaseActivity {
         Log.e(TAG, "Failed to register user: " + error.getErrorMessage());
         removeRegisterTask();
         hideProgressDialog();
+        logout();
 
         handleError(error);
     }
@@ -146,6 +147,7 @@ public class LoginActivity extends BaseActivity {
         Log.e(TAG, "Failed to register user: " + exception.getMessage());
         removeRegisterTask();
         hideProgressDialog();
+        logout();
 
         new AlertDialog.Builder(this)
                 .setPositiveButton(android.R.string.ok, null)
