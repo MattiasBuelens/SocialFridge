@@ -306,6 +306,9 @@ public class Party {
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
      */
     public void invite(User invitee) throws IllegalArgumentException {
+        if (!isInviting()) {
+            throw new IllegalArgumentException("Cannot invite user, no longer inviting.");
+        }
         Ref<PartyMember> ref = getMember(invitee.getID());
         PartyMember member;
         if (ref != null) {
@@ -355,6 +358,9 @@ public class Party {
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
     public void acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException {
+        if (!isInviting()) {
+            throw new IllegalArgumentException("Cannot accept invite, no longer inviting.");
+        }
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot accept invite, was not invited.");
@@ -401,6 +407,9 @@ public class Party {
      * @throws IllegalArgumentException If the user is the host or was not in the party.
      */
     public void leave(User invitee) throws IllegalArgumentException {
+        if (!isInviting()) {
+            throw new IllegalArgumentException("Cannot leave, no longer inviting.");
+        }
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot leave, was not in the party.");

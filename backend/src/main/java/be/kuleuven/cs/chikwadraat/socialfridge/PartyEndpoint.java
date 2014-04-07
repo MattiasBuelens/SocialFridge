@@ -110,8 +110,9 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
 
-        // TODO Send invite to friend
-        // TODO Send update to all party members
+        // Send invite to friend
+        // TODO Move to task queue
+        new Messages().partyInvited(partyID, friend);
     }
 
     /**
@@ -143,6 +144,9 @@ public class PartyEndpoint extends BaseEndpoint {
                 ofy().save().entities(party, friend).now();
             }
         });
+
+        // TODO Move to task queue
+        new Messages().partyInviteCanceled(partyID, friend);
     }
 
     /**
@@ -154,14 +158,14 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
     public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
         // TODO Add time slots parameter
-        final String userID = getUserID(accessToken);
+        String userID = getUserID(accessToken);
+        final User user = getUser(userID);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
         transact(new VoidWork<ServiceException>() {
             @Override
             public void vrun() throws ServiceException {
-                User user = getUser(userID);
-                if (user == null) {
-                    throw new NotFoundException("User not found");
-                }
                 Party party = getParty(partyID, true);
                 // Accept invite
                 party.acceptInvite(user, timeSlots.getList());
@@ -169,6 +173,10 @@ public class PartyEndpoint extends BaseEndpoint {
                 ofy().save().entities(party, user).now();
             }
         });
+
+        // TODO Move to task queue
+        //Party party = getParty(partyID, false);
+        //new Messages().partyPartnerJoined(partyID, user, party.getMembers());
     }
 
     /**
