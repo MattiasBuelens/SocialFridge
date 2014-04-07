@@ -58,7 +58,6 @@
         android:id="@+id/party_action_find_partners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/time_slots_fragment"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:text="@string/party_action_find_partners"

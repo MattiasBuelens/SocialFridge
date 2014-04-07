@@ -36,24 +36,27 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     private static final String TAG = "CreatePartyActivity";
 
+    private Button findPartnersButton;
+    private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
     private CreatePartyTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.choose_timeslots);
+        setContentView(R.layout.party_create);
 
-        Button findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
+        findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
+        dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
+        timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
+
         findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
         slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.UNSPECIFIED));
         slots.add(new TimeSlotSelection(18, 19, TimeSlotSelection.State.INCLUDED));
-        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.INCLUDED));
-        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.EXCLUDED));
-
-        timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
+        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.EXCLUDED));
+        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.DISABLED));
         timeSlotsFragment.setDefaultTimeSlots(slots);
 
         // Re-attach to registration task
@@ -81,7 +84,6 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
     }
 
     private Date getPartyDate() {
-        RadioGroup dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         int checkedDayId = dayGroup.getCheckedRadioButtonId();
         Calendar calendar = Calendar.getInstance();
         if (checkedDayId == R.id.party_create_choose_tomorrow) {
