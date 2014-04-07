@@ -4,6 +4,7 @@ import com.google.appengine.repackaged.com.google.common.collect.Iterables;
 import com.googlecode.objectify.annotation.Embed;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,15 @@ public class TimeSlot {
 
     public static Collection<TimeSlot> merge(Iterable<TimeSlot>... slots) {
         return merge(Iterables.concat(slots));
+    }
+
+    public static class BeginHourComparator implements Comparator<TimeSlot> {
+
+        @Override
+        public int compare(TimeSlot left, TimeSlot right) {
+            return Integer.compare(left.getBeginHour(), right.getBeginHour());
+        }
+
     }
 
 }

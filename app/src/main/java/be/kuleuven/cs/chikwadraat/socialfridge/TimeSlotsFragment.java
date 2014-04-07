@@ -8,10 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.CompoundButton;
+import android.widget.GridView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -95,6 +96,18 @@ public class TimeSlotsFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putParcelableArrayList(ARG_TIME_SLOTS, timeSlotSelections);
+    }
+
+    public List<TimeSlotSelection> getTimeSlots() {
+        return timeSlotSelections;
+    }
+
+    public void setTimeSlots(List<TimeSlotSelection> timeSlots) {
+        if (timeSlotAdapter != null) {
+            timeSlotAdapter.setData(timeSlots);
+        } else {
+            timeSlotSelections = new ArrayList<TimeSlotSelection>(timeSlots);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

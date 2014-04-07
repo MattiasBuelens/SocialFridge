@@ -34,6 +34,7 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
     public List<PartyMember> loadInBackground() {
         Parties parties = Endpoints.parties(getContext());
         Session session = Session.getActiveSession();
+
         try {
             return parties.getCandidates(partyID, session.getAccessToken()).execute().getItems();
         } catch (IOException e) {

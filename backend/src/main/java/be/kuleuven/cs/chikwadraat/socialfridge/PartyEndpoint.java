@@ -15,8 +15,8 @@ import java.util.Map;
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
@@ -46,27 +46,28 @@ public class PartyEndpoint extends BaseEndpoint {
     /**
      * Insert a party.
      *
-     * @param party       The party to be inserted.
-     * @param accessToken The access token for authorization.
+     * @param partyBuilder A builder describing the party to be inserted.
+     * @param accessToken  The access token for authorization.
      * @return The inserted party.
      */
     @ApiMethod(name = "insertParty", path = "party", httpMethod = ApiMethod.HttpMethod.POST)
-    public Party insertParty(final Party party, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = party.getHostID();
+    public Party insertParty(final PartyBuilder partyBuilder, @Named("accessToken") String accessToken) throws ServiceException {
+        String userID = partyBuilder.getHostID();
         checkAccess(accessToken, userID);
-        if (party.getID() != null) {
-            throw new NotFoundException("Party already exists");
-        }
         final User user = getUser(userID);
         return transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
+                // Create party
+                final Party party = new Party();
+                // TODO Party date
+                // TODO Dish
                 // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host
-                PartyMember member = party.setHost(user);
+                party.setHost(user, partyBuilder.getHostTimeSlots());
                 // Save again
-                ofy().save().entities(party, member, user).now();
+                ofy().save().entities(party, user).now();
                 return party;
             }
         });
@@ -100,9 +101,9 @@ public class PartyEndpoint extends BaseEndpoint {
                     throw new UnauthorizedException("User must be party host to invite friends");
                 }
                 // Add to invitees
-                PartyMember member = party.invite(friend);
+                party.invite(friend);
                 // Save
-                ofy().save().entities(party, member, friend).now();
+                ofy().save().entities(party, friend).now();
             }
         });
 
@@ -134,9 +135,9 @@ public class PartyEndpoint extends BaseEndpoint {
                     throw new UnauthorizedException("User must be party host to manage invites");
                 }
                 // Cancel invite
-                PartyMember member = party.cancelInvite(friend);
+                party.cancelInvite(friend);
                 // Save
-                ofy().save().entities(party, member, friend).now();
+                ofy().save().entities(party, friend).now();
             }
         });
     }
@@ -160,9 +161,9 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // Accept invite
-                PartyMember member = party.acceptInvite(user, timeSlots.getList());
+                party.acceptInvite(user, timeSlots.getList());
                 // Save
-                ofy().save().entities(party, member, user).now();
+                ofy().save().entities(party, user).now();
             }
         });
     }
@@ -185,9 +186,9 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // Decline invite
-                PartyMember member = party.declineInvite(user);
+                party.declineInvite(user);
                 // Save
-                ofy().save().entities(party, member, user).now();
+                ofy().save().entities(party, user).now();
             }
         });
     }
@@ -210,9 +211,9 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // Leave
-                PartyMember member = party.leave(user);
+                party.leave(user);
                 // Save
-                ofy().save().entities(party, member, user).now();
+                ofy().save().entities(party, user).now();
             }
         });
     }

@@ -3,7 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import java.util.List;
 
 /**
- * Created by Mattias on 7/04/2014.
+ * Builder for creating new parties.
  */
 public class PartyBuilder {
 
@@ -22,8 +22,8 @@ public class PartyBuilder {
         return hostID;
     }
 
-    public void setHostID(String hostID) {
-        this.hostID = hostID;
+    public void setHostID(String host) {
+        this.hostID = host;
     }
 
     public List<TimeSlot> getHostTimeSlots() {

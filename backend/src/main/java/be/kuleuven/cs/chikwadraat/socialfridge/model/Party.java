@@ -2,7 +2,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -10,6 +9,7 @@ import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -92,19 +92,20 @@ public class Party {
         return host.getKey().getName();
     }
 
-    public void setHostID(String hostID) {
-        host = Ref.create(Key.create(User.class, hostID));
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public User getHost() {
+        return host.get();
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public PartyMember setHost(User host) {
+    public void setHost(User host, List<TimeSlot> timeSlots) {
         // Set as host
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
-        member = updateMember(member);
+        member.setTimeSlots(timeSlots);
+        updateMember(member);
         // Add to party
         host.addParty(this);
-        return member;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -177,6 +178,8 @@ public class Party {
             // Add member
             members.add(Ref.create(member));
         }
+        // Save member
+        ofy().save().entity(member).now();
         // Update partners if needed
         if (wasInParty != member.isInParty()) {
             updatePartner(member);
@@ -228,8 +231,14 @@ public class Party {
     /**
      * Merged time slots from partners.
      */
-    public List<TimeSlot> getTimeSlots() {
+    public Collection<TimeSlot> getTimeSlots() {
         return timeSlots;
+    }
+
+    protected void setTimeSlots(Collection<TimeSlot> timeSlots) {
+        this.timeSlots.clear();
+        this.timeSlots.addAll(timeSlots);
+        Collections.sort(this.timeSlots, new TimeSlot.BeginHourComparator());
     }
 
     protected void updateTimeSlots() {
@@ -241,25 +250,23 @@ public class Party {
         // Merge time slots
         Collection<TimeSlot> mergedSlots = TimeSlot.merge(allSlots);
         // Replace time slots
-        timeSlots.clear();
-        timeSlots.addAll(mergedSlots);
+        setTimeSlots(mergedSlots);
     }
 
     /**
      * Invite a user to this party.
      *
      * @param invitee The user to invite.
-     * @return The member to be saved.
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
      */
-    public PartyMember invite(User invitee) throws IllegalArgumentException {
+    public void invite(User invitee) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         PartyMember member;
         if (ref != null) {
             member = ref.get();
             if (!member.needsInvite()) {
                 // Already in party or invited, don't re-invite
-                return member;
+                return;
             }
             if (!member.invite()) {
                 // Could not invite, previously declined
@@ -268,21 +275,19 @@ public class Party {
         } else {
             // Add invitee
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
-            member = updateMember(member);
+            updateMember(member);
         }
         // Add to party
         invitee.addParty(this);
-        return member;
     }
 
     /**
      * Cancel an invite for a user.
      *
      * @param invitee The user of whom to cancel the invite.
-     * @return The member to be saved.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
-    public PartyMember cancelInvite(User invitee) throws IllegalArgumentException {
+    public void cancelInvite(User invitee) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited.");
@@ -291,9 +296,9 @@ public class Party {
         if (!member.cancelInvite()) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited or is already in the party.");
         }
+        updateMember(member);
         // Remove from party
         invitee.removeParty(this);
-        return member;
     }
 
     /**
@@ -301,10 +306,9 @@ public class Party {
      *
      * @param invitee   The user of whom to accept the invite.
      * @param timeSlots The time slots chosen by the user.
-     * @return The member to be saved.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
-    public PartyMember acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException {
+    public void acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot accept invite, was not invited.");
@@ -313,22 +317,20 @@ public class Party {
         if (!member.acceptInvite()) {
             throw new IllegalArgumentException("Cannot accept invite, was not invited or is already in the party.");
         }
-        // Add to party (should already be added though)
-        invitee.addParty(this);
         // Set time slots
         member.setTimeSlots(timeSlots);
-        updatePartner(member);
-        return member;
+        updateMember(member);
+        // Add to party (should already be added though)
+        invitee.addParty(this);
     }
 
     /**
      * Decline a user's invite.
      *
      * @param invitee The user of whom to decline the invite.
-     * @return The member to be saved.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
-    public PartyMember declineInvite(User invitee) throws IllegalArgumentException {
+    public void declineInvite(User invitee) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot decline invite, was not invited.");
@@ -337,23 +339,22 @@ public class Party {
         if (!member.declineInvite()) {
             throw new IllegalArgumentException("Cannot decline invite, was not invited or is already in the party.");
         }
-        // Remove from party
-        invitee.removeParty(this);
         /*
          * Note: Do NOT remove from members!
          * We should never allow a user to be re-invited after he declined.
          */
-        return member;
+        updateMember(member);
+        // Remove from party
+        invitee.removeParty(this);
     }
 
     /**
      * Make a user leave the party.
      *
      * @param invitee The user to leave.
-     * @return The member to be saved.
      * @throws IllegalArgumentException If the user is the host or was not in the party.
      */
-    public PartyMember leave(User invitee) throws IllegalArgumentException {
+    public void leave(User invitee) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(invitee.getID());
         if (ref == null) {
             throw new IllegalArgumentException("Cannot leave, was not in the party.");
@@ -362,10 +363,9 @@ public class Party {
         if (!member.leave()) {
             throw new IllegalArgumentException("Cannot leave, is host or was not in the party.");
         }
+        updateMember(member);
         // Remove from party
         invitee.removeParty(this);
-        updatePartner(member);
-        return member;
     }
 
     public static enum Status {
