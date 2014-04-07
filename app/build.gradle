@@ -34,6 +34,8 @@ repositories {
     }
 }
 
+def googleApiClientVersion = "1.18.0-rc"
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -57,10 +59,10 @@ dependencies {
      */
 
     // Play Services
-    compile "com.google.android.gms:play-services:4.2.+"
+    compile "com.google.android.gms:play-services:4.3.+"
 
     // Google API client library
-    compile(group: "com.google.api-client", name: "google-api-client", version: "1.18.0-rc") {
+    compile(group: "com.google.api-client", name: "google-api-client", version: googleApiClientVersion) {
         // Exclude artifacts that the Android SDK/Runtime provides.
         exclude(group: "xpp3", module: "xpp3")
         exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -69,16 +71,14 @@ dependencies {
     }
     // Android extensions for the Google API client library.
     compile(group: "com.google.api-client", name: "google-api-client-android",
-            version: "1.18.0-rc") {
+            version: googleApiClientVersion) {
         // Exclude play services, since we"re not using this yet.
         exclude(group: "com.google.android.google-play-services", module: "google-play-services")
     }
 
-    // Android extensions for Google HTTP Client
-    compile(group: "com.google.http-client", name: "google-http-client-android",
-            version: "1.18.0-rc") {
-        exclude(group: "com.google.android", module: "android")
-    }
+    // GSON extensions for Google HTTP Client
+    compile(group: "com.google.http-client", name: "google-http-client-gson",
+            version: googleApiClientVersion)
 }
 
 // Signing

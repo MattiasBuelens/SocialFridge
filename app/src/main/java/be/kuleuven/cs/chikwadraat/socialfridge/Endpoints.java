@@ -3,8 +3,10 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 import android.content.Context;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
@@ -27,13 +29,21 @@ public class Endpoints {
     private static final String TEST_ROOT_URL = "http://192.168.1.163:8080/_ah/api/";
 
     public static Users users(Context context) {
-        Users.Builder builder = new Users.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
+        Users.Builder builder = new Users.Builder(newHttpTransport(), getJsonFactory(), null);
         return prepare(builder, context).build();
     }
 
     public static Parties parties(Context context) {
-        Parties.Builder builder = new Parties.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null);
+        Parties.Builder builder = new Parties.Builder(newHttpTransport(), getJsonFactory(), null);
         return prepare(builder, context).build();
+    }
+
+    private static HttpTransport newHttpTransport() {
+        return AndroidHttp.newCompatibleTransport();
+    }
+
+    private static JsonFactory getJsonFactory() {
+        return GsonFactory.getDefaultInstance();
     }
 
     private static <T extends AbstractGoogleJsonClient.Builder> T prepare(T builder, Context context) {
