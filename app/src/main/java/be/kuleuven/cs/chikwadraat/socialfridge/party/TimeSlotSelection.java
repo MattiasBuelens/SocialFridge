@@ -65,6 +65,10 @@ public class TimeSlotSelection implements Parcelable {
         return getState() == State.EXCLUDED;
     }
 
+    public boolean isDisabled() {
+        return getState() == State.DISABLED;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -89,7 +93,7 @@ public class TimeSlotSelection implements Parcelable {
     };
 
     public static enum State {
-        UNSPECIFIED, INCLUDED, EXCLUDED
+        UNSPECIFIED, INCLUDED, EXCLUDED, DISABLED
     }
 
 }

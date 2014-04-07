@@ -162,34 +162,46 @@ public class TimeSlotsFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = convertView;
+            ViewHolder vh;
             if (view == null) {
                 view = View.inflate(getContext(), R.layout.timeslot, null);
+                vh = new ViewHolder();
+                vh.toggleButton = (ToggleButton) view.findViewById(R.id.time_slot_toggle);
+                view.setTag(vh);
+            } else {
+                vh = (ViewHolder) view.getTag();
             }
 
-            ToggleButton toggleButton = (ToggleButton) view.findViewById(R.id.time_slot_toggle);
-
             TimeSlotSelection slot = getItem(position);
+            vh.position = position;
             String text = slot.getBeginHour() + "h - " + slot.getEndHour() + "h";
-            toggleButton.setTextOff(text);
-            toggleButton.setTextOn(text);
-            toggleButton.setChecked(slot.isIncluded());
-            toggleButton.setOnCheckedChangeListener(this);
-
-            view.setTag(position);
+            vh.toggleButton.setTextOff(text);
+            vh.toggleButton.setTextOn(text);
+            vh.toggleButton.setChecked(slot.isIncluded());
+            vh.toggleButton.setEnabled(!slot.isDisabled());
+            vh.toggleButton.setOnCheckedChangeListener(this);
+            vh.toggleButton.setTag(vh);
 
             return view;
         }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            int position = (Integer) ((View) buttonView.getParent()).getTag();
-            TimeSlotSelection slot = getItem(position);
+            ViewHolder vh = (ViewHolder) buttonView.getTag();
+            TimeSlotSelection slot = getItem(vh.position);
+            if (slot.isDisabled()) return;
             if (isChecked) {
                 slot.setState(TimeSlotSelection.State.INCLUDED);
             } else {
                 slot.setState(TimeSlotSelection.State.EXCLUDED);
             }
         }
+
+        private static class ViewHolder {
+            ToggleButton toggleButton;
+            int position;
+        }
+
     }
 
 }
