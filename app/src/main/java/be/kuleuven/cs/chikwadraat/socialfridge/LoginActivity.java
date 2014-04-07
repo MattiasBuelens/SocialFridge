@@ -2,7 +2,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,7 +27,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 /**
  * Login activity.
  */
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements ObservableAsyncTask.Listener<LoginActivity.RegisterUserState, User> {
 
     private static final String TAG = "LoginActivity";
 
@@ -48,7 +47,7 @@ public class LoginActivity extends BaseActivity {
         // Re-attach to registration task
         task = (RegisterUserTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attachActivity(this);
+            task.attach(this);
         }
     }
 
@@ -91,13 +90,13 @@ public class LoginActivity extends BaseActivity {
         super.onLoggedIn(session, user);
 
         // Logged in on our app, done
-        onRegisterSuccess(user);
+        onResult(user);
     }
 
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
         if (task != null) {
-            task.detachActivity();
+            task.detach();
         }
         return task;
     }
@@ -118,12 +117,13 @@ public class LoginActivity extends BaseActivity {
 
     private void removeRegisterTask() {
         if (task != null) {
-            task.detachActivity();
+            task.detach();
             task = null;
         }
     }
 
-    protected void onRegisterSuccess(User user) {
+    @Override
+    public void onResult(User user) {
         Log.d(TAG, "User successfully registered");
         removeRegisterTask();
         hideProgressDialog();
@@ -134,36 +134,31 @@ public class LoginActivity extends BaseActivity {
         finish();
     }
 
-    protected void onRegisterError(FacebookRequestError error) {
-        Log.e(TAG, "Failed to register user: " + error.getErrorMessage());
-        removeRegisterTask();
-        hideProgressDialog();
-        logout();
-
-        handleError(error);
-    }
-
-    protected void onRegisterFailed(Exception exception) {
+    @Override
+    public void onError(Exception exception) {
         Log.e(TAG, "Failed to register user: " + exception.getMessage());
         removeRegisterTask();
         hideProgressDialog();
         logout();
 
-        new AlertDialog.Builder(this)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle(R.string.error_dialog_title)
-                .setMessage(exception.getMessage())
-                .show();
+        if (exception instanceof FacebookRequestException) {
+            // Handle Facebook error
+            handleError(((FacebookRequestException) exception).getError());
+        } else {
+            // Handle regular exception
+            new AlertDialog.Builder(this)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setTitle(R.string.error_dialog_title)
+                    .setMessage(exception.getMessage())
+                    .show();
+        }
     }
 
-    protected void onRegisterUpdateProgress(RegisterUserState state) {
+    @Override
+    public void onProgress(RegisterUserState... states) {
+        RegisterUserState state = states[0];
         Log.d(TAG, "Registration progress: " + state);
-
-        if (state.showProgress()) {
-            showProgressDialog();
-        } else {
-            hideProgressDialog();
-        }
+        showProgressDialog();
     }
 
     private void showProgressDialog() {
@@ -190,101 +185,46 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    protected static class RegisterUserTask extends AsyncTask<Void, RegisterUserState, Void> {
+    protected static class RegisterUserTask extends ObservableAsyncTask<Void, RegisterUserState, User> {
 
         private final Context context;
         private final Session session;
-        private LoginActivity activity;
-
-        private User user;
-        private FacebookRequestError error;
-        private Exception exception;
-        private RegisterUserState state;
 
         protected RegisterUserTask(LoginActivity activity, Session session) {
+            super(activity);
             this.context = activity.getApplicationContext();
             this.session = session;
-            this.state = RegisterUserState.WAITING;
-            attachActivity(activity);
         }
 
-        protected void attachActivity(LoginActivity activity) {
-            this.activity = activity;
-            switch (state) {
-                case SUCCESS:
-                    activity.onRegisterSuccess(user);
-                    break;
-                case FAILED:
-                    if (error != null) {
-                        activity.onRegisterError(error);
-                    } else {
-                        activity.onRegisterFailed(exception);
-                    }
-                    break;
-                default:
-                    activity.onRegisterUpdateProgress(state);
-            }
-        }
-
-        protected void detachActivity() {
-            this.activity = null;
-        }
-
-        private void setState(RegisterUserState state) {
-            this.state = state;
-            publishProgress(state);
-        }
-
-        private void setResult(User user) {
-            this.user = user;
-            setState(RegisterUserState.SUCCESS);
-        }
-
-        private void setError(FacebookRequestError e) {
-            error = e;
-            setState(RegisterUserState.FAILED);
-        }
-
-        private void setException(Exception e) {
-            exception = e;
-            setState(RegisterUserState.FAILED);
+        protected void attach(LoginActivity activity) {
+            super.attach(activity);
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        protected User run(Void... unused) throws Exception {
+            // Retrieve user information
+            postProgress(RegisterUserState.RETRIEVE_INFO);
+            User user = retrieveUserInfo();
+            if (user == null) return null;
+
+            // Register on GCM
+            postProgress(RegisterUserState.REGISTER_GCM);
+            user = registerGCM(user);
+
+            // Register user
+            postProgress(RegisterUserState.REGISTER_USER);
+            user = registerUser(user);
+
+            // Success
+            return user;
         }
 
-        @Override
-        protected Void doInBackground(Void... unused) {
-            try {
-                // Retrieve user information
-                setState(RegisterUserState.RETRIEVE_INFO);
-                User user = retrieveUserInfo();
-                if (user == null) return null;
-
-                // Register on GCM
-                setState(RegisterUserState.REGISTER_GCM);
-                user = registerGCM(user);
-
-                // Register user
-                setState(RegisterUserState.REGISTER_USER);
-                user = registerUser(user);
-
-                // Success
-                setResult(user);
-            } catch (IOException e) {
-                setException(e);
-            }
-            return null;
-        }
-
-        private User retrieveUserInfo() {
+        private User retrieveUserInfo() throws FacebookRequestException {
             // Retrieve user info
             Response response = Request.newMeRequest(session, null).executeAndWait();
             if (response.getError() != null) {
-                setError(response.getError());
-                return null;
+                // TODO Make Exception
+                throw new FacebookRequestException(response.getError());
             }
 
             // Create user
@@ -316,47 +256,12 @@ public class LoginActivity extends BaseActivity {
             return Endpoints.users(context);
         }
 
-        @Override
-        protected void onProgressUpdate(RegisterUserState... states) {
-            RegisterUserState state = states[0];
-            if (activity == null) {
-                Log.d(TAG, "onProgressUpdate() skipped -- no activity");
-            } else {
-                activity.onRegisterUpdateProgress(state);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            if (activity == null) {
-                Log.d(TAG, "onPostExecute() skipped -- no activity");
-            } else if (user != null) {
-                activity.onRegisterSuccess(user);
-            } else if (error != null) {
-                activity.onRegisterError(error);
-            } else if (exception != null) {
-                activity.onRegisterFailed(exception);
-            }
-        }
     }
 
     public static enum RegisterUserState {
-        WAITING(false),
-        RETRIEVE_INFO(true),
-        REGISTER_USER(true),
-        REGISTER_GCM(true),
-        SUCCESS(false),
-        FAILED(false);
-
-        private boolean showProgress;
-
-        private RegisterUserState(boolean showProgress) {
-            this.showProgress = showProgress;
-        }
-
-        public boolean showProgress() {
-            return showProgress;
-        }
+        RETRIEVE_INFO,
+        REGISTER_USER,
+        REGISTER_GCM
     }
 
 }
