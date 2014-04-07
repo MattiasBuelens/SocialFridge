@@ -92,7 +92,10 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             // targetActivity = PartyViewActivity.class;
         }
 
-        if (!targetActivity.isAssignableFrom(this.getClass())) {
+        // Seriously Android Studio, get your sh*t together.
+        // I should not need a cast for this.
+        Class<?> ownClass = ((Object) this).getClass();
+        if (!targetActivity.isAssignableFrom(ownClass)) {
             Intent intent = new Intent(this, targetActivity);
             intent.putExtra(EXTRA_PARTY_ID, getPartyID());
             startActivity(intent);
