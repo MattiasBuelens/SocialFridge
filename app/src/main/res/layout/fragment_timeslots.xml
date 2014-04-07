@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
     android:rowCount="1"
     android:columnCount="1">
 

@@ -55,7 +55,6 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
-
         getSupportLoaderManager().destroyLoader(LOADER_PARTY);
     }
 
@@ -68,7 +67,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     protected void loadParty() {
         Bundle args = new Bundle();
         args.putLong(LOADER_ARGS_PARTY_ID, getPartyID());
-        getSupportLoaderManager().restartLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
+        getSupportLoaderManager().initLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
     }
 
     private void firePartyLoaded(Party party) {

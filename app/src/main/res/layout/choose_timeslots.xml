@@ -8,10 +8,10 @@
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_horizontal_margin"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotActivity">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity">
 
     <TextView
-        android:id="@+id/time_text_day"
+        android:id="@+id/party_create_day_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -20,57 +20,48 @@
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <RadioGroup
-        android:id="@+id/time_day_options"
+        android:id="@+id/party_create_day_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/time_text_day"
+        android:layout_below="@+id/party_create_day_title"
         android:layout_marginBottom="@dimen/section_margin"
         android:layout_marginTop="@dimen/section_margin"
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/time_action_choose_today"
+            android:id="@+id/party_create_action_choose_today"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/time_choose_today" />
+            android:text="@string/party_create_choose_today" />
 
         <RadioButton
-            android:id="@+id/time_action_choose_tomorrow"
+            android:id="@+id/party_create_choose_tomorrow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="false"
-            android:text="@string/time_choose_tomorrow" />
+            android:text="@string/party_create_choose_tomorrow" />
 
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/time_text_slots"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/time_day_options"
-        android:text="@string/time_time_slots"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
-
     <fragment
         android:id="@+id/time_slots_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/time_text_slots"
+        android:layout_below="@+id/party_create_day_options"
         tools:layout="@layout/fragment_timeslots" />
 
     <Button
-        android:id="@+id/time_action_find_partners"
+        android:id="@+id/party_action_find_partners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/time_slots_fragment"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="@string/time_find_partners"
+        android:text="@string/party_action_find_partners"
         android:textAllCaps="true" />
-
 
 </RelativeLayout>

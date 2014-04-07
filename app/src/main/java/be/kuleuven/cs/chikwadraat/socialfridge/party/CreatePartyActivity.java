@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,23 +19,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
+import be.kuleuven.cs.chikwadraat.socialfridge.ObservableAsyncTask;
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
-import be.kuleuven.cs.chikwadraat.socialfridge.party.BasePartyActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
- * Time slot activity.
- * Choose time slots.
+ * Create party activity.
  */
-public class TimeSlotActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
+public class CreatePartyActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
 
-    private static final String TAG = "TimeSlotActivity";
-
-    private static final String DayStateKey = "DayState";
+    private static final String TAG = "CreatePartyActivity";
 
     private TimeSlotsFragment timeSlotsFragment;
     private CreatePartyTask task;
@@ -45,7 +44,7 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_timeslots);
 
-        Button findPartnersButton = (Button) findViewById(R.id.time_action_find_partners);
+        Button findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
         findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
@@ -75,17 +74,17 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.time_action_find_partners:
+            case R.id.party_action_find_partners:
                 createParty();
                 break;
         }
     }
 
     private Date getPartyDate() {
-        RadioGroup dayGroup = (RadioGroup) findViewById(R.id.time_day_options);
+        RadioGroup dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         int checkedDayId = dayGroup.getCheckedRadioButtonId();
         Calendar calendar = Calendar.getInstance();
-        if (checkedDayId == R.id.time_action_choose_tomorrow) {
+        if (checkedDayId == R.id.party_create_choose_tomorrow) {
             // Tomorrow
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -186,13 +185,13 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
         private final Context context;
         private final PartyBuilder builder;
 
-        protected CreatePartyTask(TimeSlotActivity activity, PartyBuilder builder) {
+        protected CreatePartyTask(CreatePartyActivity activity, PartyBuilder builder) {
             super(activity);
             this.context = activity.getApplicationContext();
             this.builder = builder;
         }
 
-        protected void attach(TimeSlotActivity activity) {
+        protected void attach(CreatePartyActivity activity) {
             super.attach(activity);
         }
 

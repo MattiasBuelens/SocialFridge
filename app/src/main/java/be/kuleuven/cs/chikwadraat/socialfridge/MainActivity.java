@@ -12,6 +12,7 @@ import com.facebook.widget.ProfilePictureView;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
@@ -61,7 +62,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_create_party:
-                Intent intent = new Intent(this, TimeSlotActivity.class);
+                Intent intent = new Intent(this, CreatePartyActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_test_notification:

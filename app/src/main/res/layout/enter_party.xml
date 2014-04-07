@@ -21,7 +21,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.TimeSlotsFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
         android:id="@+id/time_slots_fragment"
         tools:layout="@layout/fragment_timeslots"
         android:layout_alignParentLeft="true"

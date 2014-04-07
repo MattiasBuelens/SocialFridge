@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +14,9 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.

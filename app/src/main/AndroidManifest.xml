@@ -37,7 +37,7 @@
             android:label="@string/dishes_title" />
 
         <activity
-            android:name=".TimeSlotActivity"
+            android:name=".party.CreatePartyActivity"
             android:label="@string/time_slots_title" />
 
         <activity

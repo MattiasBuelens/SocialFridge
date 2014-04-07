@@ -37,9 +37,9 @@
     <string name="time_slots_title">Time slots</string>
     <string name="time_day">Day</string>
     <string name="time_time_slots">Time slots</string>
-    <string name="time_choose_today">Today</string>
-    <string name="time_choose_tomorrow">Tomorrow</string>
-    <string name="time_find_partners">Find partners</string>
+    <string name="party_create_choose_today">Today</string>
+    <string name="party_create_choose_tomorrow">Tomorrow</string>
+    <string name="party_action_find_partners">Find partners</string>
 
     <!-- Final screen -->
     <string name="final_screen_done">Done</string>

@@ -4,9 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-
 import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
