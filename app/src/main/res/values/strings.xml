@@ -11,7 +11,7 @@
     <string name="action_logout">Log out</string>
 
     <!-- Login -->
-    <string name="login_progress">Logging in on %1$sy&#8230;</string>
+    <string name="login_progress">Logging in on %1$s&#8230;</string>
 
     <!-- Start -->
     <string name="start_action_create_party">Create Cooking Party</string>

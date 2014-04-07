@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.facebook.Session;
+import com.google.api.client.util.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -109,8 +110,8 @@ public class TimeSlotActivity extends BaseActivity implements View.OnClickListen
 
         PartyBuilder builder = new PartyBuilder();
         builder.setHostID(getLoggedInUser().getId());
+        builder.setDate(new DateTime(getPartyDate()));
         builder.setHostTimeSlots(getTimeSlots());
-        // TODO builder.setDate(getPartyDate());
 
         task = new CreatePartyTask(this, builder);
         task.execute();

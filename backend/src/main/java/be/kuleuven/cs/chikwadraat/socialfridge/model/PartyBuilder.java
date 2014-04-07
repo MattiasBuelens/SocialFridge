@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -8,14 +9,10 @@ import java.util.List;
 public class PartyBuilder {
 
     private String hostID;
+    private Date date;
     private List<TimeSlot> hostTimeSlots;
 
     public PartyBuilder() {
-    }
-
-    public PartyBuilder(String hostID, List<TimeSlot> hostTimeSlots) {
-        this.hostID = hostID;
-        this.hostTimeSlots = hostTimeSlots;
     }
 
     public String getHostID() {
@@ -24,6 +21,14 @@ public class PartyBuilder {
 
     public void setHostID(String host) {
         this.hostID = host;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public List<TimeSlot> getHostTimeSlots() {

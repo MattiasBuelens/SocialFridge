@@ -10,6 +10,7 @@ import com.googlecode.objectify.annotation.Load;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,6 +72,16 @@ public class Party {
      */
     private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
+    /**
+     * Party date.
+     */
+    private Date date;
+
+    /**
+     * Date created.
+     */
+    private Date dateCreated;
+
     public Party() {
     }
 
@@ -122,6 +133,41 @@ public class Party {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean isInviting() {
+        return getStatus() == Status.INVITING;
+    }
+
+    public boolean isArranging() {
+        return getStatus() == Status.ARRANGING;
+    }
+
+    public boolean isDone() {
+        return getStatus() == Status.DONE;
+    }
+
+    /**
+     * Party date.
+     * When {@link #isDone() not done yet}, the time part is not yet configured and should be ignored.
+     */
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    /**
+     * Date created.
+     */
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     /**

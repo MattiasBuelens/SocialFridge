@@ -9,6 +9,7 @@ import com.google.api.server.spi.response.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -46,13 +47,13 @@ public class PartyEndpoint extends BaseEndpoint {
     /**
      * Insert a party.
      *
-     * @param partyBuilder A builder describing the party to be inserted.
-     * @param accessToken  The access token for authorization.
+     * @param builder     A builder describing the party to be inserted.
+     * @param accessToken The access token for authorization.
      * @return The inserted party.
      */
     @ApiMethod(name = "insertParty", path = "party", httpMethod = ApiMethod.HttpMethod.POST)
-    public Party insertParty(final PartyBuilder partyBuilder, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = partyBuilder.getHostID();
+    public Party insertParty(final PartyBuilder builder, @Named("accessToken") String accessToken) throws ServiceException {
+        String userID = builder.getHostID();
         checkAccess(accessToken, userID);
         final User user = getUser(userID);
         return transact(new Work<Party, ServiceException>() {
@@ -60,12 +61,14 @@ public class PartyEndpoint extends BaseEndpoint {
             public Party run() throws ServiceException {
                 // Create party
                 final Party party = new Party();
-                // TODO Party date
+                party.setDateCreated(new Date());
+                // Party date
+                party.setDate(builder.getDate());
                 // TODO Dish
                 // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host
-                party.setHost(user, partyBuilder.getHostTimeSlots());
+                party.setHost(user, builder.getHostTimeSlots());
                 // Save again
                 ofy().save().entities(party, user).now();
                 return party;
