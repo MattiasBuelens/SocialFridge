@@ -48,10 +48,10 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
-        slots.add(new TimeSlotSelection(17, 18, TimeSlotToggleState.UNSPECIFIED));
-        slots.add(new TimeSlotSelection(18, 19, TimeSlotToggleState.INCLUDED));
-        slots.add(new TimeSlotSelection(19, 20, TimeSlotToggleState.INCLUDED));
-        slots.add(new TimeSlotSelection(20, 21, TimeSlotToggleState.EXCLUDED));
+        slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.UNSPECIFIED));
+        slots.add(new TimeSlotSelection(18, 19, TimeSlotSelection.State.INCLUDED));
+        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.INCLUDED));
+        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.EXCLUDED));
 
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
         timeSlotsFragment.setDefaultTimeSlots(slots);

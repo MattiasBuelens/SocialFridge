@@ -185,9 +185,9 @@ public class TimeSlotsFragment extends Fragment {
             int position = (Integer) ((View) buttonView.getParent()).getTag();
             TimeSlotSelection slot = getItem(position);
             if (isChecked) {
-                slot.setState(TimeSlotToggleState.INCLUDED);
+                slot.setState(TimeSlotSelection.State.INCLUDED);
             } else {
-                slot.setState(TimeSlotToggleState.EXCLUDED);
+                slot.setState(TimeSlotSelection.State.EXCLUDED);
             }
         }
     }

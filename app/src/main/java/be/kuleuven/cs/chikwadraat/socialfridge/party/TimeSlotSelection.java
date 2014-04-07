@@ -10,10 +10,10 @@ public class TimeSlotSelection implements Parcelable {
 
     private int beginHour;
     private int endHour;
-    private TimeSlotToggleState state;
-    private static final TimeSlotToggleState defaultState = TimeSlotToggleState.UNSPECIFIED;
+    private State state;
+    private static final State defaultState = State.UNSPECIFIED;
 
-    public TimeSlotSelection(int beginHour, int endHour, TimeSlotToggleState state) {
+    public TimeSlotSelection(int beginHour, int endHour, State state) {
         this.beginHour = beginHour;
         this.endHour = endHour;
         this.state = state;
@@ -26,7 +26,7 @@ public class TimeSlotSelection implements Parcelable {
     protected TimeSlotSelection(Parcel in) {
         this.beginHour = in.readInt();
         this.endHour = in.readInt();
-        this.state = TimeSlotToggleState.valueOf(in.readString());
+        this.state = State.valueOf(in.readString());
     }
 
     public int getBeginHour() {
@@ -45,20 +45,24 @@ public class TimeSlotSelection implements Parcelable {
         this.endHour = endHour;
     }
 
-    public TimeSlotToggleState getState() { return state; }
+    public State getState() {
+        return state;
+    }
 
-    public void setState(TimeSlotToggleState state) { this.state = state; }
+    public void setState(State state) {
+        this.state = state;
+    }
 
     public boolean isUnspecified() {
-        return getState() == TimeSlotToggleState.UNSPECIFIED;
+        return getState() == State.UNSPECIFIED;
     }
 
     public boolean isIncluded() {
-        return getState() == TimeSlotToggleState.INCLUDED;
+        return getState() == State.INCLUDED;
     }
 
     public boolean isExcluded() {
-        return getState() == TimeSlotToggleState.EXCLUDED;
+        return getState() == State.EXCLUDED;
     }
 
     @Override
@@ -83,5 +87,9 @@ public class TimeSlotSelection implements Parcelable {
             return new TimeSlotSelection[size];
         }
     };
+
+    public static enum State {
+        UNSPECIFIED, INCLUDED, EXCLUDED
+    }
 
 }
