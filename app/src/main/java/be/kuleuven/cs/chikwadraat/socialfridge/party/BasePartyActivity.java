@@ -26,7 +26,6 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     private static final int LOADER_PARTY = 1;
     private static final String LOADER_ARGS_PARTY_ID = "party_id";
-    private static final String LOADER_ARGS_USER_ID = "user_id";
 
     private long partyID;
 
@@ -70,6 +69,37 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         getSupportLoaderManager().initLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
     }
 
+    /**
+     * Redirects to the appropriate activity
+     * based on the new party state.
+     */
+    protected void redirectIfNeeded(Party party, User user) {
+        Class<?> targetActivity = null;
+        if (party.getHostID().equals(user.getId())) {
+            // User is host
+            if (party.getInviting()) {
+                targetActivity = PartyInviteActivity.class;
+            } else if (party.getArranging()) {
+                // TODO Set correct activity
+                // targetActivity = PartyArrangeActivity.class;
+            } else if (party.getDone()) {
+                // TODO Set correct activity
+                // targetActivity = PartyViewActivity.class;
+            }
+        } else {
+            // User is partner
+            // TODO Set correct activity
+            // targetActivity = PartyViewActivity.class;
+        }
+
+        if (!targetActivity.isAssignableFrom(this.getClass())) {
+            Intent intent = new Intent(this, targetActivity);
+            intent.putExtra(EXTRA_PARTY_ID, getPartyID());
+            startActivity(intent);
+            finish();
+        }
+    }
+
     private void firePartyLoaded(Party party) {
         User user = getLoggedInUser();
         if (user == null) return;
@@ -105,6 +135,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     @Override
     public void onPartyLoaded(Party party, User user) {
+        redirectIfNeeded(party, user);
     }
 
     @Override

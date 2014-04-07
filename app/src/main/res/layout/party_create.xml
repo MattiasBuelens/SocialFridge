@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="@string/time_day"
+        android:text="@string/party_create_day"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <RadioGroup

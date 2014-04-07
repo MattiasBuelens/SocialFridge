@@ -38,7 +38,7 @@
 
         <activity
             android:name=".party.CreatePartyActivity"
-            android:label="@string/time_slots_title" />
+            android:label="@string/party_create_title" />
 
         <activity
             android:name=".party.PartyInviteActivity"

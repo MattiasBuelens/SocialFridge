@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/time_slots_title"
+        android:text="@string/party_create_title"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
 
