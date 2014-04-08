@@ -66,7 +66,7 @@ public abstract class BaseEndpoint extends FacebookAuthEndpoint {
      * @param <E> The (checked) exception thrown by the transaction.
      */
     public static interface Work<R, E extends Exception> {
-        R run() throws E;
+        public R run() throws E;
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class BaseEndpoint extends FacebookAuthEndpoint {
             return null;
         }
 
-        abstract void vrun() throws E;
+        public abstract void vrun() throws E;
 
     }
 

@@ -275,6 +275,29 @@ public class Party {
     }
 
     /**
+     * Update recipients.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Collection<PartyMember> getUpdateMembers() {
+        List<PartyMember> updateMembers = new ArrayList<PartyMember>();
+        for (PartyMember member : getMembers()) {
+            if (member.receivesUpdates()) {
+                updateMembers.add(member);
+            }
+        }
+        return updateMembers;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Collection<User> getUpdateUsers() {
+        List<String> userIDs = new ArrayList<String>();
+        for (PartyMember member : getUpdateMembers()) {
+            userIDs.add(member.getUserID());
+        }
+        return ofy().load().type(User.class).ids(userIDs).values();
+    }
+
+    /**
      * Merged time slots from partners.
      */
     public Collection<TimeSlot> getTimeSlots() {

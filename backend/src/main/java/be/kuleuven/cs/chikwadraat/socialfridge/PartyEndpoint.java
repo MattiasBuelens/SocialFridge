@@ -20,6 +20,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
@@ -111,8 +112,11 @@ public class PartyEndpoint extends BaseEndpoint {
         });
 
         // Send invite to friend
-        // TODO Move to task queue
-        new Messages().partyInvited(partyID, friend);
+        List<UserMessage> messages = Messages.partyInvited(partyID)
+                .invitee(friend)
+                .recipients(friend)
+                .build();
+        new UserMessageEndpoint().addMessages(messages);
     }
 
     /**
@@ -145,8 +149,12 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
 
-        // TODO Move to task queue
-        new Messages().partyInviteCanceled(partyID, friend);
+        // Send cancel invite to friend
+        List<UserMessage> messages = Messages.partyInviteCanceled(partyID)
+                .invitee(friend)
+                .recipients(friend)
+                .build();
+        new UserMessageEndpoint().addMessages(messages);
     }
 
     /**
@@ -157,26 +165,29 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
     public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
-        // TODO Add time slots parameter
         String userID = getUserID(accessToken);
         final User user = getUser(userID);
         if (user == null) {
             throw new NotFoundException("User not found");
         }
-        transact(new VoidWork<ServiceException>() {
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
+            public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // Accept invite
                 party.acceptInvite(user, timeSlots.getList());
                 // Save
                 ofy().save().entities(party, user).now();
+                return party;
             }
         });
-
-        // TODO Move to task queue
-        //Party party = getParty(partyID, false);
-        //new Messages().partyPartnerJoined(partyID, user, party.getMembers());
+        // Send update to party members
+        List<UserMessage> messages = Messages.partyUpdated(partyID)
+                .reason(Messages.PartyUpdateReason.JOINED)
+                .reasonUser(user)
+                .recipients(party.getUpdateUsers())
+                .build();
+        new UserMessageEndpoint().addMessages(messages);
     }
 
     /**
@@ -187,21 +198,23 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "declineInvite", path = "party/{partyID}/declineInvite", httpMethod = ApiMethod.HttpMethod.GET)
     public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        final String userID = getUserID(accessToken);
-        transact(new VoidWork<ServiceException>() {
+        String userID = getUserID(accessToken);
+        final User user = getUser(userID);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
-                User user = getUser(userID);
-                if (user == null) {
-                    throw new NotFoundException("User not found");
-                }
+            public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // Decline invite
                 party.declineInvite(user);
                 // Save
                 ofy().save().entities(party, user).now();
+                return party;
             }
         });
+        // TODO Send update to host?
     }
 
     /**
@@ -212,21 +225,29 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "leaveParty", path = "party/{partyID}/leave", httpMethod = ApiMethod.HttpMethod.GET)
     public void leaveParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        final String userID = getUserID(accessToken);
-        transact(new VoidWork<ServiceException>() {
+        String userID = getUserID(accessToken);
+        final User user = getUser(userID);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
-                User user = getUser(userID);
-                if (user == null) {
-                    throw new NotFoundException("User not found");
-                }
+            public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // Leave
                 party.leave(user);
                 // Save
                 ofy().save().entities(party, user).now();
+                return party;
             }
         });
+        // Send update to party members
+        List<UserMessage> messages = Messages.partyUpdated(partyID)
+                .reason(Messages.PartyUpdateReason.LEFT)
+                .reasonUser(user)
+                .recipients(party.getUpdateUsers())
+                .build();
+        new UserMessageEndpoint().addMessages(messages);
     }
 
     /**

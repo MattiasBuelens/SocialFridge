@@ -117,6 +117,11 @@ public class PartyMember {
         return !(isInParty() || isInvited());
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public boolean receivesUpdates() {
+        return isInParty() || isInvited();
+    }
+
     /**
      * Time slots.
      */
@@ -129,8 +134,8 @@ public class PartyMember {
     }
 
     public TimeSlot getTimeSlot(int beginHour, int endHour) {
-        for(TimeSlot slot : getTimeSlots()) {
-            if(slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+        for (TimeSlot slot : getTimeSlots()) {
+            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
                 return slot;
             }
         }
