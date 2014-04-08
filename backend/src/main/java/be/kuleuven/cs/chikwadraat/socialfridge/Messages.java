@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageType;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 
@@ -15,50 +18,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
  */
 public class Messages {
 
-    public static final String ARG_TYPE = "type";
-    public static final String ARG_PARTY_ID = "party_id";
-    public static final String ARG_USER_ID = "user_id";
-    public static final String ARG_UPDATE_REASON = "party_update_reason";
-    public static final String ARG_UPDATE_USER_ID = "party_update_user_id";
-    public static final String ARG_UPDATE_USER_NAME = "party_update_user_name";
-
     private Messages() {
-    }
-
-    public enum MessageType {
-        PARTY_UPDATE("party_update", true),
-        PARTY_INVITE("party_invite", false),
-        PARTY_CANCEL_INVITE("party_cancel_invite", false);
-
-        private final String name;
-        private final boolean collapsed;
-
-        private MessageType(String name, boolean collapsed) {
-            this.name = name;
-            this.collapsed = collapsed;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean isCollapsed() {
-            return collapsed;
-        }
-    }
-
-    public enum PartyUpdateReason {
-        JOINED("partner_joined"), LEFT("partner_left"), DONE("done");
-
-        private final String name;
-
-        private PartyUpdateReason(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 
     protected static class Builder<T extends Builder> {
@@ -75,13 +35,14 @@ public class Messages {
             return recipients(Arrays.asList(newRecipients));
         }
 
+        @SuppressWarnings("unchecked")
         public T recipients(Collection<User> newRecipients) {
             recipients.addAll(newRecipients);
             return (T) this;
         }
 
         public List<UserMessage> build() {
-            data.put(ARG_TYPE, type.getName());
+            data.put(MessageConstants.ARG_TYPE, type.getName());
             String collapseKey = type.isCollapsed() ? type.getName() : null;
             List<UserMessage> results = new ArrayList<UserMessage>();
             for (User recipient : recipients) {
@@ -102,7 +63,7 @@ public class Messages {
         }
 
         public List<UserMessage> build() {
-            data.put(ARG_PARTY_ID, Long.toString(partyID));
+            data.put(MessageConstants.ARG_PARTY_ID, Long.toString(partyID));
             return super.build();
         }
 
@@ -129,10 +90,10 @@ public class Messages {
 
         public List<UserMessage> build() {
             if (reason != null) {
-                data.put(ARG_UPDATE_REASON, reason.getName());
+                data.put(MessageConstants.ARG_UPDATE_REASON, reason.getName());
                 if (reasonUser != null) {
-                    data.put(ARG_UPDATE_USER_ID, reasonUser.getID());
-                    data.put(ARG_UPDATE_USER_NAME, reasonUser.getName());
+                    data.put(MessageConstants.ARG_REASON_USER_ID, reasonUser.getID());
+                    data.put(MessageConstants.ARG_REASON_USER_NAME, reasonUser.getName());
                 }
             }
             return super.build();
@@ -142,10 +103,16 @@ public class Messages {
 
     public static class PartyInviteBuilder extends PartyBuilder<PartyInviteBuilder> {
 
+        private User host;
         private User invitee;
 
         protected PartyInviteBuilder(MessageType type, long partyID) {
             super(type, partyID);
+        }
+
+        public PartyInviteBuilder host(User host) {
+            this.host = host;
+            return this;
         }
 
         public PartyInviteBuilder invitee(User invitee) {
@@ -154,7 +121,9 @@ public class Messages {
         }
 
         public List<UserMessage> build() {
-            data.put(ARG_USER_ID, invitee.getID());
+            data.put(MessageConstants.ARG_INVITEE_USER_ID, invitee.getID());
+            data.put(MessageConstants.ARG_HOST_USER_ID, host.getID());
+            data.put(MessageConstants.ARG_HOST_USER_NAME, host.getName());
             return super.build();
         }
 
