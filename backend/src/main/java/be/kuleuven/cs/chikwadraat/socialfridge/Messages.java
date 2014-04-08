@@ -24,11 +24,13 @@ public class Messages {
     protected static class Builder<T extends Builder> {
 
         private final MessageType type;
-        protected final Map<String, String> data = new HashMap<String, String>();
+        private final String collapseKey;
+        private final Map<String, String> data = new HashMap<String, String>();
         private final List<User> recipients = new ArrayList<User>();
 
-        protected Builder(MessageType type) {
+        protected Builder(MessageType type, String collapseKey) {
             this.type = type;
+            this.collapseKey = collapseKey;
         }
 
         public T recipients(User... newRecipients) {
@@ -41,9 +43,12 @@ public class Messages {
             return (T) this;
         }
 
+        protected final void put(String key, String value) {
+            data.put(key, value);
+        }
+
         public List<UserMessage> build() {
-            data.put(MessageConstants.ARG_TYPE, type.getName());
-            String collapseKey = type.isCollapsed() ? type.getName() : null;
+            put(MessageConstants.ARG_TYPE, type.getName());
             List<UserMessage> results = new ArrayList<UserMessage>();
             for (User recipient : recipients) {
                 results.add(new UserMessage(recipient, collapseKey, data));
@@ -57,13 +62,13 @@ public class Messages {
 
         private final long partyID;
 
-        protected PartyBuilder(MessageType type, long partyID) {
-            super(type);
+        protected PartyBuilder(MessageType type, String collapseKey, long partyID) {
+            super(type, collapseKey);
             this.partyID = partyID;
         }
 
         public List<UserMessage> build() {
-            data.put(MessageConstants.ARG_PARTY_ID, Long.toString(partyID));
+            put(MessageConstants.ARG_PARTY_ID, Long.toString(partyID));
             return super.build();
         }
 
@@ -75,7 +80,7 @@ public class Messages {
         private User reasonUser;
 
         protected PartyUpdateBuilder(long partyID) {
-            super(MessageType.PARTY_UPDATE, partyID);
+            super(MessageType.PARTY_UPDATE, getCollapseKey(partyID), partyID);
         }
 
         public PartyUpdateBuilder reason(PartyUpdateReason reason) {
@@ -90,13 +95,17 @@ public class Messages {
 
         public List<UserMessage> build() {
             if (reason != null) {
-                data.put(MessageConstants.ARG_UPDATE_REASON, reason.getName());
+                put(MessageConstants.ARG_UPDATE_REASON, reason.getName());
                 if (reasonUser != null) {
-                    data.put(MessageConstants.ARG_REASON_USER_ID, reasonUser.getID());
-                    data.put(MessageConstants.ARG_REASON_USER_NAME, reasonUser.getName());
+                    put(MessageConstants.ARG_REASON_USER_ID, reasonUser.getID());
+                    put(MessageConstants.ARG_REASON_USER_NAME, reasonUser.getName());
                 }
             }
             return super.build();
+        }
+
+        private static String getCollapseKey(long partyID) {
+            return MessageType.PARTY_UPDATE.getName() + "#" + partyID;
         }
 
     }
@@ -107,7 +116,7 @@ public class Messages {
         private User invitee;
 
         protected PartyInviteBuilder(MessageType type, long partyID) {
-            super(type, partyID);
+            super(type, null, partyID);
         }
 
         public PartyInviteBuilder host(User host) {
@@ -121,9 +130,9 @@ public class Messages {
         }
 
         public List<UserMessage> build() {
-            data.put(MessageConstants.ARG_INVITEE_USER_ID, invitee.getID());
-            data.put(MessageConstants.ARG_HOST_USER_ID, host.getID());
-            data.put(MessageConstants.ARG_HOST_USER_NAME, host.getName());
+            put(MessageConstants.ARG_INVITEE_USER_ID, invitee.getID());
+            put(MessageConstants.ARG_HOST_USER_ID, host.getID());
+            put(MessageConstants.ARG_HOST_USER_NAME, host.getName());
             return super.build();
         }
 
