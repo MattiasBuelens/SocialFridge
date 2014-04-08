@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.inject.Named;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
@@ -183,7 +184,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         List<UserMessage> messages = Messages.partyUpdated(partyID)
-                .reason(Messages.PartyUpdateReason.JOINED)
+                .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
                 .recipients(party.getUpdateUsers())
                 .build();
@@ -243,7 +244,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         List<UserMessage> messages = Messages.partyUpdated(partyID)
-                .reason(Messages.PartyUpdateReason.LEFT)
+                .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
                 .recipients(party.getUpdateUsers())
                 .build();
