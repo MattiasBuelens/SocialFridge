@@ -4,18 +4,18 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
 
 /**
  * Created by vital.dhaveloose on 29/03/2014.
- *
+ * <p>
  * Service for creating and updating notifications (from intents) as well as
  * responding to their actions.
+ * </p>
  */
 public class NotificationService extends IntentService {
 
@@ -42,7 +42,7 @@ public class NotificationService extends IntentService {
             issueNotification(intent, message);
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            Intent subIntent = new Intent(getApplicationContext(), InviteReplyActivity.class); // TODO: ApplicationContext? klopt dit?
+            Intent subIntent = new Intent(this, InviteReplyActivity.class);
             subIntent.getExtras().putLong(MessageConstants.ARG_PARTY_ID, intent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
             startActivity(subIntent);
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {

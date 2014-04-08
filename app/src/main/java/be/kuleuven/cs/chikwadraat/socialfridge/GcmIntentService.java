@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.messaging.*;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageType;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
 
@@ -49,34 +50,34 @@ public class GcmIntentService extends IntentService {
                 // TODO
                 //sendNotification("Deleted messages on server: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                // Post notification of received message.
-                sendNotification(extras);
-                Log.i(TAG, "Received: " + extras.toString());
-            } else if (MessageType.PARTY_UPDATE.getName().equals(messageType)) {
-                long partyID = extras.getLong(MessageConstants.ARG_PARTY_ID);
-                // TODO: HMMM, WHAT CAN ME THAT NOW BE?
-            } else if (MessageType.PARTY_INVITE.getName().equals(messageType)) {
-                // notify user
-                Intent serviceIntent = new Intent(this, NotificationService.class);
-                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
-                startService(serviceIntent);
-            } else if (MessageType.PARTY_CANCEL_INVITE.getName().equals(messageType)) {
-                // TODO: OMG YOU CAN'T DO THIS TO ME!
+                // Handle received message.
+                handleMessage(extras);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    // Put the message into a notification and post it.
-    // This is just one simple example of what you might choose to do with
-    // a GCM message.
-    private void sendNotification(Bundle data) {
-        // TODO
-        Intent intent = new Intent(this, NotificationService.class);
-        intent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
-        intent.putExtras(data);
-        startService(intent);
+    private void handleMessage(Bundle data) {
+        MessageType type = MessageType.byName(data.getString(MessageConstants.ARG_TYPE));
+        if (type == null) return;
+
+        Log.d(TAG, "Received: " + type.getName());
+        switch (type) {
+            case PARTY_UPDATE:
+                long partyID = data.getLong(MessageConstants.ARG_PARTY_ID);
+                // TODO: HMMM, WHAT CAN ME THAT NOW BE?
+                break;
+            case PARTY_INVITE:
+                // notify user
+                Intent serviceIntent = new Intent(this, NotificationService.class);
+                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
+                startService(serviceIntent);
+                break;
+            case PARTY_CANCEL_INVITE:
+                // TODO: OMG YOU CAN'T DO THIS TO ME!
+                break;
+        }
     }
 
 }
