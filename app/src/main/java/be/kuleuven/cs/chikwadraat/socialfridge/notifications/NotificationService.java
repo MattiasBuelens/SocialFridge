@@ -4,9 +4,11 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
 
 /**
@@ -40,7 +42,9 @@ public class NotificationService extends IntentService {
             issueNotification(intent, message);
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            // TODO: send accept message
+            Intent subIntent = new Intent(getApplicationContext(), InviteReplyActivity.class); // TODO: ApplicationContext? klopt dit?
+            subIntent.getExtras().putLong(MessageConstants.ARG_PARTY_ID, intent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
+            startActivity(subIntent);
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO: send decline message
@@ -82,11 +86,11 @@ public class NotificationService extends IntentService {
                                 NotificationConstants.BUTTON_DECLINE, piDecline);
 
         /*
-         * Clicking the notification itself displays ChooseSlotsActivity, which provides
+         * Clicking the notification itself displays InviteReplyActivity, which provides
          * UI for choosing time slots or declining the notification.
          * This is available through either the normal view or big view.
          */
-        Intent resultIntent = new Intent(this, ChooseSlotsActivity.class);
+        Intent resultIntent = new Intent(this, InviteReplyActivity.class);
         resultIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, msg);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
