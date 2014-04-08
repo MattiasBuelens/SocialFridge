@@ -41,12 +41,12 @@
     <string name="party_create_time_slots">Time slots</string>
     <string name="party_action_find_partners">Find partners</string>
 
-    <!-- Final screen -->
-    <string name="final_screen_done">Done</string>
-    <string name="final_screen_time_slot">Final time slot</string>
-    <string name="final_screen_place">Place</string>
-    <string name="final_screen_bring">Bring</string>
-    <string name="final_screen_calendar">Add to calendar</string>
+    <!-- Arrange party -->
+    <string name="party_arrange_action_done">Done</string>
+    <string name="party_arrange_pick_time_slot">Choose time slot</string>
+    <string name="party_arrange_place">Place</string>
+    <string name="party_arrange_bring">Bring</string>
+    <string name="party_arrange_add_to_calendar">Add to calendar</string>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>

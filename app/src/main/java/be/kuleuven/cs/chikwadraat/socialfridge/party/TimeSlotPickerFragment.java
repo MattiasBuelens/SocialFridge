@@ -104,7 +104,7 @@ public class TimeSlotPickerFragment extends Fragment {
         private int checkedPosition = -1;
 
         public TimeSlotPickerArrayAdapter(Context context, List<TimeSlotSelection> selections) {
-            super(context, R.layout.timeslot, selections);
+            super(context, R.layout.time_slot_check, selections);
         }
 
         public int getCheckedPosition() {
@@ -134,7 +134,7 @@ public class TimeSlotPickerFragment extends Fragment {
             View view = convertView;
             ViewHolder vh;
             if (view == null) {
-                view = View.inflate(getContext(), R.layout.timeslot_pick, null);
+                view = View.inflate(getContext(), R.layout.time_slot_pick, null);
                 vh = new ViewHolder();
                 vh.radioButton = (RadioButton) view.findViewById(R.id.time_slot_pick);
                 view.setTag(vh);

@@ -20,7 +20,7 @@
         tools:layout="@layout/fragment_party_partners" />
 
     <fragment
-        android:id="@+id/final_time_slot_fragment"
+        android:id="@+id/arrange_time_slot_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotPickerFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,21 +29,21 @@
         tools:layout="@layout/fragment_pick_timeslot" />
 
     <CheckBox
-        android:id="@+id/final_check_add_calendar"
+        android:id="@+id/arrange_check_add_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/final_time_slot_fragment"
+        android:layout_below="@+id/arrange_time_slot_fragment"
         android:checked="false"
-        android:text="@string/final_screen_calendar" />
+        android:text="@string/party_arrange_add_to_calendar" />
 
     <Button
-        android:id="@+id/final_action_done"
+        android:id="@+id/arrange_action_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="@dimen/section_margin"
-        android:text="@string/final_screen_done"
+        android:text="@string/party_arrange_action_done"
         android:textAllCaps="true" />
 
 </RelativeLayout>

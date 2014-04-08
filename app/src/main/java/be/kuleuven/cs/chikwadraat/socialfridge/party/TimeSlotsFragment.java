@@ -156,7 +156,7 @@ public class TimeSlotsFragment extends Fragment {
     public static class TimeSlotSelectionArrayAdapter extends ArrayAdapter<TimeSlotSelection> implements CompoundButton.OnCheckedChangeListener {
 
         public TimeSlotSelectionArrayAdapter(Context context, List<TimeSlotSelection> selections) {
-            super(context, R.layout.timeslot, selections);
+            super(context, R.layout.time_slot_check, selections);
         }
 
         @Override
@@ -164,7 +164,7 @@ public class TimeSlotsFragment extends Fragment {
             View view = convertView;
             ViewHolder vh;
             if (view == null) {
-                view = View.inflate(getContext(), R.layout.timeslot, null);
+                view = View.inflate(getContext(), R.layout.time_slot_check, null);
                 vh = new ViewHolder();
                 vh.toggleButton = (ToggleButton) view.findViewById(R.id.time_slot_toggle);
                 view.setTag(vh);

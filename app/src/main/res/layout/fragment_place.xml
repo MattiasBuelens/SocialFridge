@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/final_screen_place"
+        android:text="@string/party_arrange_place"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <TextView
