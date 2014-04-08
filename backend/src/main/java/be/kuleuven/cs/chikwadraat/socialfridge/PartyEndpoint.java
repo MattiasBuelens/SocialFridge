@@ -4,6 +4,7 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 
@@ -19,6 +20,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
@@ -282,6 +284,77 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         }
         return candidates;
+    }
+
+    /**
+     * Start arranging a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "startArranging", path = "party/{partyID}/startArranging", httpMethod = ApiMethod.HttpMethod.GET)
+    public void startArranging(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                Party party = getParty(partyID, true);
+                // User must be host
+                if (!userID.equals(party.getHostID())) {
+                    throw new UnauthorizedException("User must be party host to start arranging");
+                }
+                // Party must be inviting
+                if (!party.isInviting()) {
+                    throw new ConflictException("Party must be still inviting");
+                }
+                // Set arranging
+                party.setArranging();
+                // Save
+                ofy().save().entities(party).now();
+            }
+        });
+    }
+
+
+    /**
+     * Arrange a party.
+     *
+     * @param partyID     The party ID.
+     * @param timeSlot    The chosen time slot.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "arrange", path = "party/{partyID}/arrange", httpMethod = ApiMethod.HttpMethod.POST)
+    public void arrange(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        Party party = transact(new Work<Party, ServiceException>() {
+            @Override
+            public Party run() throws ServiceException {
+                Party party = getParty(partyID, true);
+                // User must be host
+                if (!userID.equals(party.getHostID())) {
+                    throw new UnauthorizedException("User must be party host to arrange");
+                }
+                // Party must be arranging
+                if (!party.isArranging()) {
+                    throw new ConflictException("Party must be still arranging");
+                }
+                // Time slot must be available
+                if (!party.isAvailable(timeSlot.getBeginHour(), timeSlot.getEndHour())) {
+                    throw new ConflictException("Not all partners are available on the given time slot");
+                }
+                // Set done
+                party.setDone(timeSlot);
+                // Save
+                ofy().save().entities(party).now();
+                return party;
+            }
+        });
+        // Send update to party members
+        List<UserMessage> messages = Messages.partyUpdated(partyID)
+                .reason(PartyUpdateReason.DONE)
+                .recipients(party.getUpdateUsers())
+                .build();
+        new UserMessageEndpoint().addMessages(messages);
     }
 
     protected Party getParty(long partyID, boolean full) throws ServiceException {

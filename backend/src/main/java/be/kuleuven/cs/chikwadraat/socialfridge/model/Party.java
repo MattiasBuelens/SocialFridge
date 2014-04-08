@@ -8,6 +8,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -143,8 +144,25 @@ public class Party {
         return getStatus() == Status.ARRANGING;
     }
 
+    public void setArranging() {
+        setStatus(Status.ARRANGING);
+    }
+
     public boolean isDone() {
         return getStatus() == Status.DONE;
+    }
+
+    public void setDone(TimeSlot chosenTimeSlot) {
+        setStatus(Status.DONE);
+        // Create date for time slot
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(getDate());
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, chosenTimeSlot.getBeginHour());
+        // Store data
+        setDate(calendar.getTime());
     }
 
     /**
@@ -308,6 +326,20 @@ public class Party {
         this.timeSlots.clear();
         this.timeSlots.addAll(timeSlots);
         Collections.sort(this.timeSlots, new TimeSlot.BeginHourComparator());
+    }
+
+    public TimeSlot getTimeSlot(int beginHour, int endHour) {
+        for (TimeSlot slot : getTimeSlots()) {
+            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    public boolean isAvailable(int beginHour, int endHour) {
+        TimeSlot slot = getTimeSlot(beginHour, endHour);
+        return slot != null && slot.isAvailable();
     }
 
     protected void updateTimeSlots() {
