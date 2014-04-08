@@ -42,9 +42,9 @@ public class NotificationService extends IntentService {
             issueNotification(intent, message);
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            Intent subIntent = new Intent(this, InviteReplyActivity.class);
-            subIntent.getExtras().putLong(MessageConstants.ARG_PARTY_ID, intent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
-            startActivity(subIntent);
+            Intent inviteReplyIntent = new Intent(this, InviteReplyActivity.class);
+            inviteReplyIntent.getExtras().putLong(MessageConstants.ARG_PARTY_ID, intent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
+            startActivity(inviteReplyIntent);
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO: send decline message
@@ -62,7 +62,7 @@ public class NotificationService extends IntentService {
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
         PendingIntent piDecline = PendingIntent.getService(this, 0, declineIntent, 0);
 
-        String contextAndBigText = intent.getBundleExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;
+        String contextAndBigText = intent.getStringExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;
 
         // Constructs the Builder object.
         NotificationCompat.Builder builder =

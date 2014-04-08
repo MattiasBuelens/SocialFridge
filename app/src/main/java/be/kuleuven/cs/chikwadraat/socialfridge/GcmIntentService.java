@@ -70,9 +70,10 @@ public class GcmIntentService extends IntentService {
                 break;
             case PARTY_INVITE:
                 // notify user
-                Intent serviceIntent = new Intent(this, NotificationService.class);
-                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
-                startService(serviceIntent);
+                Intent notificationIntent = new Intent(this, NotificationService.class);
+                notificationIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
+                notificationIntent.putExtras(data);
+                startService(notificationIntent);
                 break;
             case PARTY_CANCEL_INVITE:
                 // TODO: OMG YOU CAN'T DO THIS TO ME!
