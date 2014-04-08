@@ -1,76 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_horizontal_margin"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical">
 
     <fragment
+        android:id="@+id/partners_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
-        android:id="@+id/partners_fragment"
+        android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_party_partners" />
 
     <fragment
+        android:id="@+id/time_slots_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
-        android:id="@+id/time_slots_fragment"
-        tools:layout="@layout/fragment_timeslots"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/partners_fragment" />
+        android:layout_below="@+id/partners_fragment"
+        android:layout_marginBottom="@dimen/section_margin"
+        tools:layout="@layout/fragment_timeslots" />
+
+    <fragment
+        android:id="@+id/place_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.PlaceFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/enter_buttons"
+        android:layout_below="@+id/time_slots_fragment"
+        android:layout_marginBottom="@dimen/section_margin"
+        tools:layout="@layout/fragment_place" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/enter_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout"
-        android:layout_alignParentEnd="false"
-        android:gravity="bottom">
+        android:orientation="horizontal">
 
         <Button
+            android:id="@+id/party_enter_action_join"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/party_join"
-            android:id="@+id/button"
-            android:layout_below="@+id/time_slots_fragment"
-            android:layout_toRightOf="@+id/button2"
-            android:layout_weight="1"
-            android:textAllCaps="true"
-            android:layout_gravity="bottom" />
+            android:textAllCaps="true" />
 
         <Button
+            android:id="@+id/party_enter_action_decline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/party_decline"
-            android:id="@+id/button2"
-            android:layout_below="@+id/time_slots_fragment"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_weight="1"
-            android:textAllCaps="true"
-            android:layout_gravity="bottom" />
-    </LinearLayout>
+            android:text="@string/party_decline"
+            android:textAllCaps="true" />
 
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
-        android:id="@+id/place_fragment"
-        tools:layout="@layout/fragment_place"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/time_slots_fragment" />
+    </LinearLayout>
 
 </RelativeLayout>

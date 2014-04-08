@@ -18,6 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="@integer/time_timeslots_grid_column_count"
-        tools:listitem="@layout/timeslot_pick" />
+        tools:listitem="@layout/time_slot_pick" />
 
 </LinearLayout>

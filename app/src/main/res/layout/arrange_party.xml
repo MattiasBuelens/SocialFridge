@@ -24,6 +24,7 @@
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotPickerFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/arrange_check_add_calendar"
         android:layout_below="@+id/party_partners_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_pick_timeslot" />
@@ -32,7 +33,7 @@
         android:id="@+id/arrange_check_add_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/arrange_time_slot_fragment"
+        android:layout_above="@+id/arrange_action_done"
         android:checked="false"
         android:text="@string/party_arrange_add_to_calendar" />
 
@@ -42,7 +43,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="@dimen/section_margin"
         android:text="@string/party_arrange_action_done"
         android:textAllCaps="true" />
 

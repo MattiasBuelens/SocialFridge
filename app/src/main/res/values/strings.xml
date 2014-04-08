@@ -21,17 +21,8 @@
     <string name="dishes_title">Dishes</string>
 
     <!-- Party -->
-    <string name="party_create_progress">Creating party&#8230;</string>
-    <string name="party_invite_title">Invite to party</string>
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
-    <string name="party_action_invite">Invite</string>
-    <string name="party_action_cancel_invite">@android:string/cancel</string>
-    <string name="party_partner_status_invited">Invited</string>
-    <string name="party_partner_status_accepted">Accepted</string>
-    <string name="party_partner_status_declined">Declined</string>
-    <string name="party_join">Join</string>
-    <string name="party_decline">Decline</string>
 
     <!-- Create party -->
     <string name="party_create_title">Create party</string>
@@ -40,6 +31,20 @@
     <string name="party_create_choose_tomorrow">Tomorrow</string>
     <string name="party_create_time_slots">Time slots</string>
     <string name="party_action_find_partners">Find partners</string>
+    <string name="party_create_progress">Creating party&#8230;</string>
+
+    <!-- Invite to party -->
+    <string name="party_invite_title">Invite to party</string>
+    <string name="party_invite_action_done">Finalize</string>
+    <string name="party_action_invite">Invite</string>
+    <string name="party_action_cancel_invite">@android:string/cancel</string>
+    <string name="party_partner_status_invited">Invited</string>
+    <string name="party_partner_status_accepted">Accepted</string>
+    <string name="party_partner_status_declined">Declined</string>
+
+    <!-- Reply to invite -->
+    <string name="party_join">Join</string>
+    <string name="party_decline">Decline</string>
 
     <!-- Arrange party -->
     <string name="party_arrange_action_done">Done</string>

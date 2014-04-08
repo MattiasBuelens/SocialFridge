@@ -13,12 +13,11 @@
         android:text="@string/party_create_time_slots"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
-
     <GridView
         android:id="@+id/time_slot_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="@integer/time_timeslots_grid_column_count"
-        tools:listitem="@layout/timeslot" />
+        tools:listitem="@layout/time_slot_check" />
 
 </LinearLayout>

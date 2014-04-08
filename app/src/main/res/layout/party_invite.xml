@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity">
 
     <fragment
@@ -23,9 +24,18 @@
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/invite_action_done"
         android:layout_below="@+id/party_partners_fragment"
-        android:layout_marginTop="@dimen/section_margin"
+        android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_party_candidates" />
+
+    <Button
+        android:id="@+id/invite_action_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/party_invite_action_done"
+        android:textAllCaps="true" />
 
 </RelativeLayout>
