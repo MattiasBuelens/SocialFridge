@@ -3,22 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotPickerFragment">
 
     <TextView
-        android:id="@+id/party_partners_header"
+        android:id="@+id/final_time_slot_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/party_create_time_slots"
+        android:text="@string/final_screen_time_slot"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
-
 
     <GridView
         android:id="@+id/time_slot_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="@integer/time_timeslots_grid_column_count"
-        tools:listitem="@layout/timeslot" />
+        tools:listitem="@layout/timeslot_pick" />
 
 </LinearLayout>
