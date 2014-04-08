@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
+
 /**
  * Created by vital.dhaveloose on 29/03/2014.
  *
@@ -56,12 +58,14 @@ public class NotificationService extends IntentService {
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
         PendingIntent piDecline = PendingIntent.getService(this, 0, declineIntent, 0);
 
+        String contextAndBigText = intent.getBundleExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;
+
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht?)
                         .setContentTitle(NotificationConstants.CONTENT_TITLE)
-                        .setContentText("The Italian Prime Minister" + NotificationConstants.CONTENT_TEXT_POSTFIX) //TODO: naam van inviter invoegen
+                        .setContentText(contextAndBigText)
                         .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
                 /*
                  * Sets the big view "big text" style and supplies the
@@ -71,7 +75,7 @@ public class NotificationService extends IntentService {
                  * pre-4.1 devices.
                  */
                         .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg)) //TODO: msg is hier een extra string van de intent, wat doen we hiermee?
+                                .bigText(contextAndBigText)) //TODO: voorlopig contextText en bigText identiek
                         .addAction(0,   //TODO: choose slots icoontje invoegen
                                 NotificationConstants.BUTTON_CHOOSE_SLOTS, piChooseSlots)
                         .addAction(0,   //TODO: decline icoontje invoegen
@@ -84,7 +88,7 @@ public class NotificationService extends IntentService {
          */
         Intent resultIntent = new Intent(this, ChooseSlotsActivity.class);
         resultIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, msg);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //TODO: klopt dit? wat doet die | ?
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.

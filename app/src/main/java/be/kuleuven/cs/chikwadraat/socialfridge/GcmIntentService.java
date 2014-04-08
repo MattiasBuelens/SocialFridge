@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.*;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
 
@@ -51,6 +52,16 @@ public class GcmIntentService extends IntentService {
                 // Post notification of received message.
                 sendNotification(extras);
                 Log.i(TAG, "Received: " + extras.toString());
+            } else if (MessageType.PARTY_UPDATE.getName().equals(messageType)) {
+                long partyID = extras.getLong(MessageConstants.ARG_PARTY_ID);
+                // TODO: HMMM, WHAT CAN ME THAT NOW BE?
+            } else if (MessageType.PARTY_INVITE.getName().equals(messageType)) {
+                // notify user
+                Intent serviceIntent = new Intent(this, NotificationService.class);
+                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
+                startService(serviceIntent);
+            } else if (MessageType.PARTY_CANCEL_INVITE.getName().equals(messageType)) {
+                // TODO: OMG YOU CAN'T DO THIS TO ME!
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
