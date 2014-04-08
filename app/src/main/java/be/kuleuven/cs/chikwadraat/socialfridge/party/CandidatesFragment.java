@@ -87,7 +87,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        // TODO Clear listener
+        listener = null;
     }
 
     @Override

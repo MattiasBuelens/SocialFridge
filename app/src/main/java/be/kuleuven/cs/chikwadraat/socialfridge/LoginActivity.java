@@ -223,7 +223,6 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
             // Retrieve user info
             Response response = Request.newMeRequest(session, null).executeAndWait();
             if (response.getError() != null) {
-                // TODO Make Exception
                 throw new FacebookRequestException(response.getError());
             }
 
