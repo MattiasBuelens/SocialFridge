@@ -75,7 +75,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      */
     protected void redirectIfNeeded(Party party, User user) {
         Class<?> targetActivity = null;
-        if (party.getHostID().equals(user.getId())) {
+        if (PartyHelper.isHost(party, user)) {
             // User is host
             if (party.getInviting()) {
                 targetActivity = PartyInviteActivity.class;
@@ -85,10 +85,13 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
                 // TODO Set correct activity
                 // targetActivity = PartyViewActivity.class;
             }
-        } else {
+        } else if (PartyHelper.isInParty(party, user)) {
             // User is partner
             // TODO Set correct activity
             // targetActivity = PartyViewActivity.class;
+        } else {
+            // User is invited to party
+            targetActivity = InviteReplyActivity.class;
         }
 
         // Seriously Android Studio, get your sh*t together.
