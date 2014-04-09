@@ -68,7 +68,7 @@ public class NotificationService extends IntentService {
         Intent declineIntent = new Intent(this, NotificationService.class);
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
         // reuse the bundle of the received intent
-        declineIntent.putExtras(Intent.parseIntent().getExtras());
+        declineIntent.putExtras(receivedIntent.getExtras());
         PendingIntent piDecline = PendingIntent.getService(this, 0, declineIntent, 0);
 
         String contextAndBigText = receivedIntent.getStringExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;

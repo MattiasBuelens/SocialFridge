@@ -32,20 +32,20 @@
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.PlaceFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/enter_buttons"
+        android:layout_above="@+id/invite_reply_buttons"
         android:layout_below="@+id/time_slots_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_place" />
 
     <LinearLayout
-        android:id="@+id/enter_buttons"
+        android:id="@+id/invite_reply_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/party_enter_action_join"
+            android:id="@+id/invite_reply_action_join"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -53,7 +53,7 @@
             android:textAllCaps="true" />
 
         <Button
-            android:id="@+id/party_enter_action_decline"
+            android:id="@+id/invite_reply_action_decline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
