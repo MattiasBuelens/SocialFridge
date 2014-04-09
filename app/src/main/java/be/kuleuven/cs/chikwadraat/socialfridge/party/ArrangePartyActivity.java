@@ -4,63 +4,46 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioGroup;
 
 import com.facebook.Session;
-import com.google.api.client.util.DateTime;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.ObservableAsyncTask;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
-import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
+import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
- * Create party activity.
+ * Activity to arrange a party.
  */
-public class ArrangePartyActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
+public class ArrangePartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
 
-    private static final String TAG = "CreatePartyActivity";
+    private static final String TAG = "ArrangePartyActivity";
 
-    private Button findPartnersButton;
-    private RadioGroup dayGroup;
-    private TimeSlotsFragment timeSlotsFragment;
-    private CreatePartyTask task;
+    private TimeSlotPickerFragment timeSlotPicker;
+    private Button arrangeButton;
+
+    private ArrangeTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.party_create);
+        setContentView(R.layout.arrange_party);
 
-        findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
-        dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
-        timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
+        timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.arrange_time_slot_fragment);
+        arrangeButton = (Button) findViewById(R.id.arrange_action_done);
+        arrangeButton.setOnClickListener(this);
 
-        findPartnersButton.setOnClickListener(this);
-
-        List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
-        slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.UNSPECIFIED));
-        slots.add(new TimeSlotSelection(18, 19, TimeSlotSelection.State.INCLUDED));
-        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.EXCLUDED));
-        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.DISABLED));
-        timeSlotsFragment.setDefaultTimeSlots(slots);
-
-        // Re-attach to registration task
-        task = (CreatePartyTask) getLastCustomNonConfigurationInstance();
+        // Re-attach to arrange task
+        task = (ArrangeTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -75,66 +58,72 @@ public class ArrangePartyActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
+    public void onPartyLoaded(Party party, User user) {
+        super.onPartyLoaded(party, user);
+
+        timeSlotPicker.setTimeSlots(toSelections(party.getTimeSlots()));
+    }
+
+    private TimeSlotSelection toSelection(TimeSlot slot) {
+        TimeSlotSelection.State state = slot.getAvailable()
+                ? TimeSlotSelection.State.INCLUDED
+                : TimeSlotSelection.State.DISABLED;
+        return new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
+    }
+
+    private List<TimeSlotSelection> toSelections(List<TimeSlot> slots) {
+        List<TimeSlotSelection> selections = new ArrayList<TimeSlotSelection>(slots.size());
+        for (TimeSlot slot : slots) {
+            selections.add(toSelection(slot));
+        }
+        return selections;
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.party_action_find_partners:
-                createParty();
+            case R.id.arrange_action_done:
+                arrangeParty();
                 break;
         }
     }
 
-    private Date getPartyDate() {
-        int checkedDayId = dayGroup.getCheckedRadioButtonId();
-        Calendar calendar = Calendar.getInstance();
-        if (checkedDayId == R.id.party_create_choose_tomorrow) {
-            // Tomorrow
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        return calendar.getTime();
-    }
-
-    private List<TimeSlot> getTimeSlots() {
-        List<TimeSlotSelection> selections = timeSlotsFragment.getTimeSlots();
-        List<TimeSlot> slots = new ArrayList<TimeSlot>();
-        for (TimeSlotSelection selection : selections) {
-            TimeSlot slot = new TimeSlot();
-            slot.setBeginHour(selection.getBeginHour());
-            slot.setEndHour(selection.getEndHour());
-            slot.setAvailable(selection.isIncluded());
-            slots.add(slot);
-        }
-        return slots;
-    }
-
-    private void createParty() {
+    private void arrangeParty() {
         if (task != null) return;
 
-        PartyBuilder builder = new PartyBuilder();
-        builder.setHostID(getLoggedInUser().getId());
-        builder.setDate(new DateTime(getPartyDate()));
-        builder.setHostTimeSlots(getTimeSlots());
+        TimeSlot slot = getPickedTimeSlot();
+        if (slot == null) {
+            // TODO No slot selected, show error?
+            return;
+        }
 
-        task = new CreatePartyTask(this, builder);
+        task = new ArrangeTask(this, getPartyID(), slot);
         task.execute();
-        showProgressDialog();
+        showProgressDialog(R.string.party_arrange_progress);
     }
 
-    private void removeCreateTask() {
+    private void removeArrangeTask() {
         if (task != null) {
             task.detach();
             task = null;
         }
     }
 
+    private TimeSlot getPickedTimeSlot() {
+        TimeSlotSelection selection = timeSlotPicker.getPickedTimeSlot();
+        return selection == null ? null : selection.toTimeSlot();
+    }
+
     @Override
-    public void onResult(Party party) {
-        Log.d(TAG, "Party successfully created");
-        removeCreateTask();
+    public void onResult(Void unused) {
+        Log.d(TAG, "Party successfully arranged");
+        removeArrangeTask();
         hideProgressDialog();
 
-        // Party created, start inviting
-        Intent intent = new Intent(this, PartyInviteActivity.class);
-        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getId());
+        // Party arranged, done
+        // TODO Replace with correct activity class
+        Intent intent = new Intent(this, BasePartyActivity.class);
+        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 
         startActivity(intent);
         finish();
@@ -142,8 +131,8 @@ public class ArrangePartyActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to create party: " + exception.getMessage());
-        removeCreateTask();
+        Log.e(TAG, "Failed to arrange party: " + exception.getMessage());
+        removeArrangeTask();
         hideProgressDialog();
 
         // Handle regular exception
@@ -158,48 +147,23 @@ public class ArrangePartyActivity extends BaseActivity implements View.OnClickLi
     public void onProgress(Void... progress) {
     }
 
-    private void showProgressDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
-        ProgressDialogFragment fragment;
-        if (current != null) {
-            fragment = (ProgressDialogFragment) current;
-        } else {
-            String progressMessage = getString(R.string.party_create_progress);
-            fragment = ProgressDialogFragment.newInstance(progressMessage);
-            fragment.setCancelable(false);
-            ft.add(fragment, "dialog");
-            ft.addToBackStack(null);
-        }
-        ft.show(fragment);
-        ft.commit();
-    }
-
-    private void hideProgressDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (fragment != null) {
-            ((ProgressDialogFragment) fragment).dismiss();
-        }
-    }
-
-    protected static class CreatePartyTask extends ObservableAsyncTask<Void, Void, Party> {
+    private static class ArrangeTask extends ObservableAsyncTask<Void, Void, Void> {
 
         private final Context context;
-        private final PartyBuilder builder;
+        private final long partyID;
+        private final TimeSlot timeSlot;
 
-        protected CreatePartyTask(ArrangePartyActivity activity, PartyBuilder builder) {
+        private ArrangeTask(ArrangePartyActivity activity, long partyID, TimeSlot timeSlot) {
             super(activity);
             this.context = activity.getApplicationContext();
-            this.builder = builder;
-        }
-
-        protected void attach(ArrangePartyActivity activity) {
-            super.attach(activity);
+            this.partyID = partyID;
+            this.timeSlot = timeSlot;
         }
 
         @Override
-        protected Party run(Void... unused) throws Exception {
-            return parties().insertParty(Session.getActiveSession().getAccessToken(), builder).execute();
+        protected Void run(Void... unused) throws Exception {
+            parties().arrange(partyID, Session.getActiveSession().getAccessToken(), timeSlot).execute();
+            return null;
         }
 
         private Parties parties() {
@@ -209,5 +173,3 @@ public class ArrangePartyActivity extends BaseActivity implements View.OnClickLi
     }
 
 }
-
-

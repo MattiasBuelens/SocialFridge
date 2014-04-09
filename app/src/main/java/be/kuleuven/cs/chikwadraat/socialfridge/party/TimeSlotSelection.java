@@ -3,6 +3,8 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
+
 /**
  * Created by vital.dhaveloose on 31/03/2014.
  */
@@ -79,6 +81,14 @@ public class TimeSlotSelection implements Parcelable {
         dest.writeInt(getBeginHour());
         dest.writeInt(getEndHour());
         dest.writeString(getState().name());
+    }
+
+    public TimeSlot toTimeSlot() {
+        TimeSlot slot = new TimeSlot();
+        slot.setBeginHour(getBeginHour());
+        slot.setEndHour(getEndHour());
+        slot.setAvailable(isIncluded());
+        return slot;
     }
 
     public static final Parcelable.Creator<TimeSlotSelection> CREATOR

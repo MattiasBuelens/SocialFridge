@@ -44,6 +44,10 @@
             android:name=".party.PartyInviteActivity"
             android:label="@string/party_invite_title" />
 
+        <activity
+            android:name=".party.ArrangePartyActivity"
+            android:label="@string/party_arrange_title" />
+
         <service android:name=".notifications.NotificationService" />
 
         <!-- Facebook -->
