@@ -14,11 +14,11 @@ import com.facebook.Session;
 import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Activity to invite friends to a party.
@@ -27,6 +27,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     private static final String TAG = "PartyInviteActivity";
 
+    private CandidatesFragment candidatesFragment;
     private Button doneButton;
 
     private CloseInvitesTask task;
@@ -35,6 +36,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_invite);
+
+        candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.party_candidates_fragment);
 
         doneButton = (Button) findViewById(R.id.invite_action_done);
         doneButton.setOnClickListener(this);
@@ -56,12 +59,12 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     @Override
     public void onCandidateInvited(PartyMember candidate) {
-        new InviteTask(this, candidate).execute();
+        new InviteTask(candidate).execute();
     }
 
     @Override
     public void onCandidateInviteCanceled(PartyMember candidate) {
-        new CancelInviteTask(this, candidate).execute();
+        new CancelInviteTask(candidate).execute();
     }
 
     @Override
@@ -121,31 +124,34 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     }
 
-    private static class InviteTask extends AsyncTask<Void, Void, Boolean> {
+    private class InviteTask extends AsyncTask<Void, Void, Exception> {
 
         private final Context context;
         private final PartyMember candidate;
 
-        private InviteTask(Context context, PartyMember candidate) {
-            this.context = context.getApplicationContext();
+        private InviteTask(PartyMember candidate) {
+            this.context = getApplicationContext();
             this.candidate = candidate;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Exception doInBackground(Void... params) {
             try {
                 parties().invite(candidate.getPartyID(), candidate.getUserID(), Session.getActiveSession().getAccessToken()).execute();
-                return true;
+                return null;
             } catch (IOException e) {
-                Log.e(TAG, "Error while inviting: " + e.getMessage());
-                return false;
+                return e;
             }
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
+        protected void onPostExecute(Exception exception) {
+            if (exception == null) {
                 candidate.setInvited(true);
+                candidatesFragment.refreshCandidates();
+            } else {
+                Log.e(TAG, "Error while inviting: " + exception.getMessage());
+                // TODO Error handling?
             }
         }
 
@@ -155,31 +161,34 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     }
 
-    private static class CancelInviteTask extends AsyncTask<Void, Void, Boolean> {
+    private class CancelInviteTask extends AsyncTask<Void, Void, Exception> {
 
         private final Context context;
         private final PartyMember candidate;
 
-        private CancelInviteTask(Context context, PartyMember candidate) {
-            this.context = context.getApplicationContext();
+        private CancelInviteTask(PartyMember candidate) {
+            this.context = getApplicationContext();
             this.candidate = candidate;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Exception doInBackground(Void... params) {
             try {
                 parties().cancelInvite(candidate.getPartyID(), candidate.getUserID(), Session.getActiveSession().getAccessToken()).execute();
-                return true;
+                return null;
             } catch (IOException e) {
-                Log.e(TAG, "Error while canceling invite: " + e.getMessage());
-                return false;
+                return e;
             }
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
+        protected void onPostExecute(Exception exception) {
+            if (exception == null) {
                 candidate.setInvited(false);
+                candidatesFragment.refreshCandidates();
+            } else {
+                Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
+                // TODO Error handling?
             }
         }
 

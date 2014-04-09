@@ -17,7 +17,6 @@ import com.facebook.widget.ProfilePictureView;
 
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
@@ -25,6 +24,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
  * Fragment displaying the candidates for a party.
@@ -110,6 +110,12 @@ public class CandidatesFragment extends Fragment implements PartyListener {
         Bundle args = new Bundle();
         args.putLong(LOADER_ARGS_PARTY_ID, partyID);
         getLoaderManager().restartLoader(LOADER_CANDIDATES, args, new CandidatesLoaderCallbacks());
+    }
+
+    public void refreshCandidates() {
+        if (candidatesAdapter != null) {
+            candidatesAdapter.notifyDataSetChanged();
+        }
     }
 
     private void invite(PartyMember candidate) {

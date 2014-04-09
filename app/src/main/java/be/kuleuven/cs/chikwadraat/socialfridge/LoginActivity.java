@@ -172,10 +172,6 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
             this.session = session;
         }
 
-        protected void attach(LoginActivity activity) {
-            super.attach(activity);
-        }
-
         @Override
         protected User run(Void... unused) throws Exception {
             // Retrieve user information
