@@ -86,6 +86,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
                 }
             }
         }
+        timeSlotsFragment.setTimeSlots(newSelections);
     }
 
     private TimeSlotSelection newSelection(TimeSlotSelection currentSelection, TimeSlot receivedSlot) {
