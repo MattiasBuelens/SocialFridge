@@ -19,6 +19,8 @@ import be.kuleuven.cs.chikwadraat.socialfridge.party.BasePartyActivity;
  */
 public class InviteReplyActivity extends BasePartyActivity {
 
+    private static final String TAG = "InviteReplyActivity";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

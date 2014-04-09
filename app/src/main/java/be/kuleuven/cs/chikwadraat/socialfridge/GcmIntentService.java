@@ -66,12 +66,13 @@ public class GcmIntentService extends IntentService {
         switch (type) {
             case PARTY_UPDATE:
                 long partyID = data.getLong(MessageConstants.ARG_PARTY_ID);
-                // TODO: HMMM, WHAT CAN ME THAT NOW BE?
+                // TODO: ISSUE 4
                 break;
             case PARTY_INVITE:
                 // notify user
                 Intent notificationIntent = new Intent(this, NotificationService.class);
                 notificationIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
+                // simply add received bundle (from the message) to notificationIntent
                 notificationIntent.putExtras(data);
                 startService(notificationIntent);
                 break;

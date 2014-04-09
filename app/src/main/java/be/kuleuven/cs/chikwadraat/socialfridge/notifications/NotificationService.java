@@ -32,42 +32,51 @@ public class NotificationService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        String message = intent.getStringExtra(NotificationConstants.EXTRA_MESSAGE);
+    protected void onHandleIntent(Intent receivedIntent) {
+        String message = receivedIntent.getStringExtra(NotificationConstants.EXTRA_MESSAGE);
 
-        String action = intent.getAction();
+        String action = receivedIntent.getAction();
         // this section handles three different actions:
-        // receive invite, accept and decline
+        // action 1: receive invite: receivedIntent comes from elsewhere (the GcmIntentService)
         if (action.equals(NotificationConstants.ACTION_RECEIVE_INVITE)) {
-            issueNotification(intent, message);
+            issueNotification(receivedIntent, message);
+        // action 2: choose slots: receivedIntent comes from this object: it's an
+        // indirection to make sure the notification is deleted before proceeding
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             Intent inviteReplyIntent = new Intent(this, InviteReplyActivity.class);
-            inviteReplyIntent.getExtras().putLong(MessageConstants.ARG_PARTY_ID, intent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
+            // TODO: stupid translation, why not simply use the same language? Does the language have to be defined by the communication channel (i.e. MessageConstants)?
+            inviteReplyIntent.putExtra(InviteReplyActivity.EXTRA_PARTY_ID, receivedIntent.getExtras().getLong(MessageConstants.ARG_PARTY_ID));
             startActivity(inviteReplyIntent);
+        // action 3: decline: receivedIntent comes from this object: it's an
+        // indirection to make sure the notification is deleted before proceeding
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO: send decline message
         }
     }
 
-    private void issueNotification(Intent intent, String msg) {
+    private void issueNotification(Intent receivedIntent, String msg) {
         // Sets up the Choose slots and Decline action buttons that will appear in the
         // expanded view of the notification.
         Intent chooseSlotsIntent = new Intent(this, NotificationService.class);
         chooseSlotsIntent.setAction(NotificationConstants.ACTION_CHOOSE_SLOTS);
+        // reuse the bundle of the received intent
+        chooseSlotsIntent.putExtras(receivedIntent.getExtras());
         PendingIntent piChooseSlots = PendingIntent.getService(this, 0, chooseSlotsIntent, 0);
 
         Intent declineIntent = new Intent(this, NotificationService.class);
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
+        // reuse the bundle of the received intent
+        declineIntent.putExtras(Intent.parseIntent().getExtras());
         PendingIntent piDecline = PendingIntent.getService(this, 0, declineIntent, 0);
 
-        String contextAndBigText = intent.getStringExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;
+        String contextAndBigText = receivedIntent.getStringExtra(MessageConstants.ARG_HOST_USER_NAME) + NotificationConstants.CONTENT_TEXT_POSTFIX;
 
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht?)
+                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
                         .setContentTitle(NotificationConstants.CONTENT_TITLE)
                         .setContentText(contextAndBigText)
                         .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
@@ -96,6 +105,7 @@ public class NotificationService extends IntentService {
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
+        // TODO: is dit zo in ons geval?
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,

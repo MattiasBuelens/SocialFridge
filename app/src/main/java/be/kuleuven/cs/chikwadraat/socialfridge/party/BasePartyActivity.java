@@ -8,11 +8,13 @@ import android.support.v4.content.Loader;
 
 import com.facebook.Session;
 
+import java.util.Iterator;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
@@ -88,8 +90,18 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             }
         } else {
             // User is partner
-            // TODO Set correct activity
-            // targetActivity = PartyViewActivity.class;
+            // check whether user already decided ( <=> is already a partner in the party)
+            Iterator<PartyMember> it = party.getPartners().iterator();
+            PartyMember current = null;
+            // TODO: Set correct activity (when not decided yet)
+            // targetActivity = InviteReplyActivity.class
+            while(it.hasNext()) {
+                current = it.next();
+                if(current.getUserID().equals(user.getId())) {
+                    // TODO: Set correct activity (when already decided)
+                    // targetActivity = PartyViewActivity.class
+                }
+            }
         }
 
         // Seriously Android Studio, get your sh*t together.
