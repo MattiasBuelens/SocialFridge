@@ -13,15 +13,8 @@ public abstract class NotificationConstants {
     public static final String ACTION_CHOOSE_SLOTS = NOTIFICATION_ADDRESS + ".ACTION_CHOOSE_SLOTS";
     public static final String ACTION_DECLINE = NOTIFICATION_ADDRESS + ".ACTION_DECLINE";
 
-    public static final int NOTIFICATION_ID = 001;
+    public static final int NOTIFICATION_ID = 1;
 
     public static final String EXTRA_MESSAGE = NOTIFICATION_ADDRESS + ".EXTRA_MESSAGE";
-
-    // text in notification
-    public static final String CONTENT_TITLE = "New SocialFridge invitation";
-    public static final String CONTENT_TEXT_POSTFIX = " invited you to eat spaghetti together.";
-
-    public static final String BUTTON_CHOOSE_SLOTS = "Choose time slots";
-    public static final String BUTTON_DECLINE = "Decline";
 
 }
