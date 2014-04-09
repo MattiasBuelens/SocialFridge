@@ -69,7 +69,8 @@ public class NotificationIntentService extends IntentService {
                         .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
-                        .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                                //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS)
                 /*
                  * Sets the big view "big text" style and supplies the
                  * text (the user's reminder message) that will be displayed
