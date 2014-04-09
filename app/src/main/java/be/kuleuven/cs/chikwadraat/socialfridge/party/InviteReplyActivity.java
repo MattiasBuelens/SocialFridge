@@ -104,10 +104,22 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         }
     }
 
+    private List<TimeSlot> getTimeSlots() {
+        List<TimeSlot> result = new ArrayList<TimeSlot>();
+        for(TimeSlotSelection selection : timeSlotsFragment.getTimeSlots()) {
+            TimeSlot slot = new TimeSlot();
+            slot.setBeginHour(selection.getBeginHour());
+            slot.setEndHour(selection.getEndHour());
+            slot.setAvailable(selection.isIncluded());
+            result.add(slot);
+        }
+        return result;
+    }
+
     private void join() {
         if (joinTask != null) return; // TODO: niet enkel joinTask testen, maar ook declineTask?
-
-        joinTask = new JoinTask(this, getPartyID(), );
+        TimeSlotCollection timeSlots = (new TimeSlotCollection()).setList(getTimeSlots());
+        joinTask = new JoinTask(this, getPartyID(), timeSlots);
         joinTask.execute();
         // showProgressDialog(R.string.party_close_invites_progress);
         // TODO: dialog tonen
@@ -163,7 +175,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                parties().declineInvite(partyID, Session.getActiveSession().getAccessToken(), timeslots).execute();
+                parties().declineInvite(partyID, Session.getActiveSession().getAccessToken()).execute();
                 return true;
             } catch (IOException e) {
                 Log.e(TAG, "Error while replying to invite: " + e.getMessage());
