@@ -90,6 +90,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         } else if (PartyUtils.isInParty(party, user)) {
             // User is partner
             // TODO Set correct activity
+            // TODO apart van wanneer host dit doet?
             // targetActivity = PartyViewActivity.class;
         } else {
             // User is invited to party
