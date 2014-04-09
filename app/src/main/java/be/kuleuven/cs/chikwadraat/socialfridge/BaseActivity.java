@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 
 import com.facebook.FacebookRequestError;
@@ -13,6 +15,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
  * Base activity handling common things such as authentication.
@@ -290,6 +293,34 @@ public abstract class BaseActivity extends ActionBarActivity {
                 .setTitle(R.string.error_dialog_title)
                 .setMessage(dialogBody)
                 .show();
+    }
+
+    protected void showProgressDialog(int messageResID) {
+        showProgressDialog(getString(messageResID));
+    }
+
+    protected void showProgressDialog(String message) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
+        ProgressDialogFragment fragment;
+        if (current != null) {
+            fragment = (ProgressDialogFragment) current;
+        } else {
+            fragment = ProgressDialogFragment.newInstance();
+            fragment.setCancelable(false);
+            ft.add(fragment, "dialog");
+            ft.addToBackStack(null);
+        }
+        fragment.setMessage(message);
+        ft.show(fragment);
+        ft.commit();
+    }
+
+    protected void hideProgressDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (fragment != null) {
+            ((ProgressDialogFragment) fragment).dismiss();
+        }
     }
 
 }

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,11 +27,12 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
  * Create party activity.
  */
-public class CreatePartyActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
+public class ArrangePartyActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
 
     private static final String TAG = "CreatePartyActivity";
 
@@ -94,7 +97,11 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         List<TimeSlotSelection> selections = timeSlotsFragment.getTimeSlots();
         List<TimeSlot> slots = new ArrayList<TimeSlot>();
         for (TimeSlotSelection selection : selections) {
-            slots.add(selection.toTimeSlot());
+            TimeSlot slot = new TimeSlot();
+            slot.setBeginHour(selection.getBeginHour());
+            slot.setEndHour(selection.getEndHour());
+            slot.setAvailable(selection.isIncluded());
+            slots.add(slot);
         }
         return slots;
     }
@@ -109,7 +116,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
         task = new CreatePartyTask(this, builder);
         task.execute();
-        showProgressDialog(R.string.party_create_progress);
+        showProgressDialog();
     }
 
     private void removeCreateTask() {
@@ -151,18 +158,42 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
     public void onProgress(Void... progress) {
     }
 
+    private void showProgressDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
+        ProgressDialogFragment fragment;
+        if (current != null) {
+            fragment = (ProgressDialogFragment) current;
+        } else {
+            String progressMessage = getString(R.string.party_create_progress);
+            fragment = ProgressDialogFragment.newInstance(progressMessage);
+            fragment.setCancelable(false);
+            ft.add(fragment, "dialog");
+            ft.addToBackStack(null);
+        }
+        ft.show(fragment);
+        ft.commit();
+    }
+
+    private void hideProgressDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (fragment != null) {
+            ((ProgressDialogFragment) fragment).dismiss();
+        }
+    }
+
     protected static class CreatePartyTask extends ObservableAsyncTask<Void, Void, Party> {
 
         private final Context context;
         private final PartyBuilder builder;
 
-        protected CreatePartyTask(CreatePartyActivity activity, PartyBuilder builder) {
+        protected CreatePartyTask(ArrangePartyActivity activity, PartyBuilder builder) {
             super(activity);
             this.context = activity.getApplicationContext();
             this.builder = builder;
         }
 
-        protected void attach(CreatePartyActivity activity) {
+        protected void attach(ArrangePartyActivity activity) {
             super.attach(activity);
         }
 

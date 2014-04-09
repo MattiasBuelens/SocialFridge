@@ -3,11 +3,8 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
-import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -22,7 +19,6 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
  * Login activity.
@@ -158,31 +154,9 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
     public void onProgress(RegisterUserState... states) {
         RegisterUserState state = states[0];
         Log.d(TAG, "Registration progress: " + state);
-        showProgressDialog();
-    }
 
-    private void showProgressDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
-        ProgressDialogFragment fragment;
-        if (current != null) {
-            fragment = (ProgressDialogFragment) current;
-        } else {
-            String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
-            fragment = ProgressDialogFragment.newInstance(progressMessage);
-            fragment.setCancelable(false);
-            ft.add(fragment, "dialog");
-            ft.addToBackStack(null);
-        }
-        ft.show(fragment);
-        ft.commit();
-    }
-
-    private void hideProgressDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (fragment != null) {
-            ((ProgressDialogFragment) fragment).dismiss();
-        }
+        String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
+        showProgressDialog(progressMessage);
     }
 
     protected static class RegisterUserTask extends ObservableAsyncTask<Void, RegisterUserState, User> {
