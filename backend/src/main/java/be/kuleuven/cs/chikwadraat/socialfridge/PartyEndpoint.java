@@ -301,14 +301,14 @@ public class PartyEndpoint extends BaseEndpoint {
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
-                    throw new UnauthorizedException("User must be party host to start arranging");
+                    throw new UnauthorizedException("User must be party host to close invites");
                 }
                 // Party must be inviting
                 if (!party.isInviting()) {
                     throw new ConflictException("Party must be still inviting");
                 }
-                // Set arranging
-                party.setArranging();
+                // Set planning
+                party.setPlanning();
                 // Save
                 ofy().save().entities(party).now();
             }
@@ -317,14 +317,14 @@ public class PartyEndpoint extends BaseEndpoint {
 
 
     /**
-     * Arrange a party.
+     * Plan a party.
      *
      * @param partyID     The party ID.
      * @param timeSlot    The chosen time slot.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "arrange", path = "party/{partyID}/arrange", httpMethod = ApiMethod.HttpMethod.POST)
-    public void arrange(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
+    @ApiMethod(name = "plan", path = "party/{partyID}/plan", httpMethod = ApiMethod.HttpMethod.POST)
+    public void plan(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
@@ -332,18 +332,18 @@ public class PartyEndpoint extends BaseEndpoint {
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
-                    throw new UnauthorizedException("User must be party host to arrange");
+                    throw new UnauthorizedException("User must be party host to plan");
                 }
-                // Party must be arranging
-                if (!party.isArranging()) {
-                    throw new ConflictException("Party must be still arranging");
+                // Party must be planning
+                if (!party.isPlanning()) {
+                    throw new ConflictException("Party must be still planning");
                 }
                 // Time slot must be available
                 if (!party.isAvailable(timeSlot.getBeginHour(), timeSlot.getEndHour())) {
                     throw new ConflictException("Not all partners are available on the given time slot");
                 }
-                // Set done
-                party.setDone(timeSlot);
+                // Set planned
+                party.setPlanned(timeSlot);
                 // Save
                 ofy().save().entities(party).now();
                 return party;

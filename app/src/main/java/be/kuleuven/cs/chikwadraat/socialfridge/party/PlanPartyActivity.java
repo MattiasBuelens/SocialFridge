@@ -24,28 +24,28 @@ import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFra
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
- * Activity to arrange a party.
+ * Activity to plan a party.
  */
-public class ArrangePartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
+public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
 
-    private static final String TAG = "ArrangePartyActivity";
+    private static final String TAG = "PlanPartyActivity";
 
     private TimeSlotPickerFragment timeSlotPicker;
     private Button doneButton;
 
-    private ArrangeTask task;
+    private PlanTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.arrange_party);
+        setContentView(R.layout.plan_party);
 
-        timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.arrange_time_slot_fragment);
-        doneButton = (Button) findViewById(R.id.arrange_action_done);
+        timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.plan_time_slot_fragment);
+        doneButton = (Button) findViewById(R.id.plan_action_done);
         doneButton.setOnClickListener(this);
 
-        // Re-attach to arrange task
-        task = (ArrangeTask) getLastCustomNonConfigurationInstance();
+        // Re-attach to plan task
+        task = (PlanTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -84,13 +84,13 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.arrange_action_done:
-                arrangeParty();
+            case R.id.plan_action_done:
+                planParty();
                 break;
         }
     }
 
-    private void arrangeParty() {
+    private void planParty() {
         if (task != null) return;
 
         TimeSlot slot = getPickedTimeSlot();
@@ -99,12 +99,12 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
             return;
         }
 
-        task = new ArrangeTask(this, getPartyID(), slot);
+        task = new PlanTask(this, getPartyID(), slot);
         task.execute();
-        showProgressDialog(R.string.party_arrange_progress);
+        showProgressDialog(R.string.party_plan_progress);
     }
 
-    private void removeArrangeTask() {
+    private void removePlanTask() {
         if (task != null) {
             task.detach();
             task = null;
@@ -118,11 +118,11 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
 
     @Override
     public void onResult(Void unused) {
-        Log.d(TAG, "Party successfully arranged");
-        removeArrangeTask();
+        Log.d(TAG, "Party successfully planned");
+        removePlanTask();
         hideProgressDialog();
 
-        // Party arranged, done
+        // Party planned, done
         // TODO Replace with correct activity class
         Intent intent = new Intent(this, BasePartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
@@ -133,8 +133,8 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to arrange party: " + exception.getMessage());
-        removeArrangeTask();
+        Log.e(TAG, "Failed to plan party: " + exception.getMessage());
+        removePlanTask();
         hideProgressDialog();
 
         // Handle regular exception
@@ -149,13 +149,13 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
     public void onProgress(Void... progress) {
     }
 
-    private static class ArrangeTask extends ObservableAsyncTask<Void, Void, Void> {
+    private static class PlanTask extends ObservableAsyncTask<Void, Void, Void> {
 
         private final Context context;
         private final long partyID;
         private final TimeSlot timeSlot;
 
-        private ArrangeTask(ArrangePartyActivity activity, long partyID, TimeSlot timeSlot) {
+        private PlanTask(PlanPartyActivity activity, long partyID, TimeSlot timeSlot) {
             super(activity);
             this.context = activity.getApplicationContext();
             this.partyID = partyID;

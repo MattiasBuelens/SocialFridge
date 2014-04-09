@@ -47,14 +47,14 @@
     <string name="party_join">Join</string>
     <string name="party_decline">Decline</string>
 
-    <!-- Arrange party -->
-    <string name="party_arrange_title">Arrange party</string>
-    <string name="party_arrange_action_done">Done</string>
-    <string name="party_arrange_pick_time_slot">Choose time slot</string>
-    <string name="party_arrange_place">Place</string>
-    <string name="party_arrange_bring">Bring</string>
-    <string name="party_arrange_add_to_calendar">Add to calendar</string>
-    <string name="party_arrange_progress">Arranging party&#8230;</string>
+    <!-- Plan party -->
+    <string name="party_plan_title">Plan party</string>
+    <string name="party_plan_action_done">Done</string>
+    <string name="party_plan_pick_time_slot">Choose time slot</string>
+    <string name="party_plan_place">Place</string>
+    <string name="party_plan_bring">Bring</string>
+    <string name="party_plan_add_to_calendar">Add to calendar</string>
+    <string name="party_plan_progress">Planning party&#8230;</string>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>

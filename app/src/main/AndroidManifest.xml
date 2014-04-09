@@ -45,8 +45,8 @@
             android:label="@string/party_invite_title" />
 
         <activity
-            android:name=".party.ArrangePartyActivity"
-            android:label="@string/party_arrange_title" />
+            android:name=".party.PlanPartyActivity"
+            android:label="@string/party_plan_title" />
 
         <service android:name=".notifications.NotificationIntentService" />
 

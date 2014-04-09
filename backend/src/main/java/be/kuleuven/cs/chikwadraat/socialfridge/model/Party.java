@@ -140,20 +140,20 @@ public class Party {
         return getStatus() == Status.INVITING;
     }
 
-    public boolean isArranging() {
-        return getStatus() == Status.ARRANGING;
+    public boolean isPlanning() {
+        return getStatus() == Status.PLANNING;
     }
 
-    public void setArranging() {
-        setStatus(Status.ARRANGING);
+    public void setPlanning() {
+        setStatus(Status.PLANNING);
     }
 
-    public boolean isDone() {
-        return getStatus() == Status.DONE;
+    public boolean isPlanned() {
+        return getStatus() == Status.PLANNED;
     }
 
-    public void setDone(TimeSlot chosenTimeSlot) {
-        setStatus(Status.DONE);
+    public void setPlanned(TimeSlot chosenTimeSlot) {
+        setStatus(Status.PLANNED);
         // Create date for time slot
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(getDate());
@@ -167,7 +167,7 @@ public class Party {
 
     /**
      * Party date.
-     * When {@link #isDone() not done yet}, the time part is not yet configured and should be ignored.
+     * When {@link #isPlanned() not planned yet}, the time part is not yet configured and should be ignored.
      */
     public Date getDate() {
         return date;
@@ -486,14 +486,14 @@ public class Party {
         INVITING,
 
         /**
-         * Arranging a time for the party.
+         * Planning a time for the party.
          */
-        ARRANGING,
+        PLANNING,
 
         /**
-         * Party arranged.
+         * Party planned.
          */
-        DONE;
+        PLANNED;
 
         @Override
         public String toString() {

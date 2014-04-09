@@ -94,8 +94,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         removeCloseInvitesTask();
         hideProgressDialog();
 
-        // Invites closed, start arranging
-        Intent intent = new Intent(this, ArrangePartyActivity.class);
+        // Invites closed, start planning
+        Intent intent = new Intent(this, PlanPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 
         startActivity(intent);

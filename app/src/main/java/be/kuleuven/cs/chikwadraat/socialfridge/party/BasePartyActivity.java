@@ -8,13 +8,11 @@ import android.support.v4.content.Loader;
 
 import com.facebook.Session;
 
-import java.util.Iterator;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
@@ -81,9 +79,9 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             // User is host
             if (party.getInviting()) {
                 targetActivity = PartyInviteActivity.class;
-            } else if (party.getArranging()) {
-                targetActivity = ArrangePartyActivity.class;
-            } else if (party.getDone()) {
+            } else if (party.getPlanning()) {
+                targetActivity = PlanPartyActivity.class;
+            } else if (party.getPlanned()) {
                 // TODO Set correct activity
                 // targetActivity = PartyViewActivity.class;
             }

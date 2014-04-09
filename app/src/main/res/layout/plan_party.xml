@@ -8,7 +8,7 @@
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PlanPartyActivity">
 
     <fragment
         android:id="@+id/party_partners_fragment"
@@ -20,30 +20,30 @@
         tools:layout="@layout/fragment_party_partners" />
 
     <fragment
-        android:id="@+id/arrange_time_slot_fragment"
+        android:id="@+id/plan_time_slot_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/arrange_check_add_calendar"
+        android:layout_above="@+id/plan_check_add_calendar"
         android:layout_below="@+id/party_partners_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_pick_timeslot" />
 
     <CheckBox
-        android:id="@+id/arrange_check_add_calendar"
+        android:id="@+id/plan_check_add_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/arrange_action_done"
+        android:layout_above="@+id/plan_action_done"
         android:checked="false"
-        android:text="@string/party_arrange_add_to_calendar" />
+        android:text="@string/party_plan_add_to_calendar" />
 
     <Button
-        android:id="@+id/arrange_action_done"
+        android:id="@+id/plan_action_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="@string/party_arrange_action_done"
+        android:text="@string/party_plan_action_done"
         android:textAllCaps="true" />
 
 </RelativeLayout>
