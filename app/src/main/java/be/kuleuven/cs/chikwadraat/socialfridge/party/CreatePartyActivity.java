@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +25,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
-import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
  * Create party activity.
@@ -97,11 +94,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         List<TimeSlotSelection> selections = timeSlotsFragment.getTimeSlots();
         List<TimeSlot> slots = new ArrayList<TimeSlot>();
         for (TimeSlotSelection selection : selections) {
-            TimeSlot slot = new TimeSlot();
-            slot.setBeginHour(selection.getBeginHour());
-            slot.setEndHour(selection.getEndHour());
-            slot.setAvailable(selection.isIncluded());
-            slots.add(slot);
+            slots.add(selection.toTimeSlot());
         }
         return slots;
     }
@@ -116,7 +109,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
         task = new CreatePartyTask(this, builder);
         task.execute();
-        showProgressDialog();
+        showProgressDialog(R.string.party_create_progress);
     }
 
     private void removeCreateTask() {
@@ -156,30 +149,6 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onProgress(Void... progress) {
-    }
-
-    private void showProgressDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
-        ProgressDialogFragment fragment;
-        if (current != null) {
-            fragment = (ProgressDialogFragment) current;
-        } else {
-            String progressMessage = getString(R.string.party_create_progress);
-            fragment = ProgressDialogFragment.newInstance(progressMessage);
-            fragment.setCancelable(false);
-            ft.add(fragment, "dialog");
-            ft.addToBackStack(null);
-        }
-        ft.show(fragment);
-        ft.commit();
-    }
-
-    private void hideProgressDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (fragment != null) {
-            ((ProgressDialogFragment) fragment).dismiss();
-        }
     }
 
     protected static class CreatePartyTask extends ObservableAsyncTask<Void, Void, Party> {

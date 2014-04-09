@@ -77,37 +77,29 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      */
     protected void redirectIfNeeded(Party party, User user) {
         Class<?> targetActivity = null;
-        if (party.getHostID().equals(user.getId())) {
+        if (PartyHelper.isHost(party, user)) {
             // User is host
             if (party.getInviting()) {
                 targetActivity = PartyInviteActivity.class;
             } else if (party.getArranging()) {
-                // TODO Set correct activity
-                // targetActivity = PartyArrangeActivity.class;
+                targetActivity = ArrangePartyActivity.class;
             } else if (party.getDone()) {
                 // TODO Set correct activity
                 // targetActivity = PartyViewActivity.class;
             }
-        } else {
+        } else if (PartyHelper.isInParty(party, user)) {
             // User is partner
-            // check whether user already decided ( <=> is already a partner in the party)
-            Iterator<PartyMember> it = party.getPartners().iterator();
-            PartyMember current = null;
-            // TODO: Set correct activity (when not decided yet)
-            // targetActivity = InviteReplyActivity.class
-            while(it.hasNext()) {
-                current = it.next();
-                if(current.getUserID().equals(user.getId())) {
-                    // TODO: Set correct activity (when already decided)
-                    // targetActivity = PartyViewActivity.class
-                }
-            }
+            // TODO Set correct activity
+            // targetActivity = PartyViewActivity.class;
+        } else {
+            // User is invited to party
+            targetActivity = InviteReplyActivity.class;
         }
 
         // Seriously Android Studio, get your sh*t together.
         // I should not need a cast for this.
         Class<?> ownClass = ((Object) this).getClass();
-        if (!targetActivity.isAssignableFrom(ownClass)) {
+        if (targetActivity != null && !targetActivity.isAssignableFrom(ownClass)) {
             Intent intent = new Intent(this, targetActivity);
             intent.putExtra(EXTRA_PARTY_ID, getPartyID());
             startActivity(intent);

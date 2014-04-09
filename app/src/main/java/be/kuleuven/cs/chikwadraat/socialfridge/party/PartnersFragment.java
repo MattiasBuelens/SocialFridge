@@ -63,13 +63,11 @@ public class PartnersFragment extends Fragment implements PartyListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // TODO Check if Activity implements listener and store listener
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        // TODO Clear listener
     }
 
     @Override

@@ -1,8 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,12 +17,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TimeSlotsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TimeSlotsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment to configure time slots.
  */
 public class TimeSlotsFragment extends Fragment {
     private static final String ARG_TIME_SLOTS = "time_slots";
@@ -34,7 +27,6 @@ public class TimeSlotsFragment extends Fragment {
 
     private GridView timeSlotGrid;
     private TimeSlotSelectionArrayAdapter timeSlotAdapter;
-    private OnFragmentInteractionListener mListener;
 
     /**
      * Create a new time slots fragment.
@@ -112,46 +104,6 @@ public class TimeSlotsFragment extends Fragment {
             timeSlotSelections = new ArrayList<TimeSlotSelection>(timeSlots);
         }
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-
 
     public static class TimeSlotSelectionArrayAdapter extends ArrayAdapter<TimeSlotSelection> implements CompoundButton.OnCheckedChangeListener {
 
