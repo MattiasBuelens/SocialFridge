@@ -29,7 +29,7 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
     private static final String TAG = "ArrangePartyActivity";
 
     private TimeSlotPickerFragment timeSlotPicker;
-    private Button arrangeButton;
+    private Button doneButton;
 
     private ArrangeTask task;
 
@@ -39,8 +39,8 @@ public class ArrangePartyActivity extends BasePartyActivity implements Observabl
         setContentView(R.layout.arrange_party);
 
         timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.arrange_time_slot_fragment);
-        arrangeButton = (Button) findViewById(R.id.arrange_action_done);
-        arrangeButton.setOnClickListener(this);
+        doneButton = (Button) findViewById(R.id.arrange_action_done);
+        doneButton.setOnClickListener(this);
 
         // Re-attach to arrange task
         task = (ArrangeTask) getLastCustomNonConfigurationInstance();

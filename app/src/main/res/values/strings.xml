@@ -35,12 +35,13 @@
 
     <!-- Invite to party -->
     <string name="party_invite_title">Invite to party</string>
-    <string name="party_invite_action_done">Finalize</string>
+    <string name="party_invite_action_done">Done</string>
     <string name="party_action_invite">Invite</string>
     <string name="party_action_cancel_invite">@android:string/cancel</string>
     <string name="party_partner_status_invited">Invited</string>
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
+    <string name="party_close_invites_progress">Closing invites&#8230;</string>
 
     <!-- Reply to invite -->
     <string name="party_join">Join</string>

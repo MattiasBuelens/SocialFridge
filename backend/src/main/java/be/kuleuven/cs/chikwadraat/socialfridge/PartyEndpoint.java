@@ -287,13 +287,13 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Start arranging a party.
+     * Close invites for a party.
      *
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "startArranging", path = "party/{partyID}/startArranging", httpMethod = ApiMethod.HttpMethod.GET)
-    public void startArranging(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+    @ApiMethod(name = "closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
+    public void closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         transact(new VoidWork<ServiceException>() {
             @Override

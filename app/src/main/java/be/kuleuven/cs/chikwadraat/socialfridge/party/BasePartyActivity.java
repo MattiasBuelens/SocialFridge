@@ -80,8 +80,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             if (party.getInviting()) {
                 targetActivity = PartyInviteActivity.class;
             } else if (party.getArranging()) {
-                // TODO Set correct activity
-                // targetActivity = PartyArrangeActivity.class;
+                targetActivity = ArrangePartyActivity.class;
             } else if (party.getDone()) {
                 // TODO Set correct activity
                 // targetActivity = PartyViewActivity.class;
@@ -95,7 +94,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         // Seriously Android Studio, get your sh*t together.
         // I should not need a cast for this.
         Class<?> ownClass = ((Object) this).getClass();
-        if (!targetActivity.isAssignableFrom(ownClass)) {
+        if (targetActivity != null && !targetActivity.isAssignableFrom(ownClass)) {
             Intent intent = new Intent(this, targetActivity);
             intent.putExtra(EXTRA_PARTY_ID, getPartyID());
             startActivity(intent);
