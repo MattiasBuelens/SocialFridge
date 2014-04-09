@@ -26,7 +26,7 @@ public class TimeSlotPickerFragment extends Fragment {
     private static final String ARG_TIME_SLOTS = "time_slots";
 
     private TimeSlotSelection pickedTimeSlot;
-    private ArrayList<TimeSlotSelection> timeSlots;
+    private ArrayList<TimeSlotSelection> timeSlots = new ArrayList<TimeSlotSelection>();
 
     private GridView timeSlotGrid;
     private TimeSlotPickerArrayAdapter timeSlotAdapter;
@@ -68,9 +68,9 @@ public class TimeSlotPickerFragment extends Fragment {
             timeSlots = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
         }
 
-        timeSlotAdapter = new TimeSlotPickerArrayAdapter(getActivity(), timeSlots);
-        timeSlotAdapter.setCheckedItem(pickedTimeSlot);
+        timeSlotAdapter = new TimeSlotPickerArrayAdapter(getActivity());
         timeSlotGrid.setAdapter(timeSlotAdapter);
+        setTimeSlots(timeSlots);
     }
 
     @Override
@@ -83,9 +83,18 @@ public class TimeSlotPickerFragment extends Fragment {
 
     public TimeSlotSelection getPickedTimeSlot() {
         if (timeSlotAdapter != null) {
-            return timeSlotAdapter.getCheckedItem();
-        } else {
-            return pickedTimeSlot;
+            TimeSlotSelection checked = timeSlotAdapter.getCheckedItem();
+            if (checked != null) {
+                return checked;
+            }
+        }
+        return pickedTimeSlot;
+    }
+
+    protected void setPickedTimeSlot(TimeSlotSelection timeSlot) {
+        this.pickedTimeSlot = timeSlot;
+        if (timeSlotAdapter != null) {
+            timeSlotAdapter.setCheckedItem(timeSlot);
         }
     }
 
@@ -93,19 +102,27 @@ public class TimeSlotPickerFragment extends Fragment {
         return timeSlots;
     }
 
-    public void setTimeSlots(List<TimeSlotSelection> timeSlots) {
-        this.timeSlots = new ArrayList<TimeSlotSelection>(timeSlots);
-        if (timeSlotAdapter != null) {
-            timeSlotAdapter.setData(this.timeSlots);
+    public void setTimeSlots(List<TimeSlotSelection> newTimeSlots) {
+        TimeSlotSelection picked = getPickedTimeSlot();
+
+        if (timeSlots == null) {
+            timeSlots = new ArrayList<TimeSlotSelection>();
+        } else {
+            timeSlots = new ArrayList<TimeSlotSelection>(newTimeSlots);
         }
+        if (timeSlotAdapter != null) {
+            timeSlotAdapter.setData(timeSlots);
+        }
+
+        setPickedTimeSlot(picked);
     }
 
     public static class TimeSlotPickerArrayAdapter extends ArrayAdapter<TimeSlotSelection> implements CompoundButton.OnCheckedChangeListener {
 
         private int checkedPosition = -1;
 
-        public TimeSlotPickerArrayAdapter(Context context, List<TimeSlotSelection> selections) {
-            super(context, R.layout.time_slot_check, selections);
+        public TimeSlotPickerArrayAdapter(Context context) {
+            super(context, R.layout.time_slot_check);
         }
 
         public int getCheckedPosition() {

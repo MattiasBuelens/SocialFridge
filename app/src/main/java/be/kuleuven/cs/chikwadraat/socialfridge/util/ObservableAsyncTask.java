@@ -101,10 +101,10 @@ public abstract class ObservableAsyncTask<Params, Progress, Result> extends Asyn
     protected final void onPostExecute(Result result) {
         if (listener == null) {
             Log.d(TAG, "onPostExecute() skipped -- no listener");
-        } else if (result != null) {
-            listener.onResult(result);
         } else if (exception != null) {
             listener.onError(exception);
+        } else {
+            listener.onResult(result);
         }
     }
 

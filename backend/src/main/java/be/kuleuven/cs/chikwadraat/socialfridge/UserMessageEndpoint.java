@@ -46,8 +46,7 @@ public class UserMessageEndpoint extends BaseEndpoint {
                 List<TaskOptions> options = new ArrayList<TaskOptions>();
                 for (Key<UserMessage> key : keys) {
                     options.add(TaskOptions.Builder
-                            .withTaskName(key.getString())
-                            .param(MessageWorker.PARAM_MESSAGE_KEY, key.getString()));
+                            .withParam(MessageWorker.PARAM_MESSAGE_KEY, key.getString()));
                 }
                 queue.add(ofy().getTransaction(), options);
             }
@@ -78,18 +77,7 @@ public class UserMessageEndpoint extends BaseEndpoint {
      * @param userMessage The message to be deleted.
      */
     protected void removeMessage(final UserMessage userMessage) {
-        ofy().transact(new com.googlecode.objectify.VoidWork() {
-            @Override
-            public void vrun() {
-                // Delete message
-                Key<UserMessage> key = Key.create(userMessage);
-                ofy().delete().entity(userMessage).now();
-
-                // Delete task
-                Queue queue = QueueFactory.getQueue(MessageWorker.QUEUE);
-                queue.deleteTask(key.getString());
-            }
-        });
+        ofy().delete().entity(userMessage).now();
     }
 
     /**

@@ -313,13 +313,13 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
         fragment.setMessage(message);
         ft.show(fragment);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     protected void hideProgressDialog() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
         if (fragment != null) {
-            ((ProgressDialogFragment) fragment).dismiss();
+            ((ProgressDialogFragment) fragment).dismissAllowingStateLoss();
         }
     }
 

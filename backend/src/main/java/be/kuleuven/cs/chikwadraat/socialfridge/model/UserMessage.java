@@ -48,6 +48,9 @@ public class UserMessage {
     @Serialize
     private Map<String, String> data = new HashMap<String, String>();
 
+    public UserMessage() {
+    }
+
     public UserMessage(User user, String collapseKey, Map<String, String> data) {
         this.user = Ref.create(user);
         this.receivingDevices = new HashSet<String>(user.getDevices());

@@ -1,6 +1,8 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +36,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_invite);
 
-        doneButton = (Button) findViewById(R.id.arrange_action_done);
+        doneButton = (Button) findViewById(R.id.invite_action_done);
         doneButton.setOnClickListener(this);
 
         // Re-attach to close invites task
@@ -79,14 +81,39 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         showProgressDialog(R.string.party_close_invites_progress);
     }
 
+    private void removeCloseInvitesTask() {
+        if (task != null) {
+            task.detach();
+            task = null;
+        }
+    }
+
     @Override
     public void onResult(Void aVoid) {
+        Log.d(TAG, "Party invites successfully closed");
+        removeCloseInvitesTask();
+        hideProgressDialog();
 
+        // Invites closed, start arranging
+        Intent intent = new Intent(this, ArrangePartyActivity.class);
+        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
+
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onError(Exception exception) {
+        Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
+        removeCloseInvitesTask();
+        hideProgressDialog();
 
+        // Handle regular exception
+        new AlertDialog.Builder(this)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle(R.string.error_dialog_title)
+                .setMessage(exception.getMessage())
+                .show();
     }
 
     @Override

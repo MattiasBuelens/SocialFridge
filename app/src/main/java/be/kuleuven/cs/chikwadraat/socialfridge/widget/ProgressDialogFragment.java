@@ -37,10 +37,6 @@ public class ProgressDialogFragment extends DialogFragment {
         } else if (getArguments() != null) {
             message = getArguments().getString(ARGS_MESSAGE);
         }
-
-        if (message == null) {
-            message = getActivity().getString(R.string.loading);
-        }
     }
 
     @Override
@@ -58,7 +54,13 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     public String getMessage() {
-        return message;
+        if (message != null) {
+            return message;
+        } else if (getActivity() != null) {
+            return getActivity().getString(R.string.loading);
+        } else {
+            return "Loading&#8230;";
+        }
     }
 
     public void setMessage(String message) {
