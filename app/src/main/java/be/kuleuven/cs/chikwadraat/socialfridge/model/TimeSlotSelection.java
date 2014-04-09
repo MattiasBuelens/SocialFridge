@@ -3,7 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
 
 /**
  * Created by vital.dhaveloose on 31/03/2014.

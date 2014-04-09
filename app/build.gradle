@@ -50,8 +50,7 @@ dependencies {
     compile "com.facebook:facebook-android-sdk:3.7"
 
     // Client libraries
-    compile "be.kuleuven.cs.chikwadraat:socialfridge-users:v1-+"
-    compile "be.kuleuven.cs.chikwadraat:socialfridge-parties:v1-+"
+    compile "be.kuleuven.cs.chikwadraat:socialfridge-endpoint:v1-+"
 
     // Widgets
 

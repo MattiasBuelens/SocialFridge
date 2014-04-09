@@ -30,7 +30,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 @Api(
-        name = "parties",
+        name = "endpoint",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class PartyEndpoint extends BaseEndpoint {
@@ -42,7 +42,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The retrieved party.
      */
-    @ApiMethod(name = "getParty", path = "party/{partyID}", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.getParty", path = "party/{partyID}", httpMethod = ApiMethod.HttpMethod.GET)
     public Party getParty(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         Party party = getParty(partyID, false);
         checkAccess(accessToken, party.getMemberIDs());
@@ -55,7 +55,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The parties of a user.
      */
-    @ApiMethod(name = "getParties", path = "parties", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.getParties", path = "parties", httpMethod = ApiMethod.HttpMethod.GET)
     public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         User user = getUser(userID);
@@ -70,7 +70,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The inserted party.
      */
-    @ApiMethod(name = "insertParty", path = "party", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "parties.insertParty", path = "party", httpMethod = ApiMethod.HttpMethod.POST)
     public Party insertParty(final PartyBuilder builder, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = builder.getHostID();
         checkAccess(accessToken, userID);
@@ -102,7 +102,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param friendID    The user ID of the friend to invite.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "invite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.invite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.GET)
     public void invite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         // Check if friend exists
@@ -144,7 +144,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param friendID    The user ID of the friend to invite.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "cancelInvite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.DELETE)
+    @ApiMethod(name = "parties.cancelInvite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.DELETE)
     public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         // Check if friend exists
@@ -181,7 +181,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "parties.acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
     public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         final User user = getUser(userID);
@@ -214,7 +214,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "declineInvite", path = "party/{partyID}/declineInvite", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.declineInvite", path = "party/{partyID}/declineInvite", httpMethod = ApiMethod.HttpMethod.GET)
     public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         final User user = getUser(userID);
@@ -241,7 +241,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "leaveParty", path = "party/{partyID}/leave", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.leaveParty", path = "party/{partyID}/leave", httpMethod = ApiMethod.HttpMethod.GET)
     public void leaveParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         final User user = getUser(userID);
@@ -275,7 +275,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The list of candidates.
      */
-    @ApiMethod(name = "getCandidates", path = "party/{partyID}/candidates", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.getCandidates", path = "party/{partyID}/candidates", httpMethod = ApiMethod.HttpMethod.GET)
     public List<PartyMember> getCandidates(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         Party party = getParty(partyID, true);
@@ -307,7 +307,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param partyID     The party ID.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "parties.closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
     public void closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         transact(new VoidWork<ServiceException>() {
@@ -338,7 +338,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param timeSlot    The chosen time slot.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "plan", path = "party/{partyID}/plan", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "parties.plan", path = "party/{partyID}/plan", httpMethod = ApiMethod.HttpMethod.POST)
     public void plan(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {

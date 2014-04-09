@@ -8,8 +8,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
 
 /**
  * Endpoints access.
@@ -29,12 +30,15 @@ public class Endpoints {
     private static final String TEST_ROOT_URL = "http://192.168.1.163:8080/_ah/api/";
 
     public static Users users(Context context) {
-        Users.Builder builder = new Users.Builder(newHttpTransport(), getJsonFactory(), null);
-        return prepare(builder, context).build();
+        return endpoint(context).users();
     }
 
     public static Parties parties(Context context) {
-        Parties.Builder builder = new Parties.Builder(newHttpTransport(), getJsonFactory(), null);
+        return endpoint(context).parties();
+    }
+
+    private static Endpoint endpoint(Context context) {
+        Endpoint.Builder builder = new Endpoint.Builder(newHttpTransport(), getJsonFactory(), null);
         return prepare(builder, context).build();
     }
 

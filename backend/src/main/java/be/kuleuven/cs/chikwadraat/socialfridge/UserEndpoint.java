@@ -14,7 +14,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 @Api(
-        name = "users",
+        name = "endpoint",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class UserEndpoint extends BaseEndpoint {
@@ -26,7 +26,7 @@ public class UserEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The retrieved user.
      */
-    @ApiMethod(name = "getUser", path = "user/{id}")
+    @ApiMethod(name = "users.getUser", path = "user/{id}")
     public User getUser(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         return getUser(id);
@@ -40,7 +40,7 @@ public class UserEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The updated user.
      */
-    @ApiMethod(name = "updateUser", path = "user")
+    @ApiMethod(name = "users.updateUser", path = "user")
     public User updateUser(final User user, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, user.getID());
         return transact(new Work<User, ServiceException>() {
@@ -69,7 +69,7 @@ public class UserEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The deleted user.
      */
-    @ApiMethod(name = "removeUser", path = "user/{id}")
+    @ApiMethod(name = "users.removeUser", path = "user/{id}")
     public User removeUser(final @Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, id);
         return transact(new Work<User, ServiceException>() {

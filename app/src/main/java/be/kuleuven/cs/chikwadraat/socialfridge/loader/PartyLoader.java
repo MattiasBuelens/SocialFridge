@@ -8,8 +8,8 @@ import com.facebook.Session;
 import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 
 /**
  * Retrieves a party.

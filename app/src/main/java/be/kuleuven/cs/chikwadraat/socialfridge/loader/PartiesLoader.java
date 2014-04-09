@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 
 /**
  * Retrieves a user's parties.

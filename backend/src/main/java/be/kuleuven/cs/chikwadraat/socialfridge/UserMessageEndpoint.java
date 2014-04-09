@@ -25,7 +25,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 @Api(
-        name = "users",
+        name = "endpoint",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class UserMessageEndpoint extends BaseEndpoint {
@@ -106,7 +106,7 @@ public class UserMessageEndpoint extends BaseEndpoint {
      * @param messageID   The message ID to be deleted.
      * @param accessToken The access token for authorization.
      */
-    @ApiMethod(name = "removeMessage", path = "user/{userID}/message/{messageID}")
+    @ApiMethod(name = "users.removeMessage", path = "user/{userID}/message/{messageID}")
     public void removeMessage(final @Named("userID") String userID, final @Named("messageID") long messageID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
         removeMessage(userID, messageID);

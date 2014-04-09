@@ -12,7 +12,7 @@ import com.facebook.widget.ProfilePictureView;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartiesActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 
 /**
  * Main activity.

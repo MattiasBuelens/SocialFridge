@@ -11,9 +11,9 @@ import com.facebook.Session;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
  * Base activity for parties.

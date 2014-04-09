@@ -17,10 +17,10 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**

@@ -14,7 +14,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 @Api(
-        name = "users",
+        name = "endpoint",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class UserDeviceEndpoint extends BaseEndpoint {
@@ -28,7 +28,7 @@ public class UserDeviceEndpoint extends BaseEndpoint {
      * @param accessToken    The access token for authorization.
      * @return The updated user device.
      */
-    @ApiMethod(name = "updateUserDevice", path = "userDevice/{userID}/{registrationID}", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "users.updateUserDevice", path = "userDevice/{userID}/{registrationID}", httpMethod = ApiMethod.HttpMethod.GET)
     public void updateUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
         registerUserDevice(userID, registrationID);
@@ -43,7 +43,7 @@ public class UserDeviceEndpoint extends BaseEndpoint {
      * @param accessToken    The access token for authorization.
      * @return The deleted user device.
      */
-    @ApiMethod(name = "removeUserDevice", path = "userDevice/{userID}/{registrationID}")
+    @ApiMethod(name = "users.removeUserDevice", path = "userDevice/{userID}/{registrationID}")
     public void removeUserDevice(final @Named("userID") String userID, final @Named("registrationID") String registrationID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
         unregisterUserDevice(userID, registrationID);

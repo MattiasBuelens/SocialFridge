@@ -3,7 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 
 /**
  * Created by Mattias on 1/04/2014.

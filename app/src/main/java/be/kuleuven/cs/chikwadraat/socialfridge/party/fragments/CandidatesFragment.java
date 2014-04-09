@@ -18,12 +18,12 @@ import com.facebook.widget.ProfilePictureView;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**

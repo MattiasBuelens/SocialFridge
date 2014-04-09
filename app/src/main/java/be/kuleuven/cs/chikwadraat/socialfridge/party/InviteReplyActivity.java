@@ -16,13 +16,13 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlotCollection;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
-import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
-import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
