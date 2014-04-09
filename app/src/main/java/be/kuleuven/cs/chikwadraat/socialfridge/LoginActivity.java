@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmHelper;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Login activity.

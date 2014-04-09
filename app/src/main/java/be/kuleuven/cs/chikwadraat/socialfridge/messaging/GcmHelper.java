@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.messaging;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,8 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 
 /**
  * Created by Mattias on 4/04/2014.

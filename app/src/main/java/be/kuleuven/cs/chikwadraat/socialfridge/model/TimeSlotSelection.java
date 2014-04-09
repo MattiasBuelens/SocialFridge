@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge.party;
+package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

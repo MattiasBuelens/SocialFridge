@@ -11,7 +11,7 @@ import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
-import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
+import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationIntentService;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_test_notification:
-                Intent serviceIntent = new Intent(this, NotificationService.class);
+                Intent serviceIntent = new Intent(this, NotificationIntentService.class);
                 serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
                 serviceIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, "Hello world!");
                 startService(serviceIntent);

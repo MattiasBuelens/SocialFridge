@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 
 /**
  * Created by vital.dhaveloose on 29/03/2014.

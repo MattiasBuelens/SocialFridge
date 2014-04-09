@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment">
 
     <TextView
         android:id="@+id/party_candidates_header"

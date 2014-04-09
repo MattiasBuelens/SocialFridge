@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment">
 
     <TextView
         android:id="@+id/party_partners_header"

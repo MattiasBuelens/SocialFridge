@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;

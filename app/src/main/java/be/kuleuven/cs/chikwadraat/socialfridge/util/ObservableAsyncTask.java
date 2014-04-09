@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.util;
 
 import android.os.AsyncTask;
 import android.util.Log;

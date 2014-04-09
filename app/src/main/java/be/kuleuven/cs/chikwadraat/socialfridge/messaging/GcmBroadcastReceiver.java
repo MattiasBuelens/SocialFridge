@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.messaging;
 
 import android.app.Activity;
 import android.content.ComponentName;

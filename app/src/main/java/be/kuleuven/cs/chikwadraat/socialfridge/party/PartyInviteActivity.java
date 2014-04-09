@@ -12,10 +12,11 @@ import com.facebook.Session;
 import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.ObservableAsyncTask;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
 
 /**
  * Activity to invite friends to a party.

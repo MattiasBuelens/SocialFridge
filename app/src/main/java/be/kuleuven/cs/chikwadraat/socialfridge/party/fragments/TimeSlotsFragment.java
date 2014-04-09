@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge.party;
+package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,8 +13,9 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 
 /**
  * A fragment to configure time slots.

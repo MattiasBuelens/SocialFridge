@@ -12,7 +12,7 @@
 
     <fragment
         android:id="@+id/partners_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.PartnersFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/time_slots_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotsFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/partners_fragment"

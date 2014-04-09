@@ -17,11 +17,11 @@ import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
  * responding to their actions.
  * </p>
  */
-public class NotificationService extends IntentService {
+public class NotificationIntentService extends IntentService {
 
     private NotificationManager nm;
 
-    public NotificationService() {
+    public NotificationIntentService() {
         super(NotificationConstants.NOTIFICATION_ADDRESS);
     }
 
@@ -59,13 +59,13 @@ public class NotificationService extends IntentService {
     private void issueNotification(Intent receivedIntent, String msg) {
         // Sets up the Choose slots and Decline action buttons that will appear in the
         // expanded view of the notification.
-        Intent chooseSlotsIntent = new Intent(this, NotificationService.class);
+        Intent chooseSlotsIntent = new Intent(this, NotificationIntentService.class);
         chooseSlotsIntent.setAction(NotificationConstants.ACTION_CHOOSE_SLOTS);
         // reuse the bundle of the received intent
         chooseSlotsIntent.putExtras(receivedIntent.getExtras());
         PendingIntent piChooseSlots = PendingIntent.getService(this, 0, chooseSlotsIntent, 0);
 
-        Intent declineIntent = new Intent(this, NotificationService.class);
+        Intent declineIntent = new Intent(this, NotificationIntentService.class);
         declineIntent.setAction(NotificationConstants.ACTION_DECLINE);
         // reuse the bundle of the received intent
         declineIntent.putExtras(receivedIntent.getExtras());

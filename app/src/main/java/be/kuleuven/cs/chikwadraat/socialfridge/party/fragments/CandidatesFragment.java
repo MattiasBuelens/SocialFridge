@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge.party;
+package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,16 +17,18 @@ import com.facebook.widget.ProfilePictureView;
 
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
  * Fragment displaying the candidates for a party.
- * Use the {@link be.kuleuven.cs.chikwadraat.socialfridge.party.CandidatesFragment#newInstance} factory method to
+ * Use the {@link CandidatesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class CandidatesFragment extends Fragment implements PartyListener {

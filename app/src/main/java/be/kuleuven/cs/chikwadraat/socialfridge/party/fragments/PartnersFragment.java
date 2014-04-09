@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge.party;
+package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,10 +11,11 @@ import android.widget.GridView;
 
 import com.facebook.widget.ProfilePictureView;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**

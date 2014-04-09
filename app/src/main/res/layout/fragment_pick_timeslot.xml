@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.TimeSlotPickerFragment">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment">
 
     <TextView
         android:id="@+id/final_time_slot_header"

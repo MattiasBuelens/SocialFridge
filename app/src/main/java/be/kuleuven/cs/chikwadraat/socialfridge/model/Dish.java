@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 /**
  * Created by vital.dhaveloose on 24/03/2014.

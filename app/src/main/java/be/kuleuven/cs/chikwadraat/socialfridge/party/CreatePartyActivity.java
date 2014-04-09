@@ -19,12 +19,14 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.ObservableAsyncTask;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 
 /**
  * Create party activity.

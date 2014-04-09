@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.messaging;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -7,10 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
-import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageType;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
-import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationService;
+import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationIntentService;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -70,7 +68,7 @@ public class GcmIntentService extends IntentService {
                 break;
             case PARTY_INVITE:
                 // notify user
-                Intent notificationIntent = new Intent(this, NotificationService.class);
+                Intent notificationIntent = new Intent(this, NotificationIntentService.class);
                 notificationIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
                 // simply add received bundle (from the message) to notificationIntent
                 notificationIntent.putExtras(data);
