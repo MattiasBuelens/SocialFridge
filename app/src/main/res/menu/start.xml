@@ -1,13 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.LoginActivity" >
-    
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:showAsAction="never" />
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.LoginActivity">
 
-    <item android:id="@+id/action_logout"
+    <!--<item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        custom:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/action_logout"
         android:title="@string/action_logout"
-        android:showAsAction="never" />
+        custom:showAsAction="never" />
 
 </menu>
