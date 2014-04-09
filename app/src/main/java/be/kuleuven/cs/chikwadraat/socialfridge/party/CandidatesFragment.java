@@ -93,7 +93,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     @Override
     public void onPartyLoaded(Party party, User user) {
         // Load candidates if host
-        if (PartyHelper.isHost(party, user)) {
+        if (PartyUtils.isHost(party, user)) {
             loadCandidates(party.getId());
         }
     }

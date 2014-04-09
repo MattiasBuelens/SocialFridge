@@ -75,7 +75,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      */
     protected void redirectIfNeeded(Party party, User user) {
         Class<?> targetActivity = null;
-        if (PartyHelper.isHost(party, user)) {
+        if (PartyUtils.isHost(party, user)) {
             // User is host
             if (party.getInviting()) {
                 targetActivity = PartyInviteActivity.class;
@@ -85,7 +85,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
                 // TODO Set correct activity
                 // targetActivity = PartyViewActivity.class;
             }
-        } else if (PartyHelper.isInParty(party, user)) {
+        } else if (PartyUtils.isInParty(party, user)) {
             // User is partner
             // TODO Set correct activity
             // targetActivity = PartyViewActivity.class;

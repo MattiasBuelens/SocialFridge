@@ -5,11 +5,14 @@ import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
- * Created by Mattias on 9/04/2014.
+ * Utility methods for working with parties.
+ * <p>
+ * Google doesn't let us extend {@link Party}, so we need to use static extensions...
+ * </p>
  */
-public class PartyHelper {
+public class PartyUtils {
 
-    private PartyHelper() {
+    private PartyUtils() {
     }
 
     /**
