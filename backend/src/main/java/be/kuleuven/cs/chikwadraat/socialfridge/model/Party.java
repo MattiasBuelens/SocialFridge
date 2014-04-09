@@ -48,7 +48,7 @@ public class Party {
     /**
      * Host.
      */
-    @Load(Partial.class)
+    @Load
     private Ref<User> host;
 
     /**
@@ -65,7 +65,7 @@ public class Party {
     /**
      * Partners.
      */
-    @Load(Partial.class)
+    @Load
     private Set<Ref<PartyMember>> partners = new HashSet<Ref<PartyMember>>();
 
     /**

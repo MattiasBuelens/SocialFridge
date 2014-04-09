@@ -15,6 +15,7 @@
 
     <!-- Start -->
     <string name="start_action_create_party">Create Cooking Party</string>
+    <string name="start_action_list_parties">View Parties</string>
     <string name="start_action_manage_fridge">Manage Fridge</string>
 
     <!-- Dishes -->
@@ -46,6 +47,8 @@
     <!-- Reply to invite -->
     <string name="party_join">Join</string>
     <string name="party_decline">Decline</string>
+    <string name="party_join_progress">Joining party&#8230;</string>
+    <string name="party_decline_progress">Declining invite&#8230;</string>
 
     <!-- Plan party -->
     <string name="party_plan_title">Plan party</string>
@@ -61,6 +64,14 @@
     <string name="notif_party_invite_content">%1$s invited you to make %2$s together.</string>
     <string name="notif_action_choose_slots">Choose time slots</string>
     <string name="notif_action_decline">Decline</string>
+
+    <!-- List parties -->
+    <string name="party_list_title">Your parties</string>
+    <string name="party_list_members">%1$s and %2$s</string>
+    <plurals name="party_list_partners">
+        <item quantity="one">1 other</item>
+        <item quantity="other">%d others</item>
+    </plurals>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>

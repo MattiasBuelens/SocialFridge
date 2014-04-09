@@ -64,4 +64,20 @@ public class PartyUtils {
         return false;
     }
 
+    /**
+     * Get the host of a party.
+     *
+     * @param party The party.
+     * @return The host.
+     */
+    public static PartyMember getHost(Party party) {
+        String hostID = party.getHostID();
+        for (PartyMember partner : party.getPartners()) {
+            if (partner.getUserID().equals(hostID)) {
+                return partner;
+            }
+        }
+        return null;
+    }
+
 }

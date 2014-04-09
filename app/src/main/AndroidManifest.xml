@@ -47,6 +47,10 @@
             android:name=".party.PlanPartyActivity"
             android:label="@string/party_plan_title" />
 
+        <activity
+            android:name=".party.PartiesActivity"
+            android:label="@string/party_list_title" />
+
         <service android:name=".notifications.NotificationIntentService" />
 
         <!-- Facebook -->

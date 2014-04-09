@@ -6,36 +6,30 @@ import android.util.Log;
 import com.facebook.Session;
 
 import java.io.IOException;
+import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.parties.model.Party;
 
 /**
- * Retrieves a party.
+ * Retrieves a user's parties.
  */
-public class PartyLoader extends BaseLoader<Party> {
+public class PartiesLoader extends BaseLoader<List<Party>> {
 
-    private static final String TAG = "PartyLoader";
+    private static final String TAG = "PartiesLoader";
 
-    private final long partyID;
-
-    public PartyLoader(Context context, long partyID) {
+    public PartiesLoader(Context context) {
         super(context);
-        this.partyID = partyID;
-    }
-
-    public long getPartyID() {
-        return partyID;
     }
 
     @Override
-    public Party loadInBackground() {
+    public List<Party> loadInBackground() {
         Parties parties = Endpoints.parties(getContext());
         Session session = Session.getActiveSession();
 
         try {
-            return parties.getParty(partyID, session.getAccessToken()).execute();
+            return parties.getParties(session.getAccessToken()).execute().getList();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             return null;

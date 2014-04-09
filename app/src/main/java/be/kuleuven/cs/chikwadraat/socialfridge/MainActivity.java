@@ -10,9 +10,8 @@ import android.widget.TextView;
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
-import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationIntentService;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartiesActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.users.model.User;
 
 /**
@@ -35,7 +34,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         userNameView = (TextView) findViewById(R.id.current_user_name);
 
         findViewById(R.id.action_create_party).setOnClickListener(this);
-        findViewById(R.id.action_test_notification).setOnClickListener(this);
+        findViewById(R.id.action_list_parties).setOnClickListener(this);
 
         if (savedInstanceState != null) {
             // TODO Initialize stuff
@@ -61,16 +60,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.action_create_party:
+            case R.id.action_create_party: {
                 Intent intent = new Intent(this, CreatePartyActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.action_test_notification:
-                Intent serviceIntent = new Intent(this, NotificationIntentService.class);
-                serviceIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
-                serviceIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, "Hello world!");
-                startService(serviceIntent);
-                break;
+            }
+            break;
+            case R.id.action_list_parties: {
+                Intent intent = new Intent(this, PartiesActivity.class);
+                startActivity(intent);
+            }
+            break;
         }
     }
 

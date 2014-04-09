@@ -19,6 +19,7 @@ import javax.inject.Named;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
@@ -46,6 +47,20 @@ public class PartyEndpoint extends BaseEndpoint {
         Party party = getParty(partyID, false);
         checkAccess(accessToken, party.getMemberIDs());
         return party;
+    }
+
+    /**
+     * Retrieves all parties for a user.
+     *
+     * @param accessToken The access token for authorization.
+     * @return The parties of a user.
+     */
+    @ApiMethod(name = "getParties", path = "parties", httpMethod = ApiMethod.HttpMethod.GET)
+    public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        User user = getUser(userID);
+        List<Party> parties = new ArrayList<Party>(user.getParties());
+        return new PartyCollection(parties);
     }
 
     /**

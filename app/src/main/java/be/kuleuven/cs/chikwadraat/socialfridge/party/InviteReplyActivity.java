@@ -128,8 +128,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         task = new JoinTask(this, getPartyID(), getTimeSlots());
         task.execute();
-        // showProgressDialog(R.string.party_close_invites_progress);
-        // TODO: dialog tonen
+
+        showProgressDialog(R.string.party_join_progress);
     }
 
     private void decline() {
@@ -137,8 +137,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         task = new DeclineTask(this, getPartyID());
         task.execute();
-        // showProgressDialog(R.string.party_close_invites_progress);
-        // TODO: dialog tonen
+
+        showProgressDialog(R.string.party_decline_progress);
     }
 
     private void removeTask() {

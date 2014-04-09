@@ -10,10 +10,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <RelativeLayout
             android:id="@+id/current_user"
@@ -54,17 +54,17 @@
                 android:text="@string/start_action_create_party" />
 
             <Button
+                android:id="@+id/action_list_parties"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/start_action_list_parties" />
+
+            <!--<Button
                 android:id="@+id/action_manage_fridge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/start_action_manage_fridge" />
-
-            <Button
-                android:id="@+id/action_test_notification"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Test notification"
-                android:layout_gravity="center_horizontal" />
+                android:text="@string/start_action_manage_fridge" />-->
         </LinearLayout>
 
     </RelativeLayout>
