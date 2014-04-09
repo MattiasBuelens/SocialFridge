@@ -164,7 +164,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
         @Override
         protected Void run(Void... unused) throws Exception {
-            parties().arrange(partyID, Session.getActiveSession().getAccessToken(), timeSlot).execute();
+            parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot).execute();
             return null;
         }
 
