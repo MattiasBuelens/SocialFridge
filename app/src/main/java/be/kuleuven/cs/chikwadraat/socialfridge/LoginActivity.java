@@ -10,6 +10,7 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -127,6 +128,7 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
         hideProgressDialog();
 
         // Registered, finish
+        getTracker().send(new HitBuilders.EventBuilder("User", "Login").build());
         setLoggedInUser(user);
         setResult(RESULT_OK);
         finish();

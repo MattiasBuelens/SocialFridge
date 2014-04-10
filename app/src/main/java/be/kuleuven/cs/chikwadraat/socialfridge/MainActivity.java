@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
+import com.google.android.gms.analytics.HitBuilders;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
@@ -51,6 +52,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
+                getTracker().send(new HitBuilders.EventBuilder("User", "Logout").build());
                 logout();
                 return true;
         }
