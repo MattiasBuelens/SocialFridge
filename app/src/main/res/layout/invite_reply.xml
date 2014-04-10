@@ -30,7 +30,7 @@
     <fragment
         android:id="@+id/place_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.PlaceFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/invite_reply_buttons"
         android:layout_below="@+id/time_slots_fragment"
