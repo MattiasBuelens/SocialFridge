@@ -72,7 +72,7 @@ public class NotificationIntentService extends IntentService {
 
         String hostName = message.getHostUserName();
         String contentTitle = getString(R.string.notif_party_invite_title);
-        String contentText = getString(R.string.notif_party_invite_content, hostName, "spaghetti");
+        String contentText = getString(R.string.notif_party_invite_content, hostName, "dinner");
 
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
@@ -113,12 +113,12 @@ public class NotificationIntentService extends IntentService {
         if (reason.equals(PartyUpdateReason.JOINED)) {
             String partnerName = message.getUpdateReasonUserName();
             contentTitle = getString(R.string.notif_party_joined_title);
-            contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
+            contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
         } else if (reason.equals(PartyUpdateReason.DONE)) {
             // TODO Host shouldn't be notified, need to check this
             String hostName = message.getHostUserName();
             contentTitle = getString(R.string.notif_party_done_title);
-            contentText = getString(R.string.notif_party_done_content, hostName, "spaghetti");
+            contentText = getString(R.string.notif_party_done_content, hostName, "dinner");
         } else {
             // Unknown reason
             return;

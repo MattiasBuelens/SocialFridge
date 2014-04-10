@@ -93,7 +93,7 @@ public class PartiesActivity extends ListActivity {
             vh.position = position;
             vh.hostPictureView.setProfileId(party.getHostID());
             vh.partnersView.setText(partnersText);
-            vh.dishView.setText("Making Spaghetti");
+            //vh.dishView.setText("Making Spaghetti");
 
             return v;
         }
