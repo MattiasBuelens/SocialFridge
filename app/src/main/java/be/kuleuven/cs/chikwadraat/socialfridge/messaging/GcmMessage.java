@@ -33,22 +33,28 @@ public class GcmMessage implements Parcelable {
     public GcmMessage(Bundle gcmMessageExtras) {
         type = MessageType.byName(gcmMessageExtras.getString(ARG_TYPE));
 
+        // Party
         String partyIDString = gcmMessageExtras.getString(ARG_PARTY_ID);
         partyID = partyIDString == null ? null : Long.parseLong(partyIDString);
+        hostUserID = gcmMessageExtras.getString(ARG_HOST_USER_ID);
+        hostUserName = gcmMessageExtras.getString(ARG_HOST_USER_NAME);
 
+        // Updates
         updateReason = PartyUpdateReason.byName(gcmMessageExtras.getString(ARG_UPDATE_REASON));
         updateReasonUserID = gcmMessageExtras.getString(ARG_REASON_USER_ID);
         updateReasonUserName = gcmMessageExtras.getString(ARG_REASON_USER_NAME);
 
+        // Invites
         inviteeUserID = gcmMessageExtras.getString(ARG_INVITEE_USER_ID);
-        hostUserID = gcmMessageExtras.getString(ARG_HOST_USER_ID);
-        hostUserName = gcmMessageExtras.getString(ARG_HOST_USER_NAME);
     }
 
     public GcmMessage(Parcel in) {
         type = MessageType.byName(in.readString());
 
+        // Party
         partyID = (in.readByte() == 1) ? in.readLong() : null;
+        hostUserID = in.readString();
+        hostUserName = in.readString();
 
         // Updates
         updateReason = PartyUpdateReason.byName(in.readString());
@@ -57,8 +63,6 @@ public class GcmMessage implements Parcelable {
 
         // Invites
         inviteeUserID = in.readString();
-        hostUserID = in.readString();
-        hostUserName = in.readString();
     }
 
     public MessageType getType() {
@@ -67,6 +71,14 @@ public class GcmMessage implements Parcelable {
 
     public Long getPartyID() {
         return partyID;
+    }
+
+    public String getHostUserID() {
+        return hostUserID;
+    }
+
+    public String getHostUserName() {
+        return hostUserName;
     }
 
     public PartyUpdateReason getUpdateReason() {
@@ -85,14 +97,6 @@ public class GcmMessage implements Parcelable {
         return inviteeUserID;
     }
 
-    public String getHostUserID() {
-        return hostUserID;
-    }
-
-    public String getHostUserName() {
-        return hostUserName;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -102,10 +106,13 @@ public class GcmMessage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getType().getName());
 
+        // Party
         dest.writeByte((byte) (getPartyID() != null ? 1 : 0));
         if (getPartyID() != null) {
             dest.writeLong(getPartyID());
         }
+        dest.writeString(getHostUserID());
+        dest.writeString(getHostUserName());
 
         // Updates
         dest.writeString((getUpdateReason() != null) ? getUpdateReason().getName() : null);
@@ -114,8 +121,6 @@ public class GcmMessage implements Parcelable {
 
         // Invites
         dest.writeString(getInviteeUserID());
-        dest.writeString(getHostUserID());
-        dest.writeString(getHostUserName());
     }
 
     public static final Parcelable.Creator<GcmMessage> CREATOR

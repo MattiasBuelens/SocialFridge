@@ -112,9 +112,9 @@ public class PartyEndpoint extends BaseEndpoint {
         if (!isBefriendedWith(friendID, accessToken)) {
             throw new UnauthorizedException("User must be befriended with friend");
         }
-        transact(new VoidWork<ServiceException>() {
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
+            public Party run() throws ServiceException {
                 // Check if friend exists
                 final User friend = getUser(friendID);
                 if (friend == null) {
@@ -129,14 +129,13 @@ public class PartyEndpoint extends BaseEndpoint {
                 party.invite(friend);
                 // Save
                 ofy().save().entities(party, friend).now();
+                return party;
             }
         });
 
         // Send invite to friend
-        User host = getUser(userID);
         User friend = getUser(friendID);
-        List<UserMessage> messages = Messages.partyInvited(partyID)
-                .host(host)
+        List<UserMessage> messages = Messages.partyInvited(party)
                 .invitee(friend)
                 .recipients(friend)
                 .build();
@@ -153,9 +152,9 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.cancelInvite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.DELETE)
     public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        transact(new VoidWork<ServiceException>() {
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
+            public Party run() throws ServiceException {
                 // Check if friend exists
                 final User friend = getUserUnsafe(friendID);
                 if (friend == null) {
@@ -170,14 +169,13 @@ public class PartyEndpoint extends BaseEndpoint {
                 party.cancelInvite(friend);
                 // Save
                 ofy().save().entities(party, friend).now();
+                return party;
             }
         });
 
         // Send cancel invite to friend
-        User host = getUser(userID);
         User friend = getUser(friendID);
-        List<UserMessage> messages = Messages.partyInviteCanceled(partyID)
-                .host(host)
+        List<UserMessage> messages = Messages.partyInviteCanceled(party)
                 .invitee(friend)
                 .recipients(friend)
                 .build();
@@ -207,7 +205,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         User user = getUser(userID);
-        List<UserMessage> messages = Messages.partyUpdated(partyID)
+        List<UserMessage> messages = Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
                 .recipients(party.getUpdateUsers())
@@ -262,7 +260,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         User user = getUser(userID);
-        List<UserMessage> messages = Messages.partyUpdated(partyID)
+        List<UserMessage> messages = Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
                 .recipients(party.getUpdateUsers())
@@ -367,7 +365,7 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // Send update to party members
-        List<UserMessage> messages = Messages.partyUpdated(partyID)
+        List<UserMessage> messages = Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
                 .recipients(party.getUpdateUsers())
                 .build();

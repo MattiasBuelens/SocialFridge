@@ -14,6 +14,16 @@ public class MessageConstants {
     public static final String ARG_PARTY_ID = "party_id";
 
     /**
+     * User ID of party host (string)
+     */
+    public static final String ARG_HOST_USER_ID = "host_user_id";
+
+    /**
+     * User name of party host (string)
+     */
+    public static final String ARG_HOST_USER_NAME = "host_user_name";
+
+    /**
      * Reason for party update (string)
      * Set when type is {@link MessageType#PARTY_UPDATE}
      * Value set by {@link PartyUpdateReason#getName()}
@@ -37,17 +47,5 @@ public class MessageConstants {
      * Set when type is {@link MessageType#PARTY_INVITE} or {@link MessageType#PARTY_CANCEL_INVITE}
      */
     public static final String ARG_INVITEE_USER_ID = "invitee_user_id";
-
-    /**
-     * User ID of party host (string)
-     * Set when type is {@link MessageType#PARTY_INVITE} or {@link MessageType#PARTY_CANCEL_INVITE}
-     */
-    public static final String ARG_HOST_USER_ID = "host_user_id";
-
-    /**
-     * User name of party host (string)
-     * Set when type is {@link MessageType#PARTY_INVITE} or {@link MessageType#PARTY_CANCEL_INVITE}
-     */
-    public static final String ARG_HOST_USER_NAME = "host_user_name";
 
 }

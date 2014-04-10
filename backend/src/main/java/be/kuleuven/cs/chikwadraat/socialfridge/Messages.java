@@ -10,6 +10,7 @@ import java.util.Map;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageType;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 
@@ -61,14 +62,18 @@ public class Messages {
     public static class PartyBuilder<T extends PartyBuilder> extends Builder<T> {
 
         private final long partyID;
+        private final User host;
 
-        protected PartyBuilder(MessageType type, String collapseKey, long partyID) {
+        protected PartyBuilder(MessageType type, String collapseKey, Party party) {
             super(type, collapseKey);
-            this.partyID = partyID;
+            this.partyID = party.getID();
+            this.host = party.getHost();
         }
 
         public List<UserMessage> build() {
             put(MessageConstants.ARG_PARTY_ID, Long.toString(partyID));
+            put(MessageConstants.ARG_HOST_USER_ID, host.getID());
+            put(MessageConstants.ARG_HOST_USER_NAME, host.getName());
             return super.build();
         }
 
@@ -79,8 +84,8 @@ public class Messages {
         private PartyUpdateReason reason;
         private User reasonUser;
 
-        protected PartyUpdateBuilder(long partyID) {
-            super(MessageType.PARTY_UPDATE, getCollapseKey(partyID), partyID);
+        protected PartyUpdateBuilder(Party party) {
+            super(MessageType.PARTY_UPDATE, getCollapseKey(party.getID()), party);
         }
 
         public PartyUpdateBuilder reason(PartyUpdateReason reason) {
@@ -112,16 +117,10 @@ public class Messages {
 
     public static class PartyInviteBuilder extends PartyBuilder<PartyInviteBuilder> {
 
-        private User host;
         private User invitee;
 
-        protected PartyInviteBuilder(MessageType type, long partyID) {
-            super(type, null, partyID);
-        }
-
-        public PartyInviteBuilder host(User host) {
-            this.host = host;
-            return this;
+        protected PartyInviteBuilder(MessageType type, Party party) {
+            super(type, null, party);
         }
 
         public PartyInviteBuilder invitee(User invitee) {
@@ -131,23 +130,21 @@ public class Messages {
 
         public List<UserMessage> build() {
             put(MessageConstants.ARG_INVITEE_USER_ID, invitee.getID());
-            put(MessageConstants.ARG_HOST_USER_ID, host.getID());
-            put(MessageConstants.ARG_HOST_USER_NAME, host.getName());
             return super.build();
         }
 
     }
 
-    public static PartyUpdateBuilder partyUpdated(long partyID) {
-        return new PartyUpdateBuilder(partyID);
+    public static PartyUpdateBuilder partyUpdated(Party party) {
+        return new PartyUpdateBuilder(party);
     }
 
-    public static PartyInviteBuilder partyInvited(long partyID) {
-        return new PartyInviteBuilder(MessageType.PARTY_INVITE, partyID);
+    public static PartyInviteBuilder partyInvited(Party party) {
+        return new PartyInviteBuilder(MessageType.PARTY_INVITE, party);
     }
 
-    public static PartyInviteBuilder partyInviteCanceled(long partyID) {
-        return new PartyInviteBuilder(MessageType.PARTY_CANCEL_INVITE, partyID);
+    public static PartyInviteBuilder partyInviteCanceled(Party party) {
+        return new PartyInviteBuilder(MessageType.PARTY_CANCEL_INVITE, party);
     }
 
 }
