@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
 
 /**
@@ -41,7 +42,7 @@ public class NotificationIntentService extends IntentService {
         if (action.equals(NotificationConstants.ACTION_RECEIVE_INVITE)) {
             // Received party invite from GCM
             // Show notification
-            issueNotification(message);
+            issueInviteNotification(message);
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             // Choose slots action on party invite notification
             // Cancel notification first
@@ -53,10 +54,16 @@ public class NotificationIntentService extends IntentService {
             // Cancel notification first
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
             // TODO Decline invite
+        } else if (action.equals(NotificationConstants.ACTION_PARTY_UPDATE)) {
+            // Received party invite from GCM
+            // Show notification if necessary
+            issueUpdateNotification(message);
+        } else if (action.equals(NotificationConstants.ACTION_VIEW_PARTY)) {
+
         }
     }
 
-    private void issueNotification(GcmMessage message) {
+    private void issueInviteNotification(GcmMessage message) {
         // Sets up the Choose slots and Decline action buttons that will appear in the
         // expanded view of the notification.
         PendingIntent piChooseSlots = makeActionIntent(NotificationConstants.ACTION_CHOOSE_SLOTS, message);
@@ -95,6 +102,34 @@ public class NotificationIntentService extends IntentService {
         builder.setContentIntent(piChooseSlots);
 
         nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
+    }
+
+    private void issueUpdateNotification(GcmMessage message) {
+        PartyUpdateReason reason = message.getUpdateReason();
+        if(reason.equals(PartyUpdateReason.JOINED)) {
+            String partnerName = message.getUpdateReasonUserName();
+            String contentTitle = getString(R.string.notif_party_joined_title);
+            String contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
+
+            // Constructs the Builder object.
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
+                            .setContentTitle(contentTitle)
+                            .setContentText(contentText)
+                                    //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
+
+        /*
+         * Clicking the notification itself acts the same
+         * as the Choose slots action.
+         */
+            PendingIntent piViewParty = makeActionIntent(NotificationConstants.ACTION_VIEW_PARTY, message);
+
+            builder.setContentIntent(piViewParty);
+
+            nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
+        }
     }
 
     private PendingIntent makeActionIntent(String action, GcmMessage message) {

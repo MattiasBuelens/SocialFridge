@@ -63,6 +63,8 @@
     <!-- Notifications -->
     <string name="notif_party_invite_title">Invited to cooking party</string>
     <string name="notif_party_invite_content">%1$s invited you to make %2$s together.</string>
+    <string name="notif_party_joined_title">Someone joined cooking party</string>
+    <string name="notif_party_joined_content">%1$s agreed to make %2$s together.</string>
     <string name="notif_action_choose_slots">Choose time slots</string>
     <string name="notif_action_decline">Decline</string>
 

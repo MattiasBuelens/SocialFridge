@@ -60,14 +60,20 @@ public class GcmIntentService extends IntentService {
         if (message.getType() == null) return;
 
         Log.d(TAG, "Received: " + message.getType().getName());
+
+        Intent notificationIntent = new Intent(this, NotificationIntentService.class);
+
         switch (message.getType()) {
             case PARTY_UPDATE:
                 long partyID = message.getPartyID();
                 // TODO: ISSUE 4
+                // Notify user about party update
+                notificationIntent.setAction(NotificationConstants.ACTION_PARTY_UPDATE);
+                notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
+                startService(notificationIntent);
                 break;
             case PARTY_INVITE:
                 // Notify user about party invite
-                Intent notificationIntent = new Intent(this, NotificationIntentService.class);
                 notificationIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
                 notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
                 startService(notificationIntent);
