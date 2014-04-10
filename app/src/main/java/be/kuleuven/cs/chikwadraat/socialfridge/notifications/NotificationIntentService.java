@@ -60,7 +60,7 @@ public class NotificationIntentService extends IntentService {
             // Show notification if necessary
             issueUpdateNotification(message);
         } else if (action.equals(NotificationConstants.ACTION_VIEW_PARTY)) {
-            startActivity(makeViewPartyActivity(message));
+            startActivity(makeViewIntent(message));
         }
     }
 
@@ -157,10 +157,11 @@ public class NotificationIntentService extends IntentService {
         return intent;
     }
 
-    private Intent makeViewPartyActivity(GcmMessage message) {
+    private Intent makeViewIntent(GcmMessage message) {
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(ViewPartyActivity.EXTRA_PARTY_ID, message.getPartyID());
-        // TODO Flags?
+        // TODO Flags correct?
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
     }
 
