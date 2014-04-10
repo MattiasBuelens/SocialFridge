@@ -108,11 +108,6 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.invite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.GET)
     public void invite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        // Check if friend exists
-        final User friend = getUser(friendID);
-        if (friend == null) {
-            throw new NotFoundException("Friend not found");
-        }
         // Check if user is befriended with friend
         if (!isBefriendedWith(friendID, accessToken)) {
             throw new UnauthorizedException("User must be befriended with friend");
@@ -120,6 +115,11 @@ public class PartyEndpoint extends BaseEndpoint {
         transact(new VoidWork<ServiceException>() {
             @Override
             public void vrun() throws ServiceException {
+                // Check if friend exists
+                final User friend = getUser(friendID);
+                if (friend == null) {
+                    throw new NotFoundException("Friend not found");
+                }
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
@@ -134,6 +134,7 @@ public class PartyEndpoint extends BaseEndpoint {
 
         // Send invite to friend
         User host = getUser(userID);
+        User friend = getUser(friendID);
         List<UserMessage> messages = Messages.partyInvited(partyID)
                 .host(host)
                 .invitee(friend)
@@ -152,14 +153,14 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.cancelInvite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.DELETE)
     public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        // Check if friend exists
-        final User friend = getUserUnsafe(friendID);
-        if (friend == null) {
-            throw new NotFoundException("Friend not found");
-        }
         transact(new VoidWork<ServiceException>() {
             @Override
             public void vrun() throws ServiceException {
+                // Check if friend exists
+                final User friend = getUserUnsafe(friendID);
+                if (friend == null) {
+                    throw new NotFoundException("Friend not found");
+                }
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
@@ -174,6 +175,7 @@ public class PartyEndpoint extends BaseEndpoint {
 
         // Send cancel invite to friend
         User host = getUser(userID);
+        User friend = getUser(friendID);
         List<UserMessage> messages = Messages.partyInviteCanceled(partyID)
                 .host(host)
                 .invitee(friend)
