@@ -11,7 +11,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.ViewPartyActivity;
 
 /**
@@ -108,24 +107,25 @@ public class NotificationIntentService extends IntentService {
 
     private void issueUpdateNotification(GcmMessage message) {
         PartyUpdateReason reason = message.getUpdateReason();
-        String contentTitle = "There should be a content title here";
-        String contentText = "There should be a context text here";
-        NotificationCompat.Builder builder;
+        String contentTitle;
+        String contentText;
 
-        if(reason.equals(PartyUpdateReason.JOINED)) {
+        if (reason.equals(PartyUpdateReason.JOINED)) {
             String partnerName = message.getUpdateReasonUserName();
-
             contentTitle = getString(R.string.notif_party_joined_title);
             contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
-        } else if(reason.equals(PartyUpdateReason.DONE)) { //TODO: host shouldn't be notified
+        } else if (reason.equals(PartyUpdateReason.DONE)) {
+            // TODO Host shouldn't be notified, need to check this
             String hostName = message.getHostUserName();
-
             contentTitle = getString(R.string.notif_party_done_title);
             contentText = getString(R.string.notif_party_done_content, hostName, "spaghetti");
+        } else {
+            // Unknown reason
+            return;
         }
 
         // Constructs the Builder object.
-        builder =
+        NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
                         .setContentTitle(contentTitle)
