@@ -13,9 +13,9 @@ import android.widget.RadioButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
  * A fragment to pick one time slot.

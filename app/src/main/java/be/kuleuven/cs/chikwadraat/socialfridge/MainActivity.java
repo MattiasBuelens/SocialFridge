@@ -10,9 +10,9 @@ import android.widget.TextView;
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartiesActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 
 /**
  * Main activity.

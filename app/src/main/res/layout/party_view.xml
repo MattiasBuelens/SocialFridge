@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/party_candidates_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.PlaceFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PlaceFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/party_partners_fragment"

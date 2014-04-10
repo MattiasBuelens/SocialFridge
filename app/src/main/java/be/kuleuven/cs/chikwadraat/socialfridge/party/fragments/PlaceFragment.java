@@ -1,10 +1,12 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 
 
 /**
