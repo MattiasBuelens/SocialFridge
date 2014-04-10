@@ -4,7 +4,14 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.*;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_HOST_USER_ID;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_HOST_USER_NAME;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_INVITEE_USER_ID;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_PARTY_ID;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_REASON_USER_ID;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_REASON_USER_NAME;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_TYPE;
+import static be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants.ARG_UPDATE_REASON;
 
 /**
  * Created by Mattias on 10/04/2014.
@@ -41,7 +48,7 @@ public class GcmMessage implements Parcelable {
     public GcmMessage(Parcel in) {
         type = MessageType.byName(in.readString());
 
-        partyID = (in.readInt() == 1) ? in.readLong() : null;
+        partyID = (in.readByte() == 1) ? in.readLong() : null;
 
         // Updates
         updateReason = PartyUpdateReason.byName(in.readString());
@@ -95,15 +102,13 @@ public class GcmMessage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getType().getName());
 
+        dest.writeByte((byte) (getPartyID() != null ? 1 : 0));
         if (getPartyID() != null) {
-            dest.writeInt(1);
             dest.writeLong(getPartyID());
-        } else {
-            dest.writeInt(0);
         }
 
         // Updates
-        dest.writeString(getUpdateReason().getName());
+        dest.writeString((getUpdateReason() != null) ? getUpdateReason().getName() : null);
         dest.writeString(getUpdateReasonUserID());
         dest.writeString(getUpdateReasonUserName());
 

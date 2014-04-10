@@ -66,7 +66,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     protected void loadParty() {
         Bundle args = new Bundle();
         args.putLong(LOADER_ARGS_PARTY_ID, getPartyID());
-        getSupportLoaderManager().initLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
+        getSupportLoaderManager().restartLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
     }
 
     /**
@@ -159,7 +159,12 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         @Override
         public void onLoadFinished(Loader<Party> loader, Party party) {
             // Fire listeners
-            firePartyLoaded(party);
+            if (party != null) {
+                firePartyLoaded(party);
+            } else {
+                // TODO Error handling?
+                firePartyUnloaded();
+            }
         }
 
         @Override

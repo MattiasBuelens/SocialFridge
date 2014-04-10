@@ -98,13 +98,7 @@ public class NotificationIntentService extends IntentService {
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
         // TODO Can't we just use piChooseSlots instead?
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(resultPendingIntent);
 
@@ -117,7 +111,7 @@ public class NotificationIntentService extends IntentService {
         intent.setAction(action);
         // Use the same message
         intent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
-        return PendingIntent.getService(this, 0, intent, 0);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private Intent makeReplyIntent(GcmMessage message) {

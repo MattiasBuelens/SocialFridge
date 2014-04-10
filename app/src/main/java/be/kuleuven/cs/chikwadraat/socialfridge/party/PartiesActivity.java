@@ -45,7 +45,7 @@ public class PartiesActivity extends ListActivity {
     @Override
     protected void onLoggedIn(Session session, User user) {
         super.onLoggedIn(session, user);
-        getSupportLoaderManager().initLoader(LOADER_PARTIES, null, new PartiesLoaderCallbacks());
+        getSupportLoaderManager().restartLoader(LOADER_PARTIES, null, new PartiesLoaderCallbacks());
     }
 
     @Override
