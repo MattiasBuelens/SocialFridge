@@ -72,12 +72,15 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "parties.insertParty", path = "party", httpMethod = ApiMethod.HttpMethod.POST)
     public Party insertParty(final PartyBuilder builder, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = builder.getHostID();
+        final String userID = builder.getHostID();
         checkAccess(accessToken, userID);
-        final User user = getUser(userID);
         return transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
+                User user = getUser(userID);
+                if (user == null) {
+                    throw new NotFoundException("User not found.");
+                }
                 // Create party
                 final Party party = new Party();
                 party.setDateCreated(new Date());
@@ -150,7 +153,7 @@ public class PartyEndpoint extends BaseEndpoint {
     public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         // Check if friend exists
-        final User friend = getUser(friendID);
+        final User friend = getUserUnsafe(friendID);
         if (friend == null) {
             throw new NotFoundException("Friend not found");
         }
@@ -187,14 +190,11 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "parties.acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
     public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = getUserID(accessToken);
-        final User user = getUser(userID);
-        if (user == null) {
-            throw new NotFoundException("User not found");
-        }
+        final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
+                User user = getUser(userID);
                 Party party = getParty(partyID, true);
                 // Accept invite
                 party.acceptInvite(user, timeSlots.getList());
@@ -204,6 +204,7 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // Send update to party members
+        User user = getUser(userID);
         List<UserMessage> messages = Messages.partyUpdated(partyID)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
@@ -220,14 +221,11 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "parties.declineInvite", path = "party/{partyID}/declineInvite", httpMethod = ApiMethod.HttpMethod.GET)
     public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = getUserID(accessToken);
-        final User user = getUser(userID);
-        if (user == null) {
-            throw new NotFoundException("User not found");
-        }
+        final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
+                User user = getUser(userID);
                 Party party = getParty(partyID, true);
                 // Decline invite
                 party.declineInvite(user);
@@ -247,14 +245,11 @@ public class PartyEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "parties.leaveParty", path = "party/{partyID}/leave", httpMethod = ApiMethod.HttpMethod.GET)
     public void leaveParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
-        String userID = getUserID(accessToken);
-        final User user = getUser(userID);
-        if (user == null) {
-            throw new NotFoundException("User not found");
-        }
+        final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
+                User user = getUser(userID);
                 Party party = getParty(partyID, true);
                 // Leave
                 party.leave(user);
@@ -264,6 +259,7 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // Send update to party members
+        User user = getUser(userID);
         List<UserMessage> messages = Messages.partyUpdated(partyID)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
@@ -377,18 +373,30 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     protected Party getParty(long partyID, boolean full) throws ServiceException {
-        Party party = ofy().load()
-                .group(full ? Party.Everything.class : Party.Partial.class)
-                .type(Party.class)
-                .id(partyID)
-                .now();
+        Party party = getPartyUnsafe(partyID, full);
         if (party == null) {
             throw new NotFoundException("Party not found.");
         }
         return party;
     }
 
-    protected User getUser(String userID) {
+    protected Party getPartyUnsafe(long partyID, boolean full) {
+        return ofy().load()
+                .group(full ? Party.Everything.class : Party.Partial.class)
+                .type(Party.class)
+                .id(partyID)
+                .now();
+    }
+
+    protected User getUser(String userID) throws ServiceException {
+        User user = getUserUnsafe(userID);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        return user;
+    }
+
+    protected User getUserUnsafe(String userID) {
         return ofy().load().type(User.class).id(userID).now();
     }
 
