@@ -57,6 +57,9 @@ public class GcmIntentService extends IntentService {
     }
 
     private void handleMessage(Bundle data) {
+        // Parse the data
+        data = parseData(data);
+
         MessageType type = MessageType.byName(data.getString(MessageConstants.ARG_TYPE));
         if (type == null) return;
 
@@ -78,6 +81,20 @@ public class GcmIntentService extends IntentService {
                 // TODO: OMG YOU CAN'T DO THIS TO ME!
                 break;
         }
+    }
+
+    private Bundle parseData(Bundle data) {
+        Bundle parsed = (Bundle) data.clone();
+
+        // Convert party ID
+        String partyID = data.getString(MessageConstants.ARG_PARTY_ID);
+        if (partyID != null) {
+            parsed.putLong(MessageConstants.ARG_PARTY_ID, Long.parseLong(partyID));
+        } else {
+            parsed.remove(MessageConstants.ARG_PARTY_ID);
+        }
+
+        return parsed;
     }
 
 }
