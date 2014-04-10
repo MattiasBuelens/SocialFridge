@@ -79,22 +79,22 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private void reconfigureTimeSlotsFragment(Collection<TimeSlot> receivedSlots) {
         List<TimeSlotSelection> newSelections = new ArrayList<TimeSlotSelection>();
         for (TimeSlot slot : receivedSlots) {
-            for (TimeSlotSelection selection : timeSlotsFragment.getTimeSlots()) {
-                if (slot.getBeginHour().equals(selection.getBeginHour()) &&
-                        slot.getEndHour().equals(selection.getEndHour())) {
-                    newSelections.add(newSelection(selection, slot));
+            TimeSlotSelection selection = timeSlotsFragment.getTimeSlot(slot.getBeginHour(), slot.getEndHour());
+            if (selection == null) {
+                // New time slot selection, probably on first load
+                TimeSlotSelection.State state = slot.getAvailable()
+                        ? TimeSlotSelection.State.INCLUDED
+                        : TimeSlotSelection.State.DISABLED;
+                selection = new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
+            } else {
+                // Existing selection, disable if no longer available
+                if (!slot.getAvailable()) {
+                    selection.setState(TimeSlotSelection.State.DISABLED);
                 }
             }
+            newSelections.add(selection);
         }
         timeSlotsFragment.setTimeSlots(newSelections);
-    }
-
-    private TimeSlotSelection newSelection(TimeSlotSelection currentSelection, TimeSlot receivedSlot) {
-        TimeSlotSelection result = currentSelection;
-        if (!receivedSlot.getAvailable()) {
-            result.setState(TimeSlotSelection.State.DISABLED);
-        }
-        return result;
     }
 
     @Override

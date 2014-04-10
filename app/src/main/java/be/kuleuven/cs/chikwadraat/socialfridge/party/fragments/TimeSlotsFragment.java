@@ -13,9 +13,9 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
  * A fragment to configure time slots.
@@ -96,6 +96,17 @@ public class TimeSlotsFragment extends Fragment {
 
     public List<TimeSlotSelection> getTimeSlots() {
         return timeSlotSelections;
+    }
+
+
+    public TimeSlotSelection getTimeSlot(int beginHour, int endHour) {
+        for (TimeSlotSelection selection : getTimeSlots()) {
+            if (beginHour == selection.getBeginHour() &&
+                    endHour == selection.getEndHour()) {
+                return selection;
+            }
+        }
+        return null;
     }
 
     public void setTimeSlots(List<TimeSlotSelection> timeSlots) {
