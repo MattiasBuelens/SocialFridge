@@ -130,7 +130,9 @@ public class PartyEndpoint extends BaseEndpoint {
         });
 
         // Send invite to friend
+        User host = getUser(userID);
         List<UserMessage> messages = Messages.partyInvited(partyID)
+                .host(host)
                 .invitee(friend)
                 .recipients(friend)
                 .build();
@@ -168,7 +170,9 @@ public class PartyEndpoint extends BaseEndpoint {
         });
 
         // Send cancel invite to friend
+        User host = getUser(userID);
         List<UserMessage> messages = Messages.partyInviteCanceled(partyID)
+                .host(host)
                 .invitee(friend)
                 .recipients(friend)
                 .build();
