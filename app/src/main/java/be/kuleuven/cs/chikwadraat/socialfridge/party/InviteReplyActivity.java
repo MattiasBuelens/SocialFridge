@@ -2,6 +2,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -164,7 +165,11 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         Log.d(TAG, "Party successfully joined");
 
         // Joined, show party
-        // TODO View party
+        Intent intent = new Intent(this, ViewPartyActivity.class);
+        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
+
+        startActivity(intent);
+        finish();
     }
 
     private void onDeclined() {

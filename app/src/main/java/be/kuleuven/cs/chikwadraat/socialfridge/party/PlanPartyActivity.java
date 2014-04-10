@@ -123,8 +123,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         hideProgressDialog();
 
         // Party planned, done
-        // TODO Replace with correct activity class
-        Intent intent = new Intent(this, BasePartyActivity.class);
+        Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 
         startActivity(intent);
