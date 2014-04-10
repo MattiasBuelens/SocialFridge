@@ -45,6 +45,7 @@
     <string name="party_close_invites_progress">Closing invites&#8230;</string>
 
     <!-- Reply to invite -->
+    <string name="party_reply_title">Invited to party</string>
     <string name="party_join">Join</string>
     <string name="party_decline">Decline</string>
     <string name="party_join_progress">Joining party&#8230;</string>

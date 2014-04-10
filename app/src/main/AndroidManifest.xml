@@ -44,6 +44,10 @@
             android:label="@string/party_invite_title" />
 
         <activity
+            android:name=".party.InviteReplyActivity"
+            android:label="@string/party_reply_title" />
+
+        <activity
             android:name=".party.PlanPartyActivity"
             android:label="@string/party_plan_title" />
 
