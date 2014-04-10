@@ -57,8 +57,7 @@ public class PartiesActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Party party = (Party) l.getItemAtPosition(position);
-        // TODO View party
-        Intent intent = new Intent(this, PartyInviteActivity.class);
+        Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getId());
         startActivity(intent);
     }
