@@ -11,6 +11,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.ViewPartyActivity;
 
 /**
  * Created by vital.dhaveloose on 29/03/2014.
@@ -59,7 +60,7 @@ public class NotificationIntentService extends IntentService {
             // Show notification if necessary
             issueUpdateNotification(message);
         } else if (action.equals(NotificationConstants.ACTION_VIEW_PARTY)) {
-
+            startActivity(makeViewPartyActivity(message));
         }
     }
 
@@ -146,6 +147,13 @@ public class NotificationIntentService extends IntentService {
         intent.putExtra(InviteReplyActivity.EXTRA_PARTY_ID, message.getPartyID());
         // TODO Flags correct?
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return intent;
+    }
+
+    private Intent makeViewPartyActivity(GcmMessage message) {
+        Intent intent = new Intent(this, ViewPartyActivity.class);
+        intent.putExtra(ViewPartyActivity.EXTRA_PARTY_ID, message.getPartyID());
+        // TODO Flags?
         return intent;
     }
 
