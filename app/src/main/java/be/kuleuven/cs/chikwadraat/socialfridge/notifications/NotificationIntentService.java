@@ -11,6 +11,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.ViewPartyActivity;
 
 /**
@@ -107,30 +108,36 @@ public class NotificationIntentService extends IntentService {
 
     private void issueUpdateNotification(GcmMessage message) {
         PartyUpdateReason reason = message.getUpdateReason();
+        String contentTitle;
+        String contentText;
+        NotificationCompat.Builder builder;
+
         if(reason.equals(PartyUpdateReason.JOINED)) {
             String partnerName = message.getUpdateReasonUserName();
-            String contentTitle = getString(R.string.notif_party_joined_title);
-            String contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
 
-            // Constructs the Builder object.
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
-                            .setContentTitle(contentTitle)
-                            .setContentText(contentText)
-                                    //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
-                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
+            contentTitle = getString(R.string.notif_party_joined_title);
+            contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
+        } else if(reason.equals(PartyUpdateReason.DONE))) { //TODO: host shouldn't be notified
+            String hostName = message.getHostUserName();
 
-        /*
-         * Clicking the notification itself acts the same
-         * as the Choose slots action.
-         */
-            PendingIntent piViewParty = makeActionIntent(NotificationConstants.ACTION_VIEW_PARTY, message);
-
-            builder.setContentIntent(piViewParty);
-
-            nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
+            contentTitle = getString(R.string.notif_party_done_title);
+            contentText = getString(R.string.notif_party_done_content, hostName, "spaghetti");
         }
+
+        // Constructs the Builder object.
+        builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
+                        .setContentTitle(contentTitle)
+                        .setContentText(contentText)
+                                //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
+
+        PendingIntent piViewParty = makeActionIntent(NotificationConstants.ACTION_VIEW_PARTY, message);
+
+        builder.setContentIntent(piViewParty);
+
+        nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
     }
 
     private PendingIntent makeActionIntent(String action, GcmMessage message) {
