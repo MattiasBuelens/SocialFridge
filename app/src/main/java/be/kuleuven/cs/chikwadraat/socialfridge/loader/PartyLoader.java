@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.facebook.Session;
 
@@ -37,7 +36,8 @@ public class PartyLoader extends BaseLoader<Party> {
         try {
             return parties.getParty(partyID, session.getAccessToken()).execute();
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
+            trackException(e);
             return null;
         }
     }

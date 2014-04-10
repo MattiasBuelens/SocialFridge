@@ -4,12 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.api.client.util.DateTime;
 
 import java.util.ArrayList;
@@ -123,11 +123,12 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onResult(Party party) {
-        Log.d(TAG, "Party successfully created");
+        //Log.d(TAG, "Party successfully created");
         removeCreateTask();
         hideProgressDialog();
 
         // Party created, start inviting
+        getTracker().send(new HitBuilders.EventBuilder("Party", "Create").build());
         Intent intent = new Intent(this, PartyInviteActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getId());
 
@@ -137,7 +138,8 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to create party: " + exception.getMessage());
+        //Log.e(TAG, "Failed to create party: " + exception.getMessage());
+        trackException(exception);
         removeCreateTask();
         hideProgressDialog();
 

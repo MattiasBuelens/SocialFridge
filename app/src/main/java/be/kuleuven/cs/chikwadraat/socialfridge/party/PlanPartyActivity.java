@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,11 +118,12 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     @Override
     public void onResult(Void unused) {
-        Log.d(TAG, "Party successfully planned");
+        //Log.d(TAG, "Party successfully planned");
         removePlanTask();
         hideProgressDialog();
 
         // Party planned, done
+        getTracker().send(new HitBuilders.EventBuilder("Party", "Plan").build());
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 
@@ -132,7 +133,8 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to plan party: " + exception.getMessage());
+        //Log.e(TAG, "Failed to plan party: " + exception.getMessage());
+        trackException(exception);
         removePlanTask();
         hideProgressDialog();
 

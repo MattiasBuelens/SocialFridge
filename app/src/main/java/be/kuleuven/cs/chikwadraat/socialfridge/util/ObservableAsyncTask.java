@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.util;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * Created by Mattias on 7/04/2014.
@@ -91,7 +90,7 @@ public abstract class ObservableAsyncTask<Params, Progress, Result> extends Asyn
     @Override
     protected final void onProgressUpdate(Progress... progress) {
         if (listener == null) {
-            Log.d(TAG, "onProgressUpdate() skipped -- no listener");
+            //Log.d(TAG, "onProgressUpdate() skipped -- no listener");
         } else {
             listener.onProgress(progress);
         }
@@ -100,7 +99,7 @@ public abstract class ObservableAsyncTask<Params, Progress, Result> extends Asyn
     @Override
     protected final void onPostExecute(Result result) {
         if (listener == null) {
-            Log.d(TAG, "onPostExecute() skipped -- no listener");
+            //Log.d(TAG, "onPostExecute() skipped -- no listener");
         } else if (exception != null) {
             listener.onError(exception);
         } else {

@@ -61,7 +61,7 @@ public class GcmIntentService extends IntentService {
     private void handleMessage(GcmMessage message) {
         if (message.getType() == null) return;
 
-        Log.d(TAG, "Received: " + message.getType().getName());
+        //Log.d(TAG, "Received: " + message.getType().getName());
 
         Intent notificationIntent = new Intent(this, NotificationIntentService.class);
 

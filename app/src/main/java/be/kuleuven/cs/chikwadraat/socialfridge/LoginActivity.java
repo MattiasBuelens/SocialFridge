@@ -122,7 +122,7 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
 
     @Override
     public void onResult(User user) {
-        Log.d(TAG, "User successfully registered");
+        //Log.d(TAG, "User successfully registered");
         removeRegisterTask();
         hideProgressDialog();
 
@@ -134,7 +134,8 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to register user: " + exception.getMessage());
+        //Log.e(TAG, "Failed to register user: " + exception.getMessage());
+        trackException(exception);
         removeRegisterTask();
         hideProgressDialog();
         logout();
@@ -155,7 +156,7 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
     @Override
     public void onProgress(RegisterUserState... states) {
         RegisterUserState state = states[0];
-        Log.d(TAG, "Registration progress: " + state);
+        //Log.d(TAG, "Registration progress: " + state);
 
         String progressMessage = getString(R.string.login_progress, getString(R.string.app_name));
         showProgressDialog(progressMessage);

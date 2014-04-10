@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -162,7 +162,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     }
 
     private void onJoined() {
-        Log.d(TAG, "Party successfully joined");
+        //Log.d(TAG, "Party successfully joined");
+        getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Accept").build());
 
         // Joined, show party
         Intent intent = new Intent(this, ViewPartyActivity.class);
@@ -173,7 +174,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     }
 
     private void onDeclined() {
-        Log.d(TAG, "Invite successfully declined");
+        //Log.d(TAG, "Invite successfully declined");
+        getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Decline").build());
 
         // Declined invite, close
         finish();
@@ -181,7 +183,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to reply to invite: " + exception.getMessage());
+        //Log.e(TAG, "Failed to reply to invite: " + exception.getMessage());
+        trackException(exception);
         removeTask();
         hideProgressDialog();
 

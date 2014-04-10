@@ -3,6 +3,9 @@ package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.Application;
+import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
+
 /**
  * Base class for async task loaders.
  * Based on sample code from http://developer.android.com/reference/android/content/AsyncTaskLoader.html
@@ -127,6 +130,15 @@ public abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
      * @param result The result object to release.
      */
     protected void releaseResources(T result) {
+    }
+
+    protected void trackException(Exception e) {
+        // TODO Fairly hackish...
+        if (getContext() instanceof Application) {
+            ((Application) getContext()).trackException(e);
+        } else if (getContext() instanceof BaseActivity) {
+            ((BaseActivity) getContext()).trackException(e);
+        }
     }
 
 }

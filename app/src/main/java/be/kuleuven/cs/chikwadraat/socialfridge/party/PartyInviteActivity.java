@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
 
@@ -93,11 +93,12 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     @Override
     public void onResult(Void aVoid) {
-        Log.d(TAG, "Party invites successfully closed");
+        //Log.d(TAG, "Party invites successfully closed");
         removeCloseInvitesTask();
         hideProgressDialog();
 
         // Invites closed, start planning
+        getTracker().send(new HitBuilders.EventBuilder("Party", "Planning").build());
         Intent intent = new Intent(this, PlanPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 
@@ -107,7 +108,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
+        //Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
+        trackException(exception);
         removeCloseInvitesTask();
         hideProgressDialog();
 
@@ -150,7 +152,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidate.setInvited(true);
                 candidatesFragment.refreshCandidates();
             } else {
-                Log.e(TAG, "Error while inviting: " + exception.getMessage());
+                //Log.e(TAG, "Error while inviting: " + exception.getMessage());
+                trackException(exception);
                 // TODO Error handling?
             }
         }
@@ -187,7 +190,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidate.setInvited(false);
                 candidatesFragment.refreshCandidates();
             } else {
-                Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
+                //Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
+                trackException(exception);
                 // TODO Error handling?
             }
         }
