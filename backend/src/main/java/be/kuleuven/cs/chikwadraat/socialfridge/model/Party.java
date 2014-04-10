@@ -116,6 +116,7 @@ public class Party {
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
         member.setTimeSlots(timeSlots);
         updateMember(member);
+        updatePartner(member);
         // Add to party
         host.addParty(this);
     }
@@ -229,11 +230,9 @@ public class Party {
 
     protected PartyMember updateMember(PartyMember member) throws IllegalArgumentException {
         Ref<PartyMember> ref = getMember(member.getUserID());
-        boolean wasInParty = false;
         if (ref != null) {
             // Copy to existing member
             PartyMember existingMember = ref.get();
-            wasInParty = existingMember.isInParty();
             existingMember.setUserName(member.getUserName());
             existingMember.setStatus(member.getStatus());
             existingMember.setTimeSlots(member.getTimeSlots());
@@ -244,10 +243,6 @@ public class Party {
         }
         // Save member
         ofy().save().entity(member).now();
-        // Update partners if needed
-        if (wasInParty != member.isInParty()) {
-            updatePartner(member);
-        }
         return member;
     }
 
@@ -427,6 +422,7 @@ public class Party {
         // Set time slots
         member.setTimeSlots(timeSlots);
         updateMember(member);
+        updatePartner(member);
         // Add to party (should already be added though)
         invitee.addParty(this);
     }
@@ -474,6 +470,7 @@ public class Party {
             throw new IllegalArgumentException("Cannot leave, is host or was not in the party.");
         }
         updateMember(member);
+        updatePartner(member);
         // Remove from party
         invitee.removeParty(this);
     }
