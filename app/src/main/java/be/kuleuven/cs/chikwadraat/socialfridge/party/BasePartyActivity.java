@@ -1,10 +1,14 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.facebook.Session;
 
@@ -22,12 +26,31 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     private static final String TAG = "BasePartyActivity";
 
+    /**
+     * Action for broadcast intent indicating that a party is updated.
+     */
+    public static final String ACTION_PARTY_UPDATE = "party_update";
+
+    /**
+     * Intent extra for the party ID.
+     */
     public static final String EXTRA_PARTY_ID = "party_id";
 
     private static final int LOADER_PARTY = 1;
     private static final String LOADER_ARGS_PARTY_ID = "party_id";
 
     private long partyID;
+
+    private BroadcastReceiver partyUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long updatedPartyID = intent.getLongExtra(EXTRA_PARTY_ID, 0);
+            // Reload party if our party was updated
+            if (updatedPartyID == getPartyID()) {
+                loadParty();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +84,23 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(EXTRA_PARTY_ID, partyID);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Register to receive party update broadcasts
+        LocalBroadcastManager.getInstance(this).registerReceiver(partyUpdateReceiver,
+                new IntentFilter(ACTION_PARTY_UPDATE));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Unregister from party update broadcasts
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(partyUpdateReceiver);
     }
 
     protected void loadParty() {

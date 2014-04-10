@@ -3,12 +3,14 @@ package be.kuleuven.cs.chikwadraat.socialfridge.messaging;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationConstants;
 import be.kuleuven.cs.chikwadraat.socialfridge.notifications.NotificationIntentService;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.BasePartyActivity;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -71,6 +73,10 @@ public class GcmIntentService extends IntentService {
                 notificationIntent.setAction(NotificationConstants.ACTION_PARTY_UPDATE);
                 notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
                 startService(notificationIntent);
+                // Broadcast party update
+                Intent updateIntent = new Intent(BasePartyActivity.ACTION_PARTY_UPDATE);
+                updateIntent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, partyID);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
                 break;
             case PARTY_INVITE:
                 // Notify user about party invite
