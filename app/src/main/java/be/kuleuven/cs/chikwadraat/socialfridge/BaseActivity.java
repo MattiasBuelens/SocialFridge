@@ -13,6 +13,8 @@ import com.facebook.FacebookRequestError;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
@@ -89,6 +91,26 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
+    public Tracker getTracker() {
+        return ((Application) getApplication()).getTracker();
+    }
+
+    public void trackException(Exception e) {
+        ((Application) getApplication()).trackException(e);
     }
 
     /**
