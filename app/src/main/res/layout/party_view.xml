@@ -11,7 +11,7 @@
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.ViewPartyActivity">
 
     <fragment
-        android:id="@+id/party_partners_fragment"
+        android:id="@+id/partners_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,12 +20,20 @@
         tools:layout="@layout/fragment_party_partners" />
 
     <fragment
-        android:id="@+id/party_candidates_fragment"
+        android:id="@+id/place_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PlaceFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/party_partners_fragment"
+        android:layout_below="@+id/partners_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_place" />
+
+    <fragment
+        android:id="@+id/date_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DateFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/place_fragment"
+        tools:layout="@layout/fragment_date" />
 
 </RelativeLayout>

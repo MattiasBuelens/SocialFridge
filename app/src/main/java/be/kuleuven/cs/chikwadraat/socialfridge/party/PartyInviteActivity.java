@@ -37,7 +37,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_invite);
 
-        candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.party_candidates_fragment);
+        candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.candidates_fragment);
 
         doneButton = (Button) findViewById(R.id.invite_action_done);
         doneButton.setOnClickListener(this);

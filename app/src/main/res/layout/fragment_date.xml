@@ -5,20 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PlaceFragment">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DateFragment">
 
     <TextView
-        android:id="@+id/party_place_header"
+        android:id="@+id/party_date_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/party_place"
+        android:text="@string/party_date"
         android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
 
     <TextView
-        android:id="@+id/party_place"
+        android:id="@+id/party_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="At Vital D'haveloose's place" />
+        tools:text="Thursday, 1 January 1970 at 19:00" />
 
 </LinearLayout>

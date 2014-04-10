@@ -5,6 +5,8 @@
 
     <!-- General -->
     <string name="loading">Loading&#8230;</string>
+    <string name="format_date_only">On %1$s</string>
+    <string name="format_date_and_time">On %1$s at %2$s</string>
 
     <!-- Menu actions -->
     <string name="action_settings">Settings</string>
@@ -24,6 +26,8 @@
     <!-- Party -->
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
+    <string name="party_place">Place</string>
+    <string name="party_date">Date</string>
 
     <!-- Create party -->
     <string name="party_create_title">Create party</string>
@@ -55,10 +59,13 @@
     <string name="party_plan_title">Plan party</string>
     <string name="party_plan_action_done">Done</string>
     <string name="party_plan_pick_time_slot">Choose time slot</string>
-    <string name="party_plan_place">Place</string>
     <string name="party_plan_bring">Bring</string>
     <string name="party_plan_add_to_calendar">Add to calendar</string>
     <string name="party_plan_progress">Planning party&#8230;</string>
+
+    <!-- View party -->
+    <string name="party_view_title">Party</string>
+    <string name="party_view_place">At %1$s\'s place</string>
 
     <!-- Notifications -->
     <string name="notif_party_invite_title">Invited to cooking party</string>
