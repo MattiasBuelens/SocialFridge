@@ -77,7 +77,7 @@ public class NotificationIntentService extends IntentService {
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
+                        .setSmallIcon(R.drawable.ic_stat_fridge)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
                                 //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
@@ -127,7 +127,7 @@ public class NotificationIntentService extends IntentService {
         // Constructs the Builder object.
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO: klein icoontje instellen (fotootje van gerecht/host?)
+                        .setSmallIcon(R.drawable.ic_stat_fridge)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
                                 //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
