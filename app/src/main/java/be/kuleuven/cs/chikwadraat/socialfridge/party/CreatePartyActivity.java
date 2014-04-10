@@ -52,10 +52,10 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
-        slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.UNSPECIFIED));
+        slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.INCLUDED));
         slots.add(new TimeSlotSelection(18, 19, TimeSlotSelection.State.INCLUDED));
-        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.EXCLUDED));
-        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.DISABLED));
+        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.INCLUDED));
+        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.INCLUDED));
         timeSlotsFragment.setDefaultTimeSlots(slots);
 
         // Re-attach to registration task
