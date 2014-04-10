@@ -89,18 +89,10 @@ public class NotificationIntentService extends IntentService {
                                 getString(R.string.notif_action_decline), piDecline);
 
         /*
-         * Clicking the notification itself displays InviteReplyActivity, which provides
-         * UI for choosing time slots or declining the notification.
-         * This is available through either the normal view or big view.
+         * Clicking the notification itself acts the same
+         * as the Choose slots action.
          */
-        Intent resultIntent = makeReplyIntent(message);
-
-        // Because clicking the notification opens a new ("special") activity, there's
-        // no need to create an artificial back stack.
-        // TODO Can't we just use piChooseSlots instead?
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(resultPendingIntent);
+        builder.setContentIntent(piChooseSlots);
 
         nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
     }
