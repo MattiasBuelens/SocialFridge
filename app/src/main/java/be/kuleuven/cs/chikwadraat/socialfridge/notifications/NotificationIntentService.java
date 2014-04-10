@@ -108,8 +108,8 @@ public class NotificationIntentService extends IntentService {
 
     private void issueUpdateNotification(GcmMessage message) {
         PartyUpdateReason reason = message.getUpdateReason();
-        String contentTitle;
-        String contentText;
+        String contentTitle = "There should be a content title here";
+        String contentText = "There should be a context text here";
         NotificationCompat.Builder builder;
 
         if(reason.equals(PartyUpdateReason.JOINED)) {
@@ -117,7 +117,7 @@ public class NotificationIntentService extends IntentService {
 
             contentTitle = getString(R.string.notif_party_joined_title);
             contentText = getString(R.string.notif_party_joined_content, partnerName, "spaghetti");
-        } else if(reason.equals(PartyUpdateReason.DONE))) { //TODO: host shouldn't be notified
+        } else if(reason.equals(PartyUpdateReason.DONE)) { //TODO: host shouldn't be notified
             String hostName = message.getHostUserName();
 
             contentTitle = getString(R.string.notif_party_done_title);
