@@ -52,6 +52,10 @@
             android:label="@string/party_plan_title" />
 
         <activity
+            android:name=".party.ViewPartyActivity"
+            android:label="@string/party_view_title" />
+
+        <activity
             android:name=".party.PartiesActivity"
             android:label="@string/party_list_title" />
 

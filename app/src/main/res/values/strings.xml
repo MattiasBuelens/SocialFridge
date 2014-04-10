@@ -60,6 +60,9 @@
     <string name="party_plan_add_to_calendar">Add to calendar</string>
     <string name="party_plan_progress">Planning party&#8230;</string>
 
+    <!-- View party -->
+    <string name="party_view_title">Party</string>
+
     <!-- Notifications -->
     <string name="notif_party_invite_title">Invited to cooking party</string>
     <string name="notif_party_invite_content">%1$s invited you to make %2$s together.</string>
