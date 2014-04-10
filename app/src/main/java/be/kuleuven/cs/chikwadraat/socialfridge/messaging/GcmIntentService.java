@@ -49,52 +49,33 @@ public class GcmIntentService extends IntentService {
                 //sendNotification("Deleted messages on server: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Handle received message.
-                handleMessage(extras);
+                handleMessage(new GcmMessage(extras));
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void handleMessage(Bundle data) {
-        // Parse the data
-        data = parseData(data);
+    private void handleMessage(GcmMessage message) {
+        if (message.getType() == null) return;
 
-        MessageType type = MessageType.byName(data.getString(MessageConstants.ARG_TYPE));
-        if (type == null) return;
-
-        Log.d(TAG, "Received: " + type.getName());
-        switch (type) {
+        Log.d(TAG, "Received: " + message.getType().getName());
+        switch (message.getType()) {
             case PARTY_UPDATE:
-                long partyID = data.getLong(MessageConstants.ARG_PARTY_ID);
+                long partyID = message.getPartyID();
                 // TODO: ISSUE 4
                 break;
             case PARTY_INVITE:
-                // notify user
+                // Notify user about party invite
                 Intent notificationIntent = new Intent(this, NotificationIntentService.class);
                 notificationIntent.setAction(NotificationConstants.ACTION_RECEIVE_INVITE);
-                // simply add received bundle (from the message) to notificationIntent
-                notificationIntent.putExtras(data);
+                notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
                 startService(notificationIntent);
                 break;
             case PARTY_CANCEL_INVITE:
                 // TODO: OMG YOU CAN'T DO THIS TO ME!
                 break;
         }
-    }
-
-    private Bundle parseData(Bundle data) {
-        Bundle parsed = (Bundle) data.clone();
-
-        // Convert party ID
-        String partyID = data.getString(MessageConstants.ARG_PARTY_ID);
-        if (partyID != null) {
-            parsed.putLong(MessageConstants.ARG_PARTY_ID, Long.parseLong(partyID));
-        } else {
-            parsed.remove(MessageConstants.ARG_PARTY_ID);
-        }
-
-        return parsed;
     }
 
 }

@@ -5,11 +5,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.messaging.MessageConstants;
+import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
 
 /**
@@ -36,30 +35,34 @@ public class NotificationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent receivedIntent) {
         String action = receivedIntent.getAction();
-        // this section handles three different actions:
-        // action 1: receive invite: receivedIntent comes from elsewhere (the GcmIntentService)
+        if (action == null) return;
+
+        GcmMessage message = receivedIntent.getParcelableExtra(NotificationConstants.EXTRA_MESSAGE);
         if (action.equals(NotificationConstants.ACTION_RECEIVE_INVITE)) {
-            issueNotification(receivedIntent);
-            // action 2: choose slots: receivedIntent comes from this object: it's an
-            // indirection to make sure the notification is deleted before proceeding
+            // Received party invite from GCM
+            // Show notification
+            issueNotification(message);
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
+            // Choose slots action on party invite notification
+            // Cancel notification first
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            startActivity(makeReplyIntent(receivedIntent.getExtras()));
-            // action 3: decline: receivedIntent comes from this object: it's an
-            // indirection to make sure the notification is deleted before proceeding
+            // Open reply activity
+            startActivity(makeReplyIntent(message));
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
+            // Decline action on party invite notification
+            // Cancel notification first
             nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            // TODO: send decline message
+            // TODO Decline invite
         }
     }
 
-    private void issueNotification(Intent receivedIntent) {
+    private void issueNotification(GcmMessage message) {
         // Sets up the Choose slots and Decline action buttons that will appear in the
         // expanded view of the notification.
-        PendingIntent piChooseSlots = makeActionIntent(NotificationConstants.ACTION_CHOOSE_SLOTS, receivedIntent.getExtras());
-        PendingIntent piDecline = makeActionIntent(NotificationConstants.ACTION_DECLINE, receivedIntent.getExtras());
+        PendingIntent piChooseSlots = makeActionIntent(NotificationConstants.ACTION_CHOOSE_SLOTS, message);
+        PendingIntent piDecline = makeActionIntent(NotificationConstants.ACTION_DECLINE, message);
 
-        String hostName = receivedIntent.getStringExtra(MessageConstants.ARG_HOST_USER_NAME);
+        String hostName = message.getHostUserName();
         String contentTitle = getString(R.string.notif_party_invite_title);
         String contentText = getString(R.string.notif_party_invite_content, hostName, "spaghetti");
 
@@ -90,7 +93,7 @@ public class NotificationIntentService extends IntentService {
          * UI for choosing time slots or declining the notification.
          * This is available through either the normal view or big view.
          */
-        Intent resultIntent = makeReplyIntent(receivedIntent.getExtras());
+        Intent resultIntent = makeReplyIntent(message);
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
@@ -104,24 +107,22 @@ public class NotificationIntentService extends IntentService {
                 );
 
         builder.setContentIntent(resultPendingIntent);
-        builder.setDeleteIntent(piDecline);
 
         nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
     }
 
-    private PendingIntent makeActionIntent(String action, Bundle extras) {
+    private PendingIntent makeActionIntent(String action, GcmMessage message) {
         Intent intent = new Intent(this, NotificationIntentService.class);
         // Set the action
         intent.setAction(action);
-        // Use the same extras
-        intent.putExtras(extras);
+        // Use the same message
+        intent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
         return PendingIntent.getService(this, 0, intent, 0);
     }
 
-    private Intent makeReplyIntent(Bundle extras) {
+    private Intent makeReplyIntent(GcmMessage message) {
         Intent intent = new Intent(this, InviteReplyActivity.class);
-        // TODO: stupid translation, why not simply use the same language? Does the language have to be defined by the communication channel (i.e. MessageConstants)?
-        intent.putExtra(InviteReplyActivity.EXTRA_PARTY_ID, extras.getLong(MessageConstants.ARG_PARTY_ID));
+        intent.putExtra(InviteReplyActivity.EXTRA_PARTY_ID, message.getPartyID());
         // TODO Flags correct?
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
