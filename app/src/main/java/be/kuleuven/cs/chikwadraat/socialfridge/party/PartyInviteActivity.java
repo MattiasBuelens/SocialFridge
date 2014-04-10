@@ -109,9 +109,9 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     @Override
     public void onError(Exception exception) {
         //Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
-        trackException(exception);
         removeCloseInvitesTask();
         hideProgressDialog();
+        trackException(TAG, exception);
 
         // Handle regular exception
         new AlertDialog.Builder(this)
@@ -153,7 +153,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidatesFragment.refreshCandidates();
             } else {
                 //Log.e(TAG, "Error while inviting: " + exception.getMessage());
-                trackException(exception);
+                trackException(TAG, exception);
                 // TODO Error handling?
             }
         }
@@ -191,7 +191,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidatesFragment.refreshCandidates();
             } else {
                 //Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
-                trackException(exception);
+                trackException(TAG, exception);
                 // TODO Error handling?
             }
         }

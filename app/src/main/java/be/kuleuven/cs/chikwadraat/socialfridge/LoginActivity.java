@@ -137,10 +137,10 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
     @Override
     public void onError(Exception exception) {
         //Log.e(TAG, "Failed to register user: " + exception.getMessage());
-        trackException(exception);
         removeRegisterTask();
         hideProgressDialog();
         logout();
+        trackException(TAG, exception);
 
         if (exception instanceof FacebookRequestException) {
             // Handle Facebook error

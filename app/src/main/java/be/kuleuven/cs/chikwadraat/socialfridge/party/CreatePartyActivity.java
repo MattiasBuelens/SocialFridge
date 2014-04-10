@@ -139,9 +139,9 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onError(Exception exception) {
         //Log.e(TAG, "Failed to create party: " + exception.getMessage());
-        trackException(exception);
         removeCreateTask();
         hideProgressDialog();
+        trackException(TAG, exception);
 
         // Handle regular exception
         new AlertDialog.Builder(this)

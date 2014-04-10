@@ -184,9 +184,9 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     @Override
     public void onError(Exception exception) {
         //Log.e(TAG, "Failed to reply to invite: " + exception.getMessage());
-        trackException(exception);
         removeTask();
         hideProgressDialog();
+        trackException(TAG, exception);
 
         // Handle regular exception
         new AlertDialog.Builder(this)

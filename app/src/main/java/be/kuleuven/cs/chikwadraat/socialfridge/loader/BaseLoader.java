@@ -132,12 +132,12 @@ public abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
     protected void releaseResources(T result) {
     }
 
-    protected void trackException(Exception e) {
+    protected void trackException(String tag, Exception e) {
         // TODO Fairly hackish...
         if (getContext() instanceof Application) {
-            ((Application) getContext()).trackException(e);
+            ((Application) getContext()).trackException(tag, e);
         } else if (getContext() instanceof BaseActivity) {
-            ((BaseActivity) getContext()).trackException(e);
+            ((BaseActivity) getContext()).trackException(tag, e);
         }
     }
 

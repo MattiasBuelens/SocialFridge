@@ -38,7 +38,7 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
             return parties.getCandidates(partyID, session.getAccessToken()).execute().getItems();
         } catch (IOException e) {
             //Log.e(TAG, e.getMessage());
-            trackException(e);
+            trackException(TAG, e);
             return null;
         }
     }

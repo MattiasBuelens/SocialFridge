@@ -134,9 +134,9 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     @Override
     public void onError(Exception exception) {
         //Log.e(TAG, "Failed to plan party: " + exception.getMessage());
-        trackException(exception);
         removePlanTask();
         hideProgressDialog();
+        trackException(TAG, exception);
 
         // Handle regular exception
         new AlertDialog.Builder(this)

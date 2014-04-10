@@ -37,7 +37,7 @@ public class PartyLoader extends BaseLoader<Party> {
             return parties.getParty(partyID, session.getAccessToken()).execute();
         } catch (IOException e) {
             //Log.e(TAG, e.getMessage());
-            trackException(e);
+            trackException(TAG, e);
             return null;
         }
     }
