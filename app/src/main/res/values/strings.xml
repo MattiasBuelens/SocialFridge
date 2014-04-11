@@ -13,6 +13,7 @@
     <string name="action_logout">Log out</string>
 
     <!-- Login -->
+    <string name="splash_tagline">Share ingredients\nCook together</string>
     <string name="login_progress">Logging in on %1$s&#8230;</string>
 
     <!-- Start -->
