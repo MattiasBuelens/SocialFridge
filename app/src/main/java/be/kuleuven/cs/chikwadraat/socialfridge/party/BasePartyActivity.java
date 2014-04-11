@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.facebook.Session;
@@ -16,7 +14,7 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoaderService;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
@@ -27,27 +25,20 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     private static final String TAG = "BasePartyActivity";
 
     /**
-     * Action for broadcast intent indicating that a party is updated.
-     */
-    public static final String ACTION_PARTY_UPDATE = "party_update";
-
-    /**
      * Intent extra for the party ID.
      */
     public static final String EXTRA_PARTY_ID = "party_id";
-
-    private static final int LOADER_PARTY = 1;
-    private static final String LOADER_ARGS_PARTY_ID = "party_id";
 
     private long partyID;
 
     private BroadcastReceiver partyUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            long updatedPartyID = intent.getLongExtra(EXTRA_PARTY_ID, 0);
-            // Reload party if our party was updated
+            long updatedPartyID = intent.getLongExtra(PartyLoaderService.EXTRA_PARTY_ID, 0);
+            // Load party if our party was updated
             if (updatedPartyID == getPartyID()) {
-                loadParty();
+                Party party = intent.getParcelableExtra(PartyLoaderService.EXTRA_PARTY_OBJECT);
+                firePartyLoaded(party);
             }
         }
     };
@@ -77,7 +68,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
-        getSupportLoaderManager().destroyLoader(LOADER_PARTY);
+        firePartyUnloaded();
     }
 
     @Override
@@ -92,7 +83,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
         // Register to receive party update broadcasts
         LocalBroadcastManager.getInstance(this).registerReceiver(partyUpdateReceiver,
-                new IntentFilter(ACTION_PARTY_UPDATE));
+                new IntentFilter(PartyLoaderService.ACTION_PARTY_UPDATE));
     }
 
     @Override
@@ -103,10 +94,26 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         LocalBroadcastManager.getInstance(this).unregisterReceiver(partyUpdateReceiver);
     }
 
+    /**
+     * Load the party.
+     */
     protected void loadParty() {
-        Bundle args = new Bundle();
-        args.putLong(LOADER_ARGS_PARTY_ID, getPartyID());
-        getSupportLoaderManager().restartLoader(LOADER_PARTY, args, new PartyLoaderCallbacks());
+        // Send load request
+        Intent reloadIntent = new Intent(this, PartyLoaderService.class);
+        reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_LOAD);
+        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, getPartyID());
+        startService(reloadIntent);
+    }
+
+    /**
+     * Reload the party.
+     */
+    protected void reloadParty() {
+        // Send reload request
+        Intent reloadIntent = new Intent(this, PartyLoaderService.class);
+        reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_RELOAD);
+        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, getPartyID());
+        startService(reloadIntent);
     }
 
     /**
@@ -189,33 +196,6 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     @Override
     public void onPartyUnloaded() {
-    }
-
-    private class PartyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Party> {
-
-        @Override
-        public Loader<Party> onCreateLoader(int id, Bundle args) {
-            long partyID = args.getLong(LOADER_ARGS_PARTY_ID);
-            return new PartyLoader(BasePartyActivity.this, partyID);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Party> loader, Party party) {
-            // Fire listeners
-            if (party != null) {
-                firePartyLoaded(party);
-            } else {
-                // TODO Error handling?
-                firePartyUnloaded();
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Party> loader) {
-            // Fire listeners
-            firePartyUnloaded();
-        }
-
     }
 
 }
