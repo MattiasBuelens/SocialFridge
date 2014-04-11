@@ -18,10 +18,10 @@ import java.util.List;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
@@ -83,13 +83,13 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
             TimeSlotSelection selection = timeSlotsFragment.getTimeSlot(slot.getBeginHour(), slot.getEndHour());
             if (selection == null) {
                 // New time slot selection, probably on first load
-                TimeSlotSelection.State state = slot.getAvailable()
+                TimeSlotSelection.State state = slot.isAvailable()
                         ? TimeSlotSelection.State.INCLUDED
                         : TimeSlotSelection.State.DISABLED;
                 selection = new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
             } else {
                 // Existing selection, disable if no longer available
-                if (!slot.getAvailable()) {
+                if (!slot.isAvailable()) {
                     selection.setState(TimeSlotSelection.State.DISABLED);
                 }
             }
@@ -113,11 +113,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private List<TimeSlot> getTimeSlots() {
         List<TimeSlot> result = new ArrayList<TimeSlot>();
         for (TimeSlotSelection selection : timeSlotsFragment.getTimeSlots()) {
-            TimeSlot slot = new TimeSlot();
-            slot.setBeginHour(selection.getBeginHour());
-            slot.setEndHour(selection.getEndHour());
-            slot.setAvailable(selection.isIncluded());
-            result.add(slot);
+            result.add(new TimeSlot(selection.getBeginHour(), selection.getEndHour(), selection.isIncluded()));
         }
         return result;
     }
@@ -228,7 +224,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         @Override
         protected Boolean run(Void... unused) throws IOException {
-            TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(timeSlots);
+            TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(TimeSlot.toEndpoint(timeSlots));
             parties().acceptInvite(partyID, Session.getActiveSession().getAccessToken(), timeSlotCollection).execute();
             return true;
         }

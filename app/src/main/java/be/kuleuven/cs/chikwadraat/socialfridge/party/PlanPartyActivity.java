@@ -16,9 +16,9 @@ import java.util.List;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
@@ -67,7 +67,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     }
 
     private TimeSlotSelection toSelection(TimeSlot slot) {
-        TimeSlotSelection.State state = slot.getAvailable()
+        TimeSlotSelection.State state = slot.isAvailable()
                 ? TimeSlotSelection.State.INCLUDED
                 : TimeSlotSelection.State.DISABLED;
         return new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
@@ -165,7 +165,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
         @Override
         protected Void run(Void... unused) throws Exception {
-            parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot).execute();
+            parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot.toEndpoint()).execute();
             return null;
         }
 

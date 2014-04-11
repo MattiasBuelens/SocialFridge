@@ -3,7 +3,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
 
 /**
  * Created by vital.dhaveloose on 31/03/2014.
@@ -84,15 +83,11 @@ public class TimeSlotSelection implements Parcelable {
     }
 
     public TimeSlot toTimeSlot() {
-        TimeSlot slot = new TimeSlot();
-        slot.setBeginHour(getBeginHour());
-        slot.setEndHour(getEndHour());
-        slot.setAvailable(isIncluded());
-        return slot;
+        return new TimeSlot(getBeginHour(), getEndHour(), isIncluded());
     }
 
-    public static final Parcelable.Creator<TimeSlotSelection> CREATOR
-            = new Parcelable.Creator<TimeSlotSelection>() {
+    public static final Creator<TimeSlotSelection> CREATOR = new Creator<TimeSlotSelection>() {
+
         public TimeSlotSelection createFromParcel(Parcel in) {
             return new TimeSlotSelection(in);
         }
@@ -100,6 +95,7 @@ public class TimeSlotSelection implements Parcelable {
         public TimeSlotSelection[] newArray(int size) {
             return new TimeSlotSelection[size];
         }
+
     };
 
     public static enum State {

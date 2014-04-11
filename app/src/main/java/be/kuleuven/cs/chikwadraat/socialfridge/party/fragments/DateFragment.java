@@ -52,7 +52,7 @@ public class DateFragment extends Fragment implements PartyListener {
 
     @Override
     public void onPartyLoaded(Party party, User user) {
-        Date date = new Date(party.getDate().getValue());
+        Date date = party.getDate();
         String dateText;
         if (party.isPlanned()) {
             dateText = getString(R.string.format_date_and_time,

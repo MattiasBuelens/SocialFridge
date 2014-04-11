@@ -21,9 +21,9 @@ import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyBuilder;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
@@ -107,7 +107,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         PartyBuilder builder = new PartyBuilder();
         builder.setHostID(getLoggedInUser().getId());
         builder.setDate(new DateTime(getPartyDate()));
-        builder.setHostTimeSlots(getTimeSlots());
+        builder.setHostTimeSlots(TimeSlot.toEndpoint(getTimeSlots()));
 
         task = new CreatePartyTask(this, builder);
         task.execute();
@@ -130,7 +130,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         // Party created, start inviting
         getTracker().send(new HitBuilders.EventBuilder("Party", "Create").build());
         Intent intent = new Intent(this, PartyInviteActivity.class);
-        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getId());
+        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getID());
 
         startActivity(intent);
         finish();
@@ -172,7 +172,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
         @Override
         protected Party run(Void... unused) throws Exception {
-            return parties().insertParty(Session.getActiveSession().getAccessToken(), builder).execute();
+            return new Party(parties().insertParty(Session.getActiveSession().getAccessToken(), builder).execute());
         }
 
         private Parties parties() {

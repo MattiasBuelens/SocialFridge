@@ -12,9 +12,9 @@ import android.widget.GridView;
 import com.facebook.widget.ProfilePictureView;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 

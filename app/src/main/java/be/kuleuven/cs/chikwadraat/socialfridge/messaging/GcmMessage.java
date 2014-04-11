@@ -123,8 +123,8 @@ public class GcmMessage implements Parcelable {
         dest.writeString(getInviteeUserID());
     }
 
-    public static final Parcelable.Creator<GcmMessage> CREATOR
-            = new Parcelable.Creator<GcmMessage>() {
+    public static final Creator<GcmMessage> CREATOR = new Creator<GcmMessage>() {
+
         public GcmMessage createFromParcel(Parcel in) {
             return new GcmMessage(in);
         }
@@ -132,6 +132,7 @@ public class GcmMessage implements Parcelable {
         public GcmMessage[] newArray(int size) {
             return new GcmMessage[size];
         }
+
     };
 
 }
