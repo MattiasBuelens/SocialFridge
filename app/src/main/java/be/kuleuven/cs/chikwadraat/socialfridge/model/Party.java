@@ -114,8 +114,10 @@ public class Party implements Parcelable {
 
     public static List<Party> fromEndpoint(List<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party> parties) {
         List<Party> list = new ArrayList<Party>();
-        for (be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party party : parties) {
-            list.add(new Party(party));
+        if (parties != null) {
+            for (be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party party : parties) {
+                list.add(new Party(party));
+            }
         }
         return list;
     }
