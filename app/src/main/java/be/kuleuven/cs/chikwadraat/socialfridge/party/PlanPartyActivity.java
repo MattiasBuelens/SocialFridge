@@ -26,7 +26,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Activity to plan a party.
  */
-public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
+public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
 
     private static final String TAG = "PlanPartyActivity";
 
@@ -117,14 +117,14 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     }
 
     @Override
-    public void onResult(Void unused) {
+    public void onResult(Party party) {
         // Party planned
         //Log.d(TAG, "Party successfully planned");
         removePlanTask();
         hideProgressDialog();
 
-        // Reload party
-        reloadParty();
+        // Cache updated party
+        cacheParty(party);
 
         // Done
         getTracker().send(new HitBuilders.EventBuilder("Party", "Plan").build());
@@ -154,7 +154,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     public void onProgress(Void... progress) {
     }
 
-    private static class PlanTask extends ObservableAsyncTask<Void, Void, Void> {
+    private static class PlanTask extends ObservableAsyncTask<Void, Void, Party> {
 
         private final Context context;
         private final long partyID;
@@ -168,9 +168,8 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         }
 
         @Override
-        protected Void run(Void... unused) throws Exception {
-            parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot.toEndpoint()).execute();
-            return null;
+        protected Party run(Void... unused) throws Exception {
+            return new Party(parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot.toEndpoint()).execute());
         }
 
         private Parties parties() {

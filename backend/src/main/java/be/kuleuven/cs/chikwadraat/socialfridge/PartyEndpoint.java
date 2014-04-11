@@ -189,7 +189,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
-    public void acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
@@ -211,6 +211,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 .recipients(party.getUpdateUsers())
                 .build();
         new UserMessageEndpoint().addMessages(messages);
+        return party;
     }
 
     /**
@@ -308,11 +309,11 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
-    public void closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        transact(new VoidWork<ServiceException>() {
+        return transact(new Work<Party, ServiceException>() {
             @Override
-            public void vrun() throws ServiceException {
+            public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
@@ -326,6 +327,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 party.setPlanning();
                 // Save
                 ofy().save().entities(party).now();
+                return party;
             }
         });
     }
@@ -339,7 +341,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.plan", path = "party/{partyID}/plan", httpMethod = ApiMethod.HttpMethod.POST)
-    public void plan(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party plan(@Named("partyID") final long partyID, final TimeSlot timeSlot, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
@@ -370,6 +372,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 .recipients(party.getUpdateUsers())
                 .build();
         new UserMessageEndpoint().addMessages(messages);
+        return party;
     }
 
     protected Party getParty(long partyID, boolean full) throws ServiceException {

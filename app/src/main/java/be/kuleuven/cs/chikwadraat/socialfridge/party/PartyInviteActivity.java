@@ -17,13 +17,14 @@ import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Activity to invite friends to a party.
  */
-public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
+public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
 
     private static final String TAG = "PartyInviteActivity";
 
@@ -92,14 +93,14 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     }
 
     @Override
-    public void onResult(Void aVoid) {
+    public void onResult(Party party) {
         // Invites closed
         //Log.d(TAG, "Party invites successfully closed");
         removeCloseInvitesTask();
         hideProgressDialog();
 
-        // Reload party
-        reloadParty();
+        // Cache updated party
+        cacheParty(party);
 
         // Start planning
         getTracker().send(new HitBuilders.EventBuilder("Party", "Planning").build());
@@ -206,7 +207,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     }
 
-    private static class CloseInvitesTask extends ObservableAsyncTask<Void, Void, Void> {
+    private static class CloseInvitesTask extends ObservableAsyncTask<Void, Void, Party> {
 
         private final Context context;
         private final long partyID;
@@ -218,9 +219,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         }
 
         @Override
-        protected Void run(Void... unused) throws Exception {
-            parties().closeInvites(partyID, Session.getActiveSession().getAccessToken()).execute();
-            return null;
+        protected Party run(Void... unused) throws Exception {
+            return new Party(parties().closeInvites(partyID, Session.getActiveSession().getAccessToken()).execute());
         }
 
         private Parties parties() {

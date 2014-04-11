@@ -25,6 +25,7 @@ public class PartyLoaderService extends BaseIntentService {
     public static final String ACTION_PARTY_LOAD = "party_load";
     public static final String ACTION_PARTY_RELOAD = "party_reload";
     public static final String ACTION_PARTY_INVALIDATE = "party_invalidate";
+    public static final String ACTION_PARTY_SET = "party_set";
     public static final String EXTRA_PARTY_ID = "party_id";
 
     public static final String ACTION_PARTY_UPDATE = "party_update";
@@ -58,6 +59,10 @@ public class PartyLoaderService extends BaseIntentService {
             // Invalidate and load
             invalidateParty(partyID);
             loadAndBroadcast(partyID);
+        } else if (action.equals(ACTION_PARTY_SET)) {
+            // Set party
+            Party party = intent.getParcelableExtra(EXTRA_PARTY_OBJECT);
+            cacheParty(party);
         }
     }
 
@@ -73,7 +78,7 @@ public class PartyLoaderService extends BaseIntentService {
 
         try {
             party = new Party(parties.getParty(partyID, session.getAccessToken()).execute());
-            cache.put(partyID, party);
+            cacheParty(party);
             return party;
         } catch (IOException e) {
             trackException(TAG, e);
@@ -97,6 +102,10 @@ public class PartyLoaderService extends BaseIntentService {
 
     private void invalidateParty(long partyID) {
         cache.invalidate(partyID);
+    }
+
+    private void cacheParty(Party party) {
+        cache.put(party.getID(), party);
     }
 
 }
