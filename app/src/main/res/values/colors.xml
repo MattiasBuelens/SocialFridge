@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application-specific accent color -->
+    <color name="apptheme_accent">#73b5e6</color>
+
+    <color name="actionbar_background">@color/apptheme_accent</color>
+
+</resources>
