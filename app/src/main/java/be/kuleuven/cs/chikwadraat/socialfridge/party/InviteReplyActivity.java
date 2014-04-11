@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -188,11 +187,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         trackException(TAG, exception);
 
         // Handle regular exception
-        new AlertDialog.Builder(this)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle(R.string.error_dialog_title)
-                .setMessage(exception.getMessage())
-                .show();
+        handleException(exception);
     }
 
     @Override

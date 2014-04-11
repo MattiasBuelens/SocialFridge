@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -142,17 +141,8 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
         logout();
         trackException(TAG, exception);
 
-        if (exception instanceof FacebookRequestException) {
-            // Handle Facebook error
-            handleError(((FacebookRequestException) exception).getError());
-        } else {
-            // Handle regular exception
-            new AlertDialog.Builder(this)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setTitle(R.string.error_dialog_title)
-                    .setMessage(exception.getMessage())
-                    .show();
-        }
+        // Handle exception
+        handleException(exception);
     }
 
     @Override

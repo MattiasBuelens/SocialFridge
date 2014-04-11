@@ -15,6 +15,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
@@ -236,11 +237,34 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     /**
+     * Handles exceptions.
+     *
+     * @param exception The exception.
+     */
+    public void handleException(Exception exception) {
+        String message;
+        if (exception instanceof FacebookRequestException) {
+            handleFacebookError(((FacebookRequestException) exception).getError());
+            return;
+        } else if (exception instanceof GoogleJsonResponseException) {
+            message = ((GoogleJsonResponseException) exception).getDetails().getMessage();
+        } else {
+            message = exception.getMessage();
+        }
+
+        new AlertDialog.Builder(this)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle(R.string.error_dialog_title)
+                .setMessage(message)
+                .show();
+    }
+
+    /**
      * Handles errors from Facebook sessions and requests.
      *
      * @param error The error.
      */
-    public void handleError(FacebookRequestError error) {
+    private void handleFacebookError(FacebookRequestError error) {
         if (error == null) return;
 
         DialogInterface.OnClickListener listener = null;
