@@ -153,9 +153,13 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             // User is partner
             // TODO apart van wanneer host dit doet?
             targetActivity = ViewPartyActivity.class;
-        } else {
+        } else if (party.isInviting()) {
             // User is invited to party
             targetActivity = InviteReplyActivity.class;
+        } else {
+            // Unauthorized
+            finish();
+            return;
         }
 
         // Seriously Android Studio, get your sh*t together.

@@ -311,7 +311,7 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
     public Party closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        return transact(new Work<Party, ServiceException>() {
+        Party party = transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
@@ -330,8 +330,10 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
+        // Cancel open invites
+        party = cancelInvites(party);
+        return party;
     }
-
 
     /**
      * Plan a party.
@@ -373,6 +375,45 @@ public class PartyEndpoint extends BaseEndpoint {
                 .build();
         new UserMessageEndpoint().addMessages(messages);
         return party;
+    }
+
+    /**
+     * Cancel all open invites of a party.
+     *
+     * @param party The party.
+     * @return The party after all invites are closed.
+     * @throws ServiceException
+     */
+    protected Party cancelInvites(Party party) throws ServiceException {
+        final long partyID = party.getID();
+        // Find an invitee
+        PartyMember invitee = findInvitee(party);
+        while(invitee != null) {
+            final String inviteeID = invitee.getUserID();
+            // Cancel each invite in a separate transaction
+            party = transact(new Work<Party, ServiceException>() {
+                @Override
+                public Party run() throws ServiceException {
+                    Party party = getParty(partyID, true);
+                    User user = getUser(inviteeID);
+                    party.cancelInvite(user);
+                    ofy().save().entities(party, user).now();
+                    return party;
+                }
+            });
+            // Find next invitee
+            invitee = findInvitee(party);
+        }
+        return party;
+    }
+
+    private PartyMember findInvitee(Party party) {
+        for (PartyMember member : party.getMembers()) {
+            if (member.isInvited()) {
+                return member;
+            }
+        }
+        return null;
     }
 
     protected Party getParty(long partyID, boolean full) throws ServiceException {
