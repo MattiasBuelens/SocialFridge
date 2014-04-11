@@ -93,11 +93,15 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     @Override
     public void onResult(Void aVoid) {
+        // Invites closed
         //Log.d(TAG, "Party invites successfully closed");
         removeCloseInvitesTask();
         hideProgressDialog();
 
-        // Invites closed, start planning
+        // Reload party
+        reloadParty();
+
+        // Start planning
         getTracker().send(new HitBuilders.EventBuilder("Party", "Planning").build());
         Intent intent = new Intent(this, PlanPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());

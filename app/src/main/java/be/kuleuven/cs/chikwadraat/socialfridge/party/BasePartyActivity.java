@@ -121,6 +121,8 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      * based on the new party state.
      */
     protected void redirectIfNeeded(Party party, User user) {
+        if (isFinishing()) return;
+
         Class<?> targetActivity = null;
         if (party.isHost(user)) {
             // User is host

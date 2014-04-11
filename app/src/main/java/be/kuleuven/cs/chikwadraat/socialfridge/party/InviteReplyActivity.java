@@ -161,7 +161,10 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         //Log.d(TAG, "Party successfully joined");
         getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Accept").build());
 
-        // Joined, show party
+        // Reload party
+        reloadParty();
+
+        // View party
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
 

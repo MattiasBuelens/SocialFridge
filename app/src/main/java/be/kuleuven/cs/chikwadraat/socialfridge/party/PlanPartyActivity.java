@@ -118,11 +118,15 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     @Override
     public void onResult(Void unused) {
+        // Party planned
         //Log.d(TAG, "Party successfully planned");
         removePlanTask();
         hideProgressDialog();
 
-        // Party planned, done
+        // Reload party
+        reloadParty();
+
+        // Done
         getTracker().send(new HitBuilders.EventBuilder("Party", "Plan").build());
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, getPartyID());
