@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
@@ -159,7 +160,8 @@ public class Party {
     public void setPlanned(TimeSlot chosenTimeSlot) {
         setStatus(Status.PLANNED);
         // Create date for time slot
-        Calendar calendar = Calendar.getInstance();
+        // TODO This is a dirty fix, find a better way to deal with timezone of host!
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Brussels"));
         calendar.setTime(getDate());
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.SECOND, 0);
