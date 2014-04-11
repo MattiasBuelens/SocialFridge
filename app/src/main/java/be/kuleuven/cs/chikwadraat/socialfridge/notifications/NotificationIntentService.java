@@ -60,6 +60,10 @@ public class NotificationIntentService extends BaseIntentService {
             // Show notification if necessary
             issueUpdateNotification(message);
         } else if (action.equals(NotificationConstants.ACTION_VIEW_PARTY)) {
+            // View action on party update notification
+            // Cancel notification first
+            nm.cancel(NotificationConstants.NOTIFICATION_ID);
+            // View party
             startActivity(makeViewIntent(message));
         }
     }
