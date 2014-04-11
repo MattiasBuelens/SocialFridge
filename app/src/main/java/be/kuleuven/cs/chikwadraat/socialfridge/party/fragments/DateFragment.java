@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.Date;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 
 
@@ -54,7 +54,7 @@ public class DateFragment extends Fragment implements PartyListener {
     public void onPartyLoaded(Party party, User user) {
         Date date = new Date(party.getDate().getValue());
         String dateText;
-        if (party.getPlanned()) {
+        if (party.isPlanned()) {
             dateText = getString(R.string.format_date_and_time,
                     DateFormat.getDateFormat(getActivity()).format(date),
                     DateFormat.getTimeFormat(getActivity()).format(date));

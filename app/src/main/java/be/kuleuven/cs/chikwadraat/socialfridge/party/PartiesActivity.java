@@ -17,10 +17,10 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
@@ -58,7 +58,7 @@ public class PartiesActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Party party = (Party) l.getItemAtPosition(position);
         Intent intent = new Intent(this, ViewPartyActivity.class);
-        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getId());
+        intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getID());
         startActivity(intent);
     }
 
@@ -84,7 +84,7 @@ public class PartiesActivity extends ListActivity {
             }
 
             Party party = getItem(position);
-            PartyMember host = PartyUtils.getHost(party);
+            PartyMember host = party.getHost();
             int nbOtherPartners = party.getPartners().size() - 1;
 
             String othersText = getContext().getResources().getQuantityString(R.plurals.party_list_partners, nbOtherPartners, nbOtherPartners);

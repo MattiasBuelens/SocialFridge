@@ -15,9 +15,9 @@ import com.facebook.Session;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
  * Base activity for parties.
@@ -115,16 +115,20 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      */
     protected void redirectIfNeeded(Party party, User user) {
         Class<?> targetActivity = null;
-        if (PartyUtils.isHost(party, user)) {
+        if (party.isHost(user)) {
             // User is host
-            if (party.getInviting()) {
-                targetActivity = PartyInviteActivity.class;
-            } else if (party.getPlanning()) {
-                targetActivity = PlanPartyActivity.class;
-            } else if (party.getPlanned()) {
-                targetActivity = ViewPartyActivity.class;
+            switch (party.getStatus()) {
+                case INVITING:
+                    targetActivity = PartyInviteActivity.class;
+                    break;
+                case PLANNING:
+                    targetActivity = PlanPartyActivity.class;
+                    break;
+                case PLANNED:
+                    targetActivity = ViewPartyActivity.class;
+                    break;
             }
-        } else if (PartyUtils.isInParty(party, user)) {
+        } else if (party.isInParty(user)) {
             // User is partner
             // TODO apart van wanneer host dit doet?
             targetActivity = ViewPartyActivity.class;
@@ -138,7 +142,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         Class<?> ownClass = ((Object) this).getClass();
         if (targetActivity != null && !targetActivity.isAssignableFrom(ownClass)) {
             Intent intent = new Intent(this, targetActivity);
-            intent.putExtra(EXTRA_PARTY_ID, getPartyID());
+            intent.putExtra(EXTRA_PARTY_ID, party.getID());
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();

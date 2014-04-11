@@ -18,12 +18,11 @@ import com.facebook.widget.ProfilePictureView;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
-import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
@@ -95,8 +94,8 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     @Override
     public void onPartyLoaded(Party party, User user) {
         // Load candidates if host
-        if (PartyUtils.isHost(party, user)) {
-            loadCandidates(party.getId());
+        if (party.isHost(user)) {
+            loadCandidates(party.getID());
         }
     }
 

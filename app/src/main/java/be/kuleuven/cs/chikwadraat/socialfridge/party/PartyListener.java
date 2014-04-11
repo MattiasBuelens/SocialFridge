@@ -1,7 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
  * Created by Mattias on 5/04/2014.

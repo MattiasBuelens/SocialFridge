@@ -8,10 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
-import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyUtils;
 
 
 /**
@@ -50,7 +49,7 @@ public class PlaceFragment extends Fragment implements PartyListener {
 
     @Override
     public void onPartyLoaded(Party party, User user) {
-        String hostName = PartyUtils.getHost(party).getUserName();
+        String hostName = party.getHost().getUserName();
         String placeText = getString(R.string.party_view_place, hostName);
         placeView.setText(placeText);
     }

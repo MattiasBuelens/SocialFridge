@@ -137,10 +137,12 @@ public class Party {
         this.status = status;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isInviting() {
         return getStatus() == Status.INVITING;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isPlanning() {
         return getStatus() == Status.PLANNING;
     }
@@ -149,6 +151,7 @@ public class Party {
         setStatus(Status.PLANNING);
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isPlanned() {
         return getStatus() == Status.PLANNED;
     }

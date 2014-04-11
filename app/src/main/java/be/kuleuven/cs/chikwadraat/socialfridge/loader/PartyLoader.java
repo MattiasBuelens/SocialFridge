@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
  * Retrieves a party.
@@ -34,7 +34,7 @@ public class PartyLoader extends BaseLoader<Party> {
         Session session = Session.getActiveSession();
 
         try {
-            return parties.getParty(partyID, session.getAccessToken()).execute();
+            return new Party(parties.getParty(partyID, session.getAccessToken()).execute());
         } catch (IOException e) {
             //Log.e(TAG, e.getMessage());
             trackException(TAG, e);

@@ -9,7 +9,7 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
  * Retrieves a user's parties.
@@ -28,7 +28,7 @@ public class PartiesLoader extends BaseLoader<List<Party>> {
         Session session = Session.getActiveSession();
 
         try {
-            return parties.getParties(session.getAccessToken()).execute().getList();
+            return Party.fromList(parties.getParties(session.getAccessToken()).execute().getList());
         } catch (IOException e) {
             //Log.e(TAG, e.getMessage());
             trackException(TAG, e);
