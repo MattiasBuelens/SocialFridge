@@ -13,20 +13,16 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class Application extends android.app.Application {
 
-    private boolean isDebug;
-
     private Tracker tracker;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        isDebug = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    protected boolean isDebug() {
+        return (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
     public synchronized Tracker getTracker() {
         if (tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.setDryRun(isDebug);
+            analytics.setDryRun(isDebug());
             tracker = analytics.newTracker(R.xml.app_tracker);
         }
         return tracker;
@@ -34,7 +30,7 @@ public class Application extends android.app.Application {
 
     public void trackException(String tag, Exception e) {
         // Log exceptions when debugging
-        if (isDebug) {
+        if (isDebug()) {
             Log.e(tag, e.getMessage());
         }
         getTracker().send(new HitBuilders.ExceptionBuilder()
