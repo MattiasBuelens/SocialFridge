@@ -2,11 +2,13 @@ package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.LongSparseArray;
 
 import com.facebook.Session;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseIntentService;
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
@@ -31,7 +33,10 @@ public class PartyLoaderService extends BaseIntentService {
     /*
      * Static cache.
      */
-    private static LongSparseArray<Party> cache = new LongSparseArray<Party>();
+    private static Cache<Long, Party> cache = CacheBuilder.newBuilder()
+            .expireAfterWrite(5000, TimeUnit.SECONDS)
+            .maximumSize(20)
+            .build();
 
     public PartyLoaderService() {
         super("PartyLoaderService");
@@ -57,7 +62,7 @@ public class PartyLoaderService extends BaseIntentService {
     }
 
     private Party loadParty(long partyID) {
-        Party party = cache.get(partyID);
+        Party party = cache.getIfPresent(partyID);
         if (party != null)
             return party;
 
@@ -91,7 +96,7 @@ public class PartyLoaderService extends BaseIntentService {
     }
 
     private void invalidateParty(long partyID) {
-        cache.delete(partyID);
+        cache.invalidate(partyID);
     }
 
 }
