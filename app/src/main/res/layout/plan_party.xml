@@ -24,18 +24,19 @@
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/plan_check_add_calendar"
+        android:layout_above="@+id/plan_action_done"
         android:layout_below="@+id/partners_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_pick_timeslot" />
 
-    <CheckBox
+    <!-- TODO Bring me back in a later release -->
+    <!--<CheckBox
         android:id="@+id/plan_check_add_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/plan_action_done"
         android:checked="false"
-        android:text="@string/party_plan_add_to_calendar" />
+        android:text="@string/party_plan_add_to_calendar" />-->
 
     <Button
         android:id="@+id/plan_action_done"
