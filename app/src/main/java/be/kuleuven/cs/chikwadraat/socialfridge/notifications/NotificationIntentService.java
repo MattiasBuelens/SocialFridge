@@ -95,9 +95,9 @@ public class NotificationIntentService extends BaseIntentService {
                  */
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(contentText)) //TODO: voorlopig contentText en bigText identiek
-                        .addAction(0,   //TODO: choose slots icoontje invoegen
+                        .addAction(R.drawable.ic_action_time,   //TODO: choose slots icoontje invoegen
                                 getString(R.string.notif_action_choose_slots), piChooseSlots)
-                        .addAction(0,   //TODO: decline icoontje invoegen
+                        .addAction(R.drawable.ic_action_cancel,   //TODO: decline icoontje invoegen
                                 getString(R.string.notif_action_decline), piDecline);
 
         /*

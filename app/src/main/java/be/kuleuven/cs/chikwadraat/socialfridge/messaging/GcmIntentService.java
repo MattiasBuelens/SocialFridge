@@ -67,7 +67,6 @@ public class GcmIntentService extends BaseIntentService {
         switch (message.getType()) {
             case PARTY_UPDATE:
                 long partyID = message.getPartyID();
-                // TODO: ISSUE 4
                 // Notify user about party update
                 notificationIntent.setAction(NotificationConstants.ACTION_PARTY_UPDATE);
                 notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
