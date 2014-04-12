@@ -1,6 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.Session;
 
@@ -37,8 +38,8 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
         try {
             return parties.getCandidates(partyID, session.getAccessToken()).execute().getItems();
         } catch (IOException e) {
-            //Log.e(TAG, e.getMessage());
-            trackException(TAG, e);
+            Log.e(TAG, "Error while loading candidates: " + e.getMessage());
+            trackException(e);
             return null;
         }
     }

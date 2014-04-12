@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -122,7 +123,7 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onResult(Party party) {
-        //Log.d(TAG, "Party successfully created");
+        Log.d(TAG, "Party successfully created");
         removeCreateTask();
         hideProgressDialog();
 
@@ -137,10 +138,10 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onError(Exception exception) {
-        //Log.e(TAG, "Failed to create party: " + exception.getMessage());
+        Log.e(TAG, "Failed to create party: " + exception.getMessage());
         removeCreateTask();
         hideProgressDialog();
-        trackException(TAG, exception);
+        trackException(exception);
 
         // Handle regular exception
         handleException(exception);

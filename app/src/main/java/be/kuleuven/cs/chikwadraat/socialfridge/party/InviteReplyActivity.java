@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -157,7 +158,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     }
 
     private void onJoined() {
-        //Log.d(TAG, "Party successfully joined");
+        Log.d(TAG, "Party successfully joined");
         getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Accept").build());
 
         // Reload party
@@ -172,7 +173,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     }
 
     private void onDeclined() {
-        //Log.d(TAG, "Invite successfully declined");
+        Log.d(TAG, "Invite successfully declined");
         getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Decline").build());
 
         // Declined invite, close
@@ -181,10 +182,10 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     @Override
     public void onError(Exception exception) {
-        //Log.e(TAG, "Failed to reply to invite: " + exception.getMessage());
+        Log.e(TAG, "Failed to reply to invite: " + exception.getMessage());
         removeTask();
         hideProgressDialog();
-        trackException(TAG, exception);
+        trackException(exception);
 
         // Handle regular exception
         handleException(exception);

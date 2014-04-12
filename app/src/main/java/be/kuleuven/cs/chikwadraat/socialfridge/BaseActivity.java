@@ -110,8 +110,8 @@ public abstract class BaseActivity extends ActionBarActivity {
         return ((Application) getApplication()).getTracker();
     }
 
-    public void trackException(String tag, Exception e) {
-        ((Application) getApplication()).trackException(tag, e);
+    public void trackException(Exception e) {
+        ((Application) getApplication()).trackException(e);
     }
 
     /**

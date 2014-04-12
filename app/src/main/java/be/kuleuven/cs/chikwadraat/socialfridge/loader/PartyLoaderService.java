@@ -2,6 +2,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.facebook.Session;
 import com.google.common.cache.Cache;
@@ -81,7 +82,8 @@ public class PartyLoaderService extends BaseIntentService {
             cacheParty(party);
             return party;
         } catch (IOException e) {
-            trackException(TAG, e);
+            Log.e(TAG, "Error while loading party: " + e.getMessage());
+            trackException(e);
             return null;
         }
     }

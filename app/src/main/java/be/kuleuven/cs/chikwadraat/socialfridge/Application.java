@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
 import android.content.pm.ApplicationInfo;
-import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -28,11 +27,7 @@ public class Application extends android.app.Application {
         return tracker;
     }
 
-    public void trackException(String tag, Exception e) {
-        // Log exceptions when debugging
-        if (isDebug()) {
-            Log.e(tag, e.getMessage());
-        }
+    public void trackException(Exception e) {
         getTracker().send(new HitBuilders.ExceptionBuilder()
                         .setDescription(new StandardExceptionParser(this, null)
                                 .getDescription(Thread.currentThread().getName(), e))

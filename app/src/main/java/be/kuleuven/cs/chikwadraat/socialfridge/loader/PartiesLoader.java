@@ -1,6 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.Session;
 
@@ -30,8 +31,8 @@ public class PartiesLoader extends BaseLoader<List<Party>> {
         try {
             return Party.fromEndpoint(parties.getParties(session.getAccessToken()).execute().getList());
         } catch (IOException e) {
-            //Log.e(TAG, e.getMessage());
-            trackException(TAG, e);
+            Log.e(TAG, "Error while loading parties: " + e.getMessage());
+            trackException(e);
             return null;
         }
     }

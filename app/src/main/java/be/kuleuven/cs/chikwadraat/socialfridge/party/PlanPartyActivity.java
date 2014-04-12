@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -118,7 +119,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     @Override
     public void onResult(Party party) {
         // Party planned
-        //Log.d(TAG, "Party successfully planned");
+        Log.d(TAG, "Party successfully planned");
         removePlanTask();
         hideProgressDialog();
 
@@ -136,10 +137,10 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     @Override
     public void onError(Exception exception) {
-        //Log.e(TAG, "Failed to plan party: " + exception.getMessage());
+        Log.e(TAG, "Failed to plan party: " + exception.getMessage());
         removePlanTask();
         hideProgressDialog();
-        trackException(TAG, exception);
+        trackException(exception);
 
         // Handle regular exception
         handleException(exception);

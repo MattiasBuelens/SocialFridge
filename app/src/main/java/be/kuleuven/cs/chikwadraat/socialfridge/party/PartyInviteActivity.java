@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -94,7 +95,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     @Override
     public void onResult(Party party) {
         // Invites closed
-        //Log.d(TAG, "Party invites successfully closed");
+        Log.d(TAG, "Party invites successfully closed");
         removeCloseInvitesTask();
         hideProgressDialog();
 
@@ -112,10 +113,10 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     @Override
     public void onError(Exception exception) {
-        //Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
+        Log.e(TAG, "Failed to close party invites: " + exception.getMessage());
         removeCloseInvitesTask();
         hideProgressDialog();
-        trackException(TAG, exception);
+        trackException(exception);
 
         // Handle regular exception
         handleException(exception);
@@ -152,8 +153,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidate.setInvited(true);
                 candidatesFragment.refreshCandidates();
             } else {
-                //Log.e(TAG, "Error while inviting: " + exception.getMessage());
-                trackException(TAG, exception);
+                Log.e(TAG, "Error while inviting: " + exception.getMessage());
+                trackException(exception);
                 // TODO Error handling?
             }
         }
@@ -190,8 +191,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 candidate.setInvited(false);
                 candidatesFragment.refreshCandidates();
             } else {
-                //Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
-                trackException(TAG, exception);
+                Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
+                trackException(exception);
                 // TODO Error handling?
             }
         }
