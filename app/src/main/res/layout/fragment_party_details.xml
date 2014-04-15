@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment">
+
+    <fragment
+        android:id="@+id/dish_header"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dish_detail_photo_height"
+        android:layout_alignParentTop="true"
+        tools:layout="@layout/fragment_dish_header" />
+
+    <LinearLayout
+        android:id="@+id/party_details_card"
+        style="@style/AppTheme.CardOuter"
+        android:layout_below="@+id/dish_header"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginTop="@dimen/section_margin"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/AppTheme.CardInner"
+            android:orientation="vertical">
+
+            <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableGridView
+                android:id="@+id/party_partners_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/section_margin"
+                android:listSelector="@android:color/transparent"
+                android:numColumns="@integer/party_partners_grid_column_count"
+                tools:listitem="@layout/partner_list_item" />
+
+            <TextView
+                android:id="@+id/party_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_action_time_light"
+                android:drawablePadding="@dimen/text_divider_margin"
+                android:gravity="center_vertical"
+                tools:text="1/1/2014 at 19:00" />
+
+            <TextView
+                android:id="@+id/party_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_action_place_light"
+                android:drawablePadding="@dimen/text_divider_margin"
+                android:gravity="center_vertical"
+                tools:text="At Vital D\'haveloose\'s place" />
+
+        </LinearLayout>
+
+        <!--suppress AndroidLintContentDescription -->
+        <ImageView style="@style/AppTheme.CardShadow" />
+
+    </LinearLayout>
+
+</RelativeLayout>

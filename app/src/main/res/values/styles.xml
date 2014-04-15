@@ -12,4 +12,37 @@
         <item name="background">@color/actionbar_background</item>
     </style>
 
+    <!-- Card styles -->
+    <style name="AppTheme.CardLayout">
+        <item name="android:background">@color/card_container_background</item>
+    </style>
+
+    <style name="AppTheme.CardShadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/card_shadow</item>
+        <item name="android:src">@drawable/card_shadow</item>
+    </style>
+
+    <style name="AppTheme.CardOuter">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/card_outer_padding_top</item>
+        <item name="android:paddingBottom">@dimen/card_outer_padding_bottom</item>
+        <item name="android:paddingLeft">@dimen/card_outer_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/card_outer_padding_horizontal</item>
+        <item name="android:descendantFocusability">blocksDescendants</item>
+    </style>
+
+    <style name="AppTheme.CardInner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/card_inner_padding_left</item>
+        <item name="android:paddingRight">@dimen/card_inner_padding_right</item>
+        <item name="android:paddingTop">@dimen/card_inner_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/card_inner_padding_vertical</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:duplicateParentState">true</item>
+    </style>
+
 </resources>

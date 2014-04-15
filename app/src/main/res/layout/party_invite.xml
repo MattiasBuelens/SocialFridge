@@ -12,12 +12,12 @@
 
     <fragment
         android:id="@+id/partners_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_party_partners" />
+        tools:layout="@layout/fragment_party_details" />
 
     <fragment
         android:id="@+id/candidates_fragment"

@@ -4,6 +4,13 @@
     <!-- Application-specific accent color -->
     <color name="apptheme_accent">#73b5e6</color>
 
+    <!-- Background color of the action bar -->
     <color name="actionbar_background">@color/apptheme_accent</color>
+
+    <!-- Color of the text above the dish photo in the dish detail view -->
+    <color name="dish_detail_photo_label_color">#eeeeee</color>
+
+    <!-- Background color of card container -->
+    <color name="card_container_background">#e5e5e5</color>
 
 </resources>

@@ -2,38 +2,18 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.ViewPartyActivity">
 
     <fragment
-        android:id="@+id/partners_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment"
+        android:id="@+id/details_fragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_party_partners" />
-
-    <fragment
-        android:id="@+id/place_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PlaceFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/partners_fragment"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_place" />
-
-    <fragment
-        android:id="@+id/date_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DateFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/place_fragment"
-        tools:layout="@layout/fragment_date" />
+        tools:layout="@layout/fragment_party_details" />
 
 </RelativeLayout>

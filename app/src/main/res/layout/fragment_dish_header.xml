@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dish_detail_photo_height">
+
+    <ImageView
+        android:id="@+id/dish_detail_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/detail_spaghetti" />
+
+    <View
+        android:id="@+id/dish_detail_label_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dish_detail_photo_label_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#7F000000" />
+
+    <TextView
+        android:id="@+id/dish_detail_label"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dish_detail_photo_label_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="@dimen/dish_detail_photo_label_indent"
+        android:paddingStart="@dimen/dish_detail_photo_label_indent"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/dish_detail_photo_label_color"
+        tools:text="Spaghetti Bolognese" />
+
+</RelativeLayout>

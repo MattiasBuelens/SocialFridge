@@ -13,4 +13,22 @@
     <!-- Margin dividing text and other elements -->
     <dimen name="text_divider_margin">10dp</dimen>
 
+    <!-- Height of a dish photo in detail view -->
+    <dimen name="dish_detail_photo_height">128dip</dimen>
+
+    <!-- Height of the text label above the dish photo in the dish detail view -->
+    <dimen name="dish_detail_photo_label_height">45dip</dimen>
+
+    <!-- Indentation before the text label above the dish photo in the dish detail view -->
+    <dimen name="dish_detail_photo_label_indent">18dip</dimen>
+
+    <!-- Card style dimensions -->
+    <dimen name="card_outer_padding_top">2dp</dimen>
+    <dimen name="card_outer_padding_bottom">1dp</dimen>
+    <dimen name="card_outer_padding_horizontal">8dp</dimen>
+    <dimen name="card_inner_padding_vertical">8dp</dimen>
+    <dimen name="card_inner_padding_left">10dp</dimen>
+    <dimen name="card_inner_padding_right">5dp</dimen>
+    <dimen name="card_shadow">3dp</dimen>
+
 </resources>

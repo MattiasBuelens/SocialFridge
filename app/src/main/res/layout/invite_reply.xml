@@ -12,29 +12,11 @@
 
     <fragment
         android:id="@+id/partners_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PartnersFragment"
+        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_party_partners" />
-
-    <fragment
-        android:id="@+id/place_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.PlaceFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/partners_fragment"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_place" />
-
-    <fragment
-        android:id="@+id/date_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DateFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/place_fragment"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_date" />
+        tools:layout="@layout/fragment_party_details" />
 
     <fragment
         android:id="@+id/time_slots_fragment"
@@ -42,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/invite_reply_buttons"
-        android:layout_below="@+id/date_fragment"
+        android:layout_below="@+id/partners_fragment"
         android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_timeslots" />
 
