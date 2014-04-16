@@ -2,37 +2,50 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity">
 
-    <fragment
-        android:id="@+id/partners_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_party_details" />
-
-    <fragment
-        android:id="@+id/time_slots_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/invite_reply_buttons"
-        android:layout_below="@+id/partners_fragment"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_timeslots" />
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/partners_fragment"
+                android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_party_details" />
+
+            <fragment
+                android:id="@+id/time_slots_fragment"
+                android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_timeslots" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/invite_reply_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/section_margin"
         android:orientation="horizontal">
 
         <Button
