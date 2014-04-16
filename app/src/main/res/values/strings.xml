@@ -42,7 +42,6 @@
 
     <!-- Invite to party -->
     <string name="party_invite_title">Invite to party</string>
-    <string name="party_invite_action_done">Done</string>
     <string name="party_action_invite">Invite</string>
     <string name="party_action_cancel_invite">@android:string/cancel</string>
     <string name="party_partner_status_invited">Invited</string>
@@ -59,7 +58,6 @@
 
     <!-- Plan party -->
     <string name="party_plan_title">Plan party</string>
-    <string name="party_plan_action_done">Done</string>
     <string name="party_plan_pick_time_slot">Choose time slot</string>
     <string name="party_plan_bring">Bring</string>
     <string name="party_plan_add_to_calendar">Add to calendar</string>
