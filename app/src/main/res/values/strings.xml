@@ -27,6 +27,7 @@
     <!-- Party -->
     <string name="party_partners">Partners</string>
     <string name="party_candidates">Candidates</string>
+    <string name="party_candidates_summary">Invite friends with matching fridges</string>
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
 

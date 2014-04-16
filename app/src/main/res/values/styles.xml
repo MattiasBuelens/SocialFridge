@@ -12,6 +12,31 @@
         <item name="background">@color/actionbar_background</item>
     </style>
 
+    <style name="AppTheme.Header">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/header_padding_top</item>
+        <item name="android:paddingBottom">@dimen/header_padding_bottom</item>
+        <item name="android:paddingLeft">@dimen/header_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/header_padding_horizontal</item>
+    </style>
+
+    <style name="AppTheme.HeaderTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/header_size</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AppTheme.HeaderSummary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/sub_header_size</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
     <!-- Card styles -->
     <style name="AppTheme.CardLayout">
         <item name="android:background">@color/card_container_background</item>
@@ -24,9 +49,11 @@
     </style>
 
     <style name="AppTheme.CardOuter">
-        <item name="android:orientation">vertical</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginBottom">@dimen/card_outer_margin_top</item>
+        <item name="android:layout_marginTop">@dimen/card_outer_margin_bottom</item>
         <item name="android:paddingTop">@dimen/card_outer_padding_top</item>
         <item name="android:paddingBottom">@dimen/card_outer_padding_bottom</item>
         <item name="android:paddingLeft">@dimen/card_outer_padding_horizontal</item>
@@ -43,6 +70,20 @@
         <item name="android:paddingBottom">@dimen/card_inner_padding_vertical</item>
         <item name="android:background">@android:color/white</item>
         <item name="android:duplicateParentState">true</item>
+    </style>
+
+    <style name="AppTheme.CardTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/card_title</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="AppTheme.CardList">
+        <item name="android:cacheColorHint">@color/card_container_background</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
     </style>
 
 </resources>

@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity">
 
     <fragment
-        android:id="@+id/partners_fragment"
+        android:id="@+id/details_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_party_details" />
 
     <fragment
@@ -24,18 +20,6 @@
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/invite_action_done"
-        android:layout_below="@+id/partners_fragment"
-        android:layout_marginBottom="@dimen/section_margin"
         tools:layout="@layout/fragment_party_candidates" />
 
-    <Button
-        android:id="@+id/invite_action_done"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/party_invite_action_done"
-        android:textAllCaps="true" />
-
-</RelativeLayout>
+</LinearLayout>

@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -19,17 +20,18 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Activity to invite friends to a party.
  */
-public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
+public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Party> {
 
     private static final String TAG = "PartyInviteActivity";
 
+    private DetailsFragment detailsFragment;
     private CandidatesFragment candidatesFragment;
-    private Button doneButton;
 
     private CloseInvitesTask task;
 
@@ -38,10 +40,10 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_invite);
 
+        detailsFragment = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.details_fragment);
         candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.candidates_fragment);
 
-        doneButton = (Button) findViewById(R.id.invite_action_done);
-        doneButton.setOnClickListener(this);
+        candidatesFragment.addHeaderView(detailsFragment.getView());
 
         // Re-attach to close invites task
         task = (CloseInvitesTask) getLastCustomNonConfigurationInstance();
@@ -69,11 +71,20 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.invite_action_done:
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.done, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_done:
                 closeInvites();
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

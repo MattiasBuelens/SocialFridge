@@ -1,77 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardOuter"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/list_item_margin"
-    android:paddingTop="@dimen/list_item_margin">
+    android:orientation="vertical">
 
-    <com.facebook.widget.ProfilePictureView
-        android:id="@+id/candidate_pic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        facebook:preset_size="small" />
+    <RelativeLayout
+        style="@style/AppTheme.CardInner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="@dimen/text_divider_margin"
-        android:layout_marginLeft="@dimen/text_divider_margin"
-        android:layout_marginRight="@dimen/text_divider_margin"
-        android:layout_marginStart="@dimen/text_divider_margin"
-        android:layout_toEndOf="@+id/candidate_pic"
-        android:layout_toRightOf="@+id/candidate_pic"
-        android:layout_toStartOf="@+id/candidate_actions"
-        android:layout_toLeftOf="@+id/candidate_actions"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/candidate_name"
-            android:layout_width="match_parent"
+        <com.facebook.widget.ProfilePictureView
+            android:id="@+id/candidate_pic"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Candidate Name" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            facebook:preset_size="small" />
 
-        <!--<TextView
-            android:id="@+id/candidate_ingredients"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="Ingredients" />-->
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/text_divider_margin"
+            android:layout_marginLeft="@dimen/text_divider_margin"
+            android:layout_marginRight="@dimen/text_divider_margin"
+            android:layout_marginStart="@dimen/text_divider_margin"
+            android:layout_toEndOf="@+id/candidate_pic"
+            android:layout_toLeftOf="@+id/candidate_actions"
+            android:layout_toRightOf="@+id/candidate_pic"
+            android:layout_toStartOf="@+id/candidate_actions"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/candidate_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Candidate Name" />
 
-    <LinearLayout
-        android:id="@+id/candidate_actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
+            <!--<TextView
+                android:id="@+id/candidate_ingredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="Ingredients" />-->
 
-        <Button
-            android:id="@+id/candidate_invite"
-            android:layout_width="match_parent"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/candidate_actions"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/party_action_invite"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
 
-        <!--<Button
-            android:id="@+id/candidate_cancel_invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/party_action_cancel_invite"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceSmall" />-->
+            <Button
+                android:id="@+id/candidate_invite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/party_action_invite"
+                android:textAllCaps="true"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    </LinearLayout>
+            <!--<Button
+                android:id="@+id/candidate_cancel_invite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/party_action_cancel_invite"
+                android:textAllCaps="true"
+                android:textAppearance="?android:attr/textAppearanceSmall" />-->
 
-</RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!--suppress AndroidLintContentDescription -->
+    <ImageView style="@style/AppTheme.CardShadow" />
+
+</LinearLayout>

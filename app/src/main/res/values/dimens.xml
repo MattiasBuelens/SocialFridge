@@ -22,7 +22,16 @@
     <!-- Indentation before the text label above the dish photo in the dish detail view -->
     <dimen name="dish_detail_photo_label_indent">18dip</dimen>
 
+    <!-- Headers -->
+    <dimen name="header_size">21sp</dimen>
+    <dimen name="sub_header_size">15sp</dimen>
+    <dimen name="header_padding_top">5dp</dimen>
+    <dimen name="header_padding_bottom">5dp</dimen>
+    <dimen name="header_padding_horizontal">20dp</dimen>
+
     <!-- Card style dimensions -->
+    <dimen name="card_outer_margin_top">5dp</dimen>
+    <dimen name="card_outer_margin_bottom">5dp</dimen>
     <dimen name="card_outer_padding_top">2dp</dimen>
     <dimen name="card_outer_padding_bottom">1dp</dimen>
     <dimen name="card_outer_padding_horizontal">8dp</dimen>
@@ -30,5 +39,6 @@
     <dimen name="card_inner_padding_left">10dp</dimen>
     <dimen name="card_inner_padding_right">5dp</dimen>
     <dimen name="card_shadow">3dp</dimen>
+    <dimen name="card_title">16sp</dimen>
 
 </resources>

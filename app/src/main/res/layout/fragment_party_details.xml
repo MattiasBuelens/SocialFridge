@@ -19,8 +19,6 @@
         android:id="@+id/party_details_card"
         style="@style/AppTheme.CardOuter"
         android:layout_below="@+id/dish_header"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:layout_marginTop="@dimen/section_margin"
         android:orientation="vertical">
 
         <LinearLayout

@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     private static final int LOADER_CANDIDATES = 1;
     private static final String LOADER_ARGS_PARTY_ID = "party_id";
 
+    private View candidatesHeader;
     private ListView candidatesList;
     private CandidatesListAdapter candidatesAdapter;
     private CandidateListener listener;
@@ -62,6 +64,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
         View view = inflater.inflate(R.layout.fragment_party_candidates, container, false);
 
         candidatesList = (ListView) view.findViewById(R.id.party_candidates_list);
+        candidatesHeader = view.findViewById(R.id.party_candidates_header);
 
         return view;
     }
@@ -69,6 +72,8 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        addHeaderView(candidatesHeader);
 
         candidatesAdapter = new CandidatesListAdapter(getActivity());
         candidatesList.setAdapter(candidatesAdapter);
@@ -103,6 +108,16 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     public void onPartyUnloaded() {
         candidatesAdapter.clear();
         getLoaderManager().destroyLoader(LOADER_CANDIDATES);
+    }
+
+    public void addHeaderView(View headerView) {
+        if (headerView.getParent() != null) {
+            // Remove from parent
+            ((ViewGroup) headerView.getParent()).removeView(headerView);
+            // Reset layout params
+            headerView.setLayoutParams(new AbsListView.LayoutParams(headerView.getLayoutParams()));
+        }
+        candidatesList.addHeaderView(headerView);
     }
 
     private void loadCandidates(long partyID) {
