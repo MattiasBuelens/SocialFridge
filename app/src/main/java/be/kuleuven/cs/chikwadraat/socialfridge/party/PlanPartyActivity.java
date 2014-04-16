@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -26,12 +27,11 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Activity to plan a party.
  */
-public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
+public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Party> {
 
     private static final String TAG = "PlanPartyActivity";
 
     private TimeSlotPickerFragment timeSlotPicker;
-    private Button doneButton;
 
     private PlanTask task;
 
@@ -41,8 +41,6 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         setContentView(R.layout.plan_party);
 
         timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.plan_time_slot_fragment);
-        doneButton = (Button) findViewById(R.id.plan_action_done);
-        doneButton.setOnClickListener(this);
 
         // Re-attach to plan task
         task = (PlanTask) getLastCustomNonConfigurationInstance();
@@ -82,11 +80,20 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.plan_action_done:
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.done, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_done:
                 planParty();
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

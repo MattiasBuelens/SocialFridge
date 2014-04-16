@@ -1,23 +1,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/final_time_slot_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/party_plan_pick_time_slot"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+        style="@style/AppTheme.Header">
 
-    <GridView
-        android:id="@+id/time_slot_grid"
+        <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+            style="@style/AppTheme.HeaderTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/party_plan_pick_time_slot" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/AppTheme.CardOuter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="@integer/time_timeslots_grid_column_count"
-        tools:listitem="@layout/time_slot_pick" />
+        android:orientation="vertical">
+
+        <FrameLayout
+            style="@style/AppTheme.CardInner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <GridView
+                android:id="@+id/time_slot_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="@integer/time_timeslots_grid_column_count"
+                tools:listitem="@layout/time_slot_pick" />
+
+        </FrameLayout>
+
+        <!--suppress AndroidLintContentDescription -->
+        <ImageView style="@style/AppTheme.CardShadow" />
+
+    </LinearLayout>
 
 </LinearLayout>
