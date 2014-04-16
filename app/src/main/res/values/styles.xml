@@ -23,7 +23,7 @@
     </style>
 
     <style name="AppTheme.HeaderTitle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/header_size</item>
         <item name="android:textColor">@android:color/black</item>
@@ -31,10 +31,17 @@
     </style>
 
     <style name="AppTheme.HeaderSummary">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/sub_header_size</item>
         <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AppTheme.HeaderSingleTitle" parent="AppTheme.HeaderTitle">
+        <item name="android:paddingTop">@dimen/header_padding_top</item>
+        <item name="android:paddingBottom">@dimen/header_padding_bottom</item>
+        <item name="android:paddingLeft">@dimen/header_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/header_padding_horizontal</item>
     </style>
 
     <!-- Card styles -->

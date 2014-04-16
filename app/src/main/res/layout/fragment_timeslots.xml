@@ -1,22 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment">
 
-    <TextView
-        android:id="@+id/party_partners_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/party_create_time_slots"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+        style="@style/AppTheme.HeaderSingleTitle"
+        android:text="@string/party_create_time_slots" />
 
-    <GridView
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableGridView
         android:id="@+id/time_slot_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:numColumns="@integer/time_timeslots_grid_column_count"
         tools:listitem="@layout/time_slot_check" />
 

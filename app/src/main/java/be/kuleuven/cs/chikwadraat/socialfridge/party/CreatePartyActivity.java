@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.RadioGroup;
 
 import com.facebook.Session;
@@ -31,11 +32,10 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Create party activity.
  */
-public class CreatePartyActivity extends BaseActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
+public class CreatePartyActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Party> {
 
     private static final String TAG = "CreatePartyActivity";
 
-    private Button findPartnersButton;
     private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
     private CreatePartyTask task;
@@ -45,11 +45,8 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_create);
 
-        findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
-
-        findPartnersButton.setOnClickListener(this);
 
         List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
         slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.INCLUDED));
@@ -74,11 +71,20 @@ public class CreatePartyActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.party_action_find_partners:
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.done, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_done:
                 createParty();
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

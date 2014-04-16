@@ -1,69 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/activity_horizontal_margin"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_horizontal_margin"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity">
 
-    <TextView
-        android:id="@+id/party_create_day_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:text="@string/party_create_day"
-        android:textAppearance="?android:attr/listSeparatorTextViewStyle" />
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/party_create_day_options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/party_create_day_title"
-        android:layout_marginBottom="@dimen/section_margin"
-        android:orientation="horizontal">
+        <fragment
+            android:id="@+id/dish_header"
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dish_detail_photo_height"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            tools:layout="@layout/fragment_dish_header" />
 
-        <RadioButton
-            android:id="@+id/party_create_action_choose_today"
-            android:layout_width="0dp"
+        <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+            android:id="@+id/party_create_day_title"
+            style="@style/AppTheme.HeaderSingleTitle"
+            android:text="@string/party_create_day" />
+
+        <RadioGroup
+            android:id="@+id/party_create_day_options"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="@string/party_create_choose_today" />
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/party_create_choose_tomorrow"
-            android:layout_width="0dp"
+            <RadioButton
+                android:id="@+id/party_create_action_choose_today"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/party_create_choose_today" />
+
+            <RadioButton
+                android:id="@+id/party_create_choose_tomorrow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/party_create_choose_tomorrow" />
+
+        </RadioGroup>
+
+        <fragment
+            android:id="@+id/time_slots_fragment"
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="false"
-            android:text="@string/party_create_choose_tomorrow" />
+            android:layout_marginBottom="@dimen/section_margin"
+            tools:layout="@layout/fragment_timeslots" />
 
-    </RadioGroup>
+    </LinearLayout>
 
-    <fragment
-        android:id="@+id/time_slots_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/party_action_find_partners"
-        android:layout_below="@+id/party_create_day_options"
-        android:layout_marginBottom="@dimen/section_margin"
-        tools:layout="@layout/fragment_timeslots" />
-
-    <Button
-        android:id="@+id/party_action_find_partners"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/party_action_find_partners"
-        android:textAllCaps="true" />
-
-</RelativeLayout>
+</ScrollView>
