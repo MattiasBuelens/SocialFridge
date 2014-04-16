@@ -91,7 +91,24 @@ public class TimeSlotPickerFragment extends Fragment {
         return pickedTimeSlot;
     }
 
+    protected TimeSlotSelection getTimeSlot(int beginHour, int endHour) {
+        for (TimeSlotSelection slot : getTimeSlots()) {
+            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
     protected void setPickedTimeSlot(TimeSlotSelection timeSlot) {
+        if (timeSlot != null) {
+            // Find own time slot
+            timeSlot = getTimeSlot(timeSlot.getBeginHour(), timeSlot.getEndHour());
+            // Reject unavailable time slots
+            if (!timeSlot.isIncluded()) {
+                timeSlot = null;
+            }
+        }
         this.pickedTimeSlot = timeSlot;
         if (timeSlotAdapter != null) {
             timeSlotAdapter.setCheckedItem(timeSlot);
