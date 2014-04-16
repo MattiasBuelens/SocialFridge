@@ -37,6 +37,7 @@ public class PartiesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.simple_card_list);
 
         partiesAdapter = new PartiesArrayAdapter(this);
         setListAdapter(partiesAdapter);
