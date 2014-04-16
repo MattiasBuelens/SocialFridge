@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardOuter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        style="@style/AppTheme.CardInner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.facebook.widget.ProfilePictureView
+            android:id="@+id/host_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            facebook:preset_size="small" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/text_divider_margin"
+            android:layout_marginLeft="@dimen/text_divider_margin"
+            android:layout_marginRight="@dimen/text_divider_margin"
+            android:layout_marginStart="@dimen/text_divider_margin"
+            android:layout_toEndOf="@+id/host_pic"
+            android:layout_toRightOf="@+id/host_pic">
+
+            <TextView
+                android:id="@+id/partners"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Host Name and 3 others" />
+
+            <TextView
+                android:id="@+id/dish_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/partners"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Dish Name" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <!--suppress AndroidLintContentDescription -->
+    <ImageView style="@style/AppTheme.CardShadow" />
+
+</LinearLayout>

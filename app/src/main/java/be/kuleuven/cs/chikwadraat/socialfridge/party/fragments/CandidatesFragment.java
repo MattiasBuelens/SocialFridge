@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,7 +25,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
 /**
  * Fragment displaying the candidates for a party.
@@ -227,7 +228,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
 
         @Override
         public void onLoadFinished(Loader<List<PartyMember>> loader, List<PartyMember> candidates) {
-            candidatesAdapter.setData(candidates);
+            AdapterUtils.setAll(candidatesAdapter, candidates);
         }
 
         @Override

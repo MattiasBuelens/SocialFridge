@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -21,7 +22,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
 /**
  * Fragment displaying the general details of a party.
@@ -86,7 +87,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
     public void onPartyLoaded(Party party, User user) {
         updateDate(party);
         updatePlace(party);
-        partnersAdapter.setData(party.getPartners());
+        AdapterUtils.setAll(partnersAdapter, party.getPartners());
     }
 
     @Override

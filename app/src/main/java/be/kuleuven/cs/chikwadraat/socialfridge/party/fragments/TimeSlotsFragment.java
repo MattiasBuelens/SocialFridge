@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ToggleButton;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
 /**
  * A fragment to configure time slots.
@@ -111,7 +112,7 @@ public class TimeSlotsFragment extends Fragment {
 
     public void setTimeSlots(List<TimeSlotSelection> timeSlots) {
         if (timeSlotAdapter != null) {
-            timeSlotAdapter.setData(timeSlots);
+            AdapterUtils.setAll(timeSlotAdapter, timeSlots);
         } else {
             timeSlotSelections = new ArrayList<TimeSlotSelection>(timeSlots);
         }

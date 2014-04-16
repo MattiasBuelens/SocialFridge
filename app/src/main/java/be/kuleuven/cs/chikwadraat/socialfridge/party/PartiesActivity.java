@@ -7,6 +7,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +22,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.ArrayAdapter;
 
 /**
  * Parties activity.
@@ -63,9 +63,9 @@ public class PartiesActivity extends ListActivity {
         startActivity(intent);
     }
 
-    public static class PartiesArrayAdapter extends ArrayAdapter<Party> {
+    public static class PartyArrayAdapter extends ArrayAdapter<Party> {
 
-        public PartiesArrayAdapter(Context context) {
+        public PartyArrayAdapter(Context context) {
             super(context, R.layout.party_list_item);
         }
 
