@@ -13,8 +13,13 @@ import android.widget.TextView;
 
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Ints;
 
+import java.util.Comparator;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
@@ -22,6 +27,8 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.SectionedAdapter;
 
 /**
  * Parties activity.
@@ -32,14 +39,16 @@ public class PartiesActivity extends ListActivity {
 
     private static final int LOADER_PARTIES = 1;
 
-    private PartiesArrayAdapter partiesAdapter;
+    private PartiesArrayAdapter partiesArrayAdapter;
+    private PartiesAdapter partiesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_card_list);
 
-        partiesAdapter = new PartiesArrayAdapter(this);
+        partiesArrayAdapter = new PartiesArrayAdapter(this);
+        partiesAdapter = new PartiesAdapter(partiesArrayAdapter);
         setListAdapter(partiesAdapter);
     }
 
@@ -63,9 +72,9 @@ public class PartiesActivity extends ListActivity {
         startActivity(intent);
     }
 
-    public static class PartyArrayAdapter extends ArrayAdapter<Party> {
+    public static class PartiesArrayAdapter extends ArrayAdapter<Party> {
 
-        public PartyArrayAdapter(Context context) {
+        public PartiesArrayAdapter(Context context) {
             super(context, R.layout.party_list_item);
         }
 
@@ -108,6 +117,63 @@ public class PartiesActivity extends ListActivity {
 
     }
 
+    public static class PartiesAdapter extends SectionedAdapter<PartiesArrayAdapter, Party.Status> {
+
+        private static final Ordering<Party.Status> statusOrdering = new Ordering<Party.Status>() {
+            @Override
+            public int compare(@Nullable Party.Status left, @Nullable Party.Status right) {
+                return -Ints.compare(left.ordinal(), right.ordinal());
+            }
+        };
+
+        private final Context context;
+
+        public PartiesAdapter(PartiesArrayAdapter sourceAdapter) {
+            super(sourceAdapter);
+            this.context = sourceAdapter.getContext();
+        }
+
+        protected Context getContext() {
+            return context;
+        }
+
+        @Override
+        protected Party.Status getSectionKey(int sourcePosition) {
+            return getSource().getItem(sourcePosition).getStatus();
+        }
+
+        @Override
+        protected Comparator<Party.Status> getSectionOrdering() {
+            return statusOrdering;
+        }
+
+        @Override
+        protected View getHeaderView(Party.Status status, View convertView, ViewGroup parent) {
+            View v = convertView;
+            ViewHolder vh;
+            if (v == null) {
+                v = View.inflate(getContext(), R.layout.party_list_status_header, null);
+                vh = new ViewHolder();
+                vh.titleView = (TextView) v.findViewById(R.id.text1);
+                v.setTag(vh);
+            } else {
+                vh = (ViewHolder) v.getTag();
+            }
+
+            String titleText = getContext().getString(status.getStringResource());
+
+            vh.status = status;
+            vh.titleView.setText(titleText);
+
+            return v;
+        }
+
+        private class ViewHolder {
+            TextView titleView;
+            Party.Status status;
+        }
+    }
+
     private class PartiesLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Party>> {
 
         @Override
@@ -117,12 +183,12 @@ public class PartiesActivity extends ListActivity {
 
         @Override
         public void onLoadFinished(Loader<List<Party>> loader, List<Party> parties) {
-            partiesAdapter.setData(parties);
+            AdapterUtils.setAll(partiesArrayAdapter, parties);
         }
 
         @Override
         public void onLoaderReset(Loader<List<Party>> loader) {
-            partiesAdapter.clear();
+            partiesArrayAdapter.clear();
         }
 
     }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 
 /**
@@ -151,7 +152,21 @@ public class Party implements Parcelable {
     };
 
     public enum Status {
-        INVITING, PLANNING, PLANNED
+
+        INVITING(R.string.party_status_inviting),
+        PLANNING(R.string.party_status_planning),
+        PLANNED(R.string.party_status_planned);
+
+        private final int resourceID;
+
+        Status(int resourceID) {
+            this.resourceID = resourceID;
+        }
+
+        public int getStringResource() {
+            return resourceID;
+        }
+
     }
 
 }

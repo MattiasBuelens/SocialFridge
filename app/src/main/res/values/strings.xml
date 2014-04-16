@@ -31,6 +31,11 @@
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
 
+    <!-- Party status -->
+    <string name="party_status_inviting">Inviting</string>
+    <string name="party_status_planning">Planning</string>
+    <string name="party_status_planned">Planned</string>
+
     <!-- Create party -->
     <string name="party_create_title">Create party</string>
     <string name="party_create_day">Day</string>
