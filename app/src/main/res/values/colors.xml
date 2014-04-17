@@ -22,8 +22,9 @@
     <!-- Color of the text above the dish photo in the dish detail view -->
     <color name="dish_detail_photo_label_color">#eeeeee</color>
 
-    <!-- Background color of card container -->
+    <!-- Cards -->
     <color name="card_container_background">#e5e5e5</color>
+    <color name="card_pressed">#ebebeb</color>
 
     <!-- Tags -->
     <color name="tag_label_color">@android:color/white</color>

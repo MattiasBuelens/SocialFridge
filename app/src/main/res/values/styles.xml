@@ -75,7 +75,7 @@
         <item name="android:paddingRight">@dimen/card_inner_padding_right</item>
         <item name="android:paddingTop">@dimen/card_inner_padding_vertical</item>
         <item name="android:paddingBottom">@dimen/card_inner_padding_vertical</item>
-        <item name="android:background">@android:color/white</item>
+        <item name="android:background">@drawable/card_selector</item>
         <item name="android:duplicateParentState">true</item>
     </style>
 

@@ -1,5 +1,8 @@
 <resources>
 
+    <!-- The duration (in milliseconds) of a short animation. -->
+    <integer name="config_shortAnimTime">200</integer>
+
     <!-- Party: partners grid column count -->
     <integer name="party_partners_grid_column_count">6</integer>
 
