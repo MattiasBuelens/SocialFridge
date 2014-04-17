@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
-import com.google.api.server.spi.config.AnnotationBoolean;
-import com.google.api.server.spi.config.ApiResourceProperty;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -9,8 +8,6 @@ import com.googlecode.objectify.annotation.Id;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * User.
@@ -30,11 +27,6 @@ public class User {
      */
     private Set<String> devices = new HashSet<String>();
 
-    /**
-     * Parties.
-     */
-    private Set<Ref<Party>> parties = new HashSet<Ref<Party>>();
-
     public User() {
     }
 
@@ -48,6 +40,14 @@ public class User {
      */
     public String getID() {
         return id;
+    }
+
+    public static Key<User> getKey(String userID) {
+        return Key.create(User.class, userID);
+    }
+
+    public static Ref<User> getRef(String userID) {
+        return Ref.create(getKey(userID));
     }
 
     /**
@@ -82,35 +82,6 @@ public class User {
 
     public void removeDevice(String device) {
         devices.remove(device);
-    }
-
-    /**
-     * Parties.
-     */
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<Party> getParties() {
-        return ofy().load().refs(getPartyRefs()).values();
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<Ref<Party>> getPartyRefs() {
-        return parties;
-    }
-
-    public void addParty(Ref<Party> partyRef) {
-        parties.add(partyRef);
-    }
-
-    public void addParty(Party party) {
-        addParty(Ref.create(party));
-    }
-
-    public void removeParty(Ref<Party> partyRef) {
-        parties.remove(partyRef);
-    }
-
-    public void removeParty(Party party) {
-        removeParty(Ref.create(party));
     }
 
 }

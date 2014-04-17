@@ -14,7 +14,6 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
 
-import java.util.List;
 import java.util.logging.Level;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.AppSettings;

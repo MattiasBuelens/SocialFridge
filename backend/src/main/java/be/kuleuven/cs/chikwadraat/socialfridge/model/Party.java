@@ -2,9 +2,12 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
@@ -18,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+
+import javax.annotation.Nullable;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
@@ -64,10 +69,11 @@ public class Party {
     private Set<Ref<PartyMember>> members = new HashSet<Ref<PartyMember>>();
 
     /**
-     * Partners.
+     * Visible users.
      */
     @Load
-    private Set<Ref<PartyMember>> partners = new HashSet<Ref<PartyMember>>();
+    @Index
+    private Set<Ref<User>> visibleUsers = new HashSet<Ref<User>>();
 
     /**
      * Merged time slots from partners.
@@ -77,6 +83,7 @@ public class Party {
     /**
      * Party date.
      */
+    @Index
     private Date date;
 
     /**
@@ -116,10 +123,9 @@ public class Party {
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
         member.setTimeSlots(timeSlots);
+        // Update members and partners
         updateMember(member);
         updatePartner(member);
-        // Add to party
-        host.addParty(this);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -248,17 +254,9 @@ public class Party {
         }
         // Save member
         ofy().save().entity(member).now();
+        // Update
+        updateVisible(member);
         return member;
-    }
-
-    protected void removeMember(User user) throws IllegalArgumentException {
-        // Remove from party
-        Ref<PartyMember> ref = getMember(user);
-        if (ref != null) {
-            members.remove(ref);
-        }
-        // Remove from user
-        user.removeParty(this);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -273,46 +271,39 @@ public class Party {
     /**
      * Partners.
      */
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Set<Ref<PartyMember>> getPartnerKeys() {
-        return partners;
-    }
-
     public Collection<PartyMember> getPartners() {
-        return ofy().load().refs(getPartnerKeys()).values();
+        return Collections2.filter(getMembers(), new Predicate<PartyMember>() {
+            @Override
+            public boolean apply(@Nullable PartyMember member) {
+                return member.isInParty();
+            }
+        });
     }
 
     protected void updatePartner(PartyMember member) {
-        Ref<PartyMember> ref = Ref.create(member);
-        if (member.isInParty()) {
-            partners.add(ref);
-        } else {
-            partners.remove(ref);
-        }
         updateTimeSlots();
     }
 
     /**
-     * Update recipients.
+     * Visible users.
      */
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<PartyMember> getUpdateMembers() {
-        List<PartyMember> updateMembers = new ArrayList<PartyMember>();
-        for (PartyMember member : getMembers()) {
-            if (member.receivesUpdates()) {
-                updateMembers.add(member);
-            }
-        }
-        return updateMembers;
+    public Collection<Ref<User>> getVisibleUserKeys() {
+        return visibleUsers;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<User> getUpdateUsers() {
-        List<String> userIDs = new ArrayList<String>();
-        for (PartyMember member : getUpdateMembers()) {
-            userIDs.add(member.getUserID());
+    public Collection<User> getVisibleUsers() {
+        return ofy().load().refs(getVisibleUserKeys()).values();
+    }
+
+    protected void updateVisible(PartyMember member) {
+        Ref<User> userRef = member.getUserRef();
+        if (member.isVisible()) {
+            visibleUsers.add(userRef);
+        } else {
+            visibleUsers.remove(userRef);
         }
-        return ofy().load().type(User.class).ids(userIDs).values();
     }
 
     /**
@@ -381,8 +372,6 @@ public class Party {
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
             updateMember(member);
         }
-        // Add to party
-        invitee.addParty(this);
     }
 
     /**
@@ -396,13 +385,30 @@ public class Party {
         if (ref == null) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited.");
         }
-        PartyMember member = ref.get();
-        if (!member.cancelInvite()) {
+        cancelInvite(ref.get());
+    }
+
+    protected void cancelInvite(PartyMember invitee) throws IllegalArgumentException {
+        if (!invitee.cancelInvite()) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited or is already in the party.");
         }
-        updateMember(member);
-        // Remove from party
-        invitee.removeParty(this);
+        updateMember(invitee);
+    }
+
+    /**
+     * Cancel all open invites.
+     *
+     * @return The user IDs of canceled invitees.
+     */
+    public List<Ref<User>> cancelInvites() {
+        List<Ref<User>> canceledUserIDs = new ArrayList<Ref<User>>();
+        for (PartyMember member : getMembers()) {
+            if (member.isInvited()) {
+                cancelInvite(member);
+                canceledUserIDs.add(User.getRef(member.getUserID()));
+            }
+        }
+        return canceledUserIDs;
     }
 
     /**
@@ -428,8 +434,6 @@ public class Party {
         member.setTimeSlots(timeSlots);
         updateMember(member);
         updatePartner(member);
-        // Add to party (should already be added though)
-        invitee.addParty(this);
     }
 
     /**
@@ -452,8 +456,6 @@ public class Party {
          * We should never allow a user to be re-invited after he declined.
          */
         updateMember(member);
-        // Remove from party
-        invitee.removeParty(this);
     }
 
     /**
@@ -476,8 +478,6 @@ public class Party {
         }
         updateMember(member);
         updatePartner(member);
-        // Remove from party
-        invitee.removeParty(this);
     }
 
     public static enum Status {

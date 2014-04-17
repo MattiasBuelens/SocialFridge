@@ -26,6 +26,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 @Api(
         name = "endpoint",
+        version = "v2",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class UserMessageEndpoint extends BaseEndpoint {
@@ -122,7 +123,7 @@ public class UserMessageEndpoint extends BaseEndpoint {
 
     protected UserMessage getMessageUnsafe(String userID, long messageID) {
         return ofy().load().type(UserMessage.class)
-                .parent(Key.create(User.class, userID))
+                .parent(User.getKey(userID))
                 .id(messageID)
                 .now();
     }

@@ -74,6 +74,11 @@ public class PartyMember {
         return userID;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<User> getUserRef() {
+        return User.getRef(userID);
+    }
+
     /**
      * User name.
      */
@@ -118,7 +123,7 @@ public class PartyMember {
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public boolean receivesUpdates() {
+    public boolean isVisible() {
         return isInParty() || isInvited();
     }
 

@@ -4,10 +4,10 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 
 /**
  * Created by Mattias on 2/04/2014.

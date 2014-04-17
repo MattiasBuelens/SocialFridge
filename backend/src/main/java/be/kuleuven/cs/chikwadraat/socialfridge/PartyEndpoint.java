@@ -7,8 +7,10 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.googlecode.objectify.Ref;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +26,13 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.UserMessage;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
 @Api(
         name = "endpoint",
+        version = "v2",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class PartyEndpoint extends BaseEndpoint {
@@ -50,7 +52,7 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Retrieves all parties for a user.
+     * Retrieves all parties for a user, most recent party first.
      *
      * @param accessToken The access token for authorization.
      * @return The parties of a user.
@@ -58,8 +60,11 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.getParties", path = "parties", httpMethod = ApiMethod.HttpMethod.GET)
     public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
-        User user = getUser(userID);
-        List<Party> parties = new ArrayList<Party>(user.getParties());
+        Ref<User> refUser = User.getRef(userID);
+        List<Party> parties = ofy().load().type(Party.class)
+                .filter("visibleUsers ==", refUser)
+                .order("-date")
+                .list();
         return new PartyCollection(parties);
     }
 
@@ -92,7 +97,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Configure the host
                 party.setHost(user, builder.getHostTimeSlots());
                 // Save again
-                ofy().save().entities(party, user).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
@@ -128,18 +133,17 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Add to invitees
                 party.invite(friend);
                 // Save
-                ofy().save().entities(party, friend).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
 
         // Send invite to friend
         User friend = getUser(friendID);
-        List<UserMessage> messages = Messages.partyInvited(party)
+        new UserMessageEndpoint().addMessages(Messages.partyInvited(party)
                 .invitee(friend)
                 .recipients(friend)
-                .build();
-        new UserMessageEndpoint().addMessages(messages);
+                .build());
     }
 
     /**
@@ -168,18 +172,27 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Cancel invite
                 party.cancelInvite(friend);
                 // Save
-                ofy().save().entities(party, friend).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
+        // Send cancel invite
+        sendCancelInvites(party, getUser(friendID));
+    }
 
-        // Send cancel invite to friend
-        User friend = getUser(friendID);
-        List<UserMessage> messages = Messages.partyInviteCanceled(party)
-                .invitee(friend)
-                .recipients(friend)
-                .build();
-        new UserMessageEndpoint().addMessages(messages);
+    protected void sendCancelInvites(Party party, User... invitees) throws ServiceException {
+        sendCancelInvites(party, Arrays.asList(invitees));
+    }
+
+    protected void sendCancelInvites(Party party, Collection<User> invitees) throws ServiceException {
+        UserMessageEndpoint endpoint = new UserMessageEndpoint();
+        for (User invitee : invitees) {
+            endpoint.addMessages(Messages.partyInviteCanceled(party)
+                            .invitee(invitee)
+                            .recipients(invitee)
+                            .build()
+            );
+        }
     }
 
     /**
@@ -199,18 +212,17 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Accept invite
                 party.acceptInvite(user, timeSlots.getList());
                 // Save
-                ofy().save().entities(party, user).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
         // Send update to party members
         User user = getUser(userID);
-        List<UserMessage> messages = Messages.partyUpdated(party)
+        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
-                .recipients(party.getUpdateUsers())
-                .build();
-        new UserMessageEndpoint().addMessages(messages);
+                .recipients(party.getVisibleUsers())
+                .build());
         return party;
     }
 
@@ -231,7 +243,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Decline invite
                 party.declineInvite(user);
                 // Save
-                ofy().save().entities(party, user).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
@@ -255,18 +267,17 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Leave
                 party.leave(user);
                 // Save
-                ofy().save().entities(party, user).now();
+                ofy().save().entities(party).now();
                 return party;
             }
         });
         // Send update to party members
         User user = getUser(userID);
-        List<UserMessage> messages = Messages.partyUpdated(party)
+        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
-                .recipients(party.getUpdateUsers())
-                .build();
-        new UserMessageEndpoint().addMessages(messages);
+                .recipients(party.getVisibleUsers())
+                .build());
     }
 
     /**
@@ -311,9 +322,9 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.closeInvites", path = "party/{partyID}/closeInvites", httpMethod = ApiMethod.HttpMethod.GET)
     public Party closeInvites(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        Party party = transact(new Work<Party, ServiceException>() {
+        CloseInvitesResult result = transact(new Work<CloseInvitesResult, ServiceException>() {
             @Override
-            public Party run() throws ServiceException {
+            public CloseInvitesResult run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // User must be host
                 if (!userID.equals(party.getHostID())) {
@@ -325,14 +336,28 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 // Set planning
                 party.setPlanning();
+                // Cancel open invites
+                Collection<Ref<User>> canceledInvitees = party.cancelInvites();
                 // Save
                 ofy().save().entities(party).now();
-                return party;
+                return new CloseInvitesResult(party, canceledInvitees);
             }
         });
-        // Cancel open invites
-        party = cancelInvites(party);
+        Party party = result.party;
+        // Send cancel invites
+        Collection<User> canceledInvitees = ofy().load().refs(result.canceledInvitees).values();
+        sendCancelInvites(party, canceledInvitees);
         return party;
+    }
+
+    private class CloseInvitesResult {
+        private final Party party;
+        private final Collection<Ref<User>> canceledInvitees;
+
+        private CloseInvitesResult(Party party, Collection<Ref<User>> canceledInvitees) {
+            this.party = party;
+            this.canceledInvitees = canceledInvitees;
+        }
     }
 
     /**
@@ -369,51 +394,11 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // Send update to party members
-        List<UserMessage> messages = Messages.partyUpdated(party)
+        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
-                .recipients(party.getUpdateUsers())
-                .build();
-        new UserMessageEndpoint().addMessages(messages);
+                .recipients(party.getVisibleUsers())
+                .build());
         return party;
-    }
-
-    /**
-     * Cancel all open invites of a party.
-     *
-     * @param party The party.
-     * @return The party after all invites are closed.
-     * @throws ServiceException
-     */
-    protected Party cancelInvites(Party party) throws ServiceException {
-        final long partyID = party.getID();
-        // Find an invitee
-        PartyMember invitee = findInvitee(party);
-        while(invitee != null) {
-            final String inviteeID = invitee.getUserID();
-            // Cancel each invite in a separate transaction
-            party = transact(new Work<Party, ServiceException>() {
-                @Override
-                public Party run() throws ServiceException {
-                    Party party = getParty(partyID, true);
-                    User user = getUser(inviteeID);
-                    party.cancelInvite(user);
-                    ofy().save().entities(party, user).now();
-                    return party;
-                }
-            });
-            // Find next invitee
-            invitee = findInvitee(party);
-        }
-        return party;
-    }
-
-    private PartyMember findInvitee(Party party) {
-        for (PartyMember member : party.getMembers()) {
-            if (member.isInvited()) {
-                return member;
-            }
-        }
-        return null;
     }
 
     protected Party getParty(long partyID, boolean full) throws ServiceException {
