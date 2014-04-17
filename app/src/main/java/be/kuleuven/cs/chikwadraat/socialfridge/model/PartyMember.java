@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
+
 /**
  * Adapter for {@link be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember PartyMember} endpoint model.
  */
@@ -67,6 +69,17 @@ public class PartyMember implements Parcelable {
         return isInvited;
     }
 
+    public Role getRole() {
+        if (isHost()) {
+            return Role.HOST;
+        } else if (isInParty()) {
+            return Role.PARTNER;
+        } else if (isInvited()) {
+            return Role.INVITEE;
+        }
+        return Role.UNKNOWN;
+    }
+
     public static List<PartyMember> fromEndpoint(List<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember> members) {
         List<PartyMember> list = new ArrayList<PartyMember>();
         if (members != null) {
@@ -91,6 +104,31 @@ public class PartyMember implements Parcelable {
         dest.writeByte((byte) (isInParty() ? 1 : 0));
         dest.writeByte((byte) (isInvited() ? 1 : 0));
         dest.writeTypedList(getTimeSlots());
+    }
+
+    public enum Role {
+
+        HOST(R.string.party_role_host, R.color.party_role_host_background),
+        PARTNER(R.string.party_role_partner, R.color.party_role_partner_background),
+        INVITEE(R.string.party_role_invitee, R.color.party_role_invitee_background),
+        UNKNOWN(R.string.party_role_unknown, R.color.party_role_unknown_background);
+
+        private final int stringResID;
+        private final int colorResID;
+
+        Role(int stringResID, int colorResID) {
+            this.stringResID = stringResID;
+            this.colorResID = colorResID;
+        }
+
+        public int getStringResource() {
+            return stringResID;
+        }
+
+        public int getColorResource() {
+            return colorResID;
+        }
+
     }
 
     public static final Creator<PartyMember> CREATOR = new Creator<PartyMember>() {

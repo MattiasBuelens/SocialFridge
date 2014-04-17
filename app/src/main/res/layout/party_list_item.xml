@@ -8,53 +8,99 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         style="@style/AppTheme.CardInner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.facebook.widget.ProfilePictureView
-            android:id="@+id/host_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            facebook:preset_size="small" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="@dimen/text_divider_margin"
-            android:layout_marginLeft="@dimen/text_divider_margin"
-            android:layout_marginRight="@dimen/text_divider_margin"
-            android:layout_marginStart="@dimen/text_divider_margin"
-            android:layout_toEndOf="@+id/host_pic"
-            android:layout_toRightOf="@+id/host_pic">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.facebook.widget.ProfilePictureView
+                android:id="@+id/host_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="@dimen/picture_small_vertical_margin"
+                facebook:preset_size="small" />
 
             <TextView
                 android:id="@+id/partners"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="@dimen/text_divider_margin"
+                android:layout_marginLeft="@dimen/text_divider_margin"
+                android:layout_marginRight="@dimen/text_divider_margin"
+                android:layout_marginStart="@dimen/text_divider_margin"
+                android:layout_toEndOf="@+id/host_pic"
+                android:layout_toLeftOf="@+id/tags"
+                android:layout_toRightOf="@+id/host_pic"
+                android:layout_toStartOf="@+id/tags"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 tools:text="Host Name and 3 others" />
 
-            <TextView
-                android:id="@+id/dish_name"
+            <LinearLayout
+                android:id="@+id/tags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/partners"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/party_role"
+                    style="@style/AppTheme.Tag"
+                    android:layout_width="match_parent"
+                    tools:text="@string/party_role_host" />
+
+                <TextView
+                    android:id="@+id/party_status"
+                    style="@style/AppTheme.Tag"
+                    android:layout_width="match_parent"
+                    tools:text="@string/party_status_inviting" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/dish_pic"
+                android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_small"
+                android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_small"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/detail_spaghetti" />
+
+            <TextView
+                android:id="@+id/dish_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_divider_margin"
+                android:layout_marginStart="@dimen/text_divider_margin"
+                android:layout_toEndOf="@+id/dish_pic"
+                android:layout_toRightOf="@+id/dish_pic"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 tools:text="Dish Name" />
 
         </RelativeLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <!--suppress AndroidLintContentDescription -->
-    <ImageView style="@style/AppTheme.CardShadow" />
+    <ImageView
+        style="@style/AppTheme.CardShadow"
+        android:scaleType="centerCrop" />
 
 </LinearLayout>

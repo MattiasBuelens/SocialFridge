@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Android ICS color palette -->
+    <color name="ics_blue">#33B5E5</color>
+    <color name="ics_purple">#AA66CC</color>
+    <color name="ics_green">#99CC00</color>
+    <color name="ics_orange">#FFBB33</color>
+    <color name="ics_red">#FF4444</color>
+    <color name="ics_dark_blue">#0099CC</color>
+    <color name="ics_dark_purple">#9933CC</color>
+    <color name="ics_dark_green">#669900</color>
+    <color name="ics_dark_orange">#FF8800</color>
+    <color name="ics_dark_red">#CC0000</color>
+
     <!-- Application-specific accent color -->
     <color name="apptheme_accent">#73b5e6</color>
 
@@ -12,5 +24,20 @@
 
     <!-- Background color of card container -->
     <color name="card_container_background">#e5e5e5</color>
+
+    <!-- Tags -->
+    <color name="tag_label_color">@android:color/white</color>
+    <color name="tag_background">@color/ics_green</color>
+
+    <!-- Party role colors -->
+    <color name="party_role_host_background">@color/ics_green</color>
+    <color name="party_role_partner_background">@color/ics_purple</color>
+    <color name="party_role_invitee_background">@color/ics_orange</color>
+    <color name="party_role_unknown_background">@android:color/darker_gray</color>
+
+    <!-- Party status colors -->
+    <color name="party_status_inviting_background">@color/ics_blue</color>
+    <color name="party_status_planning_background">@color/ics_dark_orange</color>
+    <color name="party_status_planned_background">@color/ics_dark_green</color>
 
 </resources>

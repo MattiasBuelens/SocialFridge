@@ -1,25 +1,21 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
 
-import java.util.Comparator;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
@@ -28,7 +24,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.SectionedAdapter;
 
 /**
  * Parties activity.
@@ -40,16 +35,14 @@ public class PartiesActivity extends ListActivity {
     private static final int LOADER_PARTIES = 1;
 
     private PartiesArrayAdapter partiesArrayAdapter;
-    private PartiesAdapter partiesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_card_list);
 
-        partiesArrayAdapter = new PartiesArrayAdapter(this);
-        partiesAdapter = new PartiesAdapter(partiesArrayAdapter);
-        setListAdapter(partiesAdapter);
+        partiesArrayAdapter = new PartiesArrayAdapter();
+        setListAdapter(partiesArrayAdapter);
     }
 
     @Override
@@ -72,10 +65,10 @@ public class PartiesActivity extends ListActivity {
         startActivity(intent);
     }
 
-    public static class PartiesArrayAdapter extends ArrayAdapter<Party> {
+    public class PartiesArrayAdapter extends ArrayAdapter<Party> {
 
-        public PartiesArrayAdapter(Context context) {
-            super(context, R.layout.party_list_item);
+        public PartiesArrayAdapter() {
+            super(PartiesActivity.this, R.layout.party_list_item);
         }
 
         @Override
@@ -87,7 +80,10 @@ public class PartiesActivity extends ListActivity {
                 vh = new ViewHolder();
                 vh.hostPictureView = (ProfilePictureView) v.findViewById(R.id.host_pic);
                 vh.partnersView = (TextView) v.findViewById(R.id.partners);
-                vh.dishView = (TextView) v.findViewById(R.id.dish_name);
+                vh.roleView = (TextView) v.findViewById(R.id.party_role);
+                vh.statusView = (TextView) v.findViewById(R.id.party_status);
+                vh.dishImageView = (ImageView) v.findViewById(R.id.dish_pic);
+                vh.dishNameView = (TextView) v.findViewById(R.id.dish_name);
                 v.setTag(vh);
             } else {
                 vh = (ViewHolder) v.getTag();
@@ -95,15 +91,27 @@ public class PartiesActivity extends ListActivity {
 
             Party party = getItem(position);
             PartyMember host = party.getHost();
+            PartyMember user = party.getPartner(getLoggedInUser());
             int nbOtherPartners = party.getPartners().size() - 1;
 
             String othersText = getContext().getResources().getQuantityString(R.plurals.party_list_partners, nbOtherPartners, nbOtherPartners);
             String partnersText = getContext().getString(R.string.party_list_members, host.getUserName(), othersText);
+            String roleText = getContext().getString(user.getRole().getStringResource());
+            int roleColor = getContext().getResources().getColor(user.getRole().getColorResource());
+            String statusText = getContext().getString(party.getStatus().getStringResource());
+            int statusColor = getContext().getResources().getColor(party.getStatus().getColorResource());
+            String dishText = "Spaghetti Bolognese"; // TODO Dummy
+            Drawable dishDrawable = getContext().getResources().getDrawable(R.drawable.detail_spaghetti); // TODO Dummy
 
             vh.position = position;
             vh.hostPictureView.setProfileId(party.getHostID());
             vh.partnersView.setText(partnersText);
-            //vh.dishView.setText("Making Spaghetti");
+            vh.roleView.setText(roleText);
+            vh.roleView.setBackgroundColor(roleColor);
+            vh.statusView.setText(statusText);
+            vh.statusView.setBackgroundColor(statusColor);
+            vh.dishImageView.setImageDrawable(dishDrawable);
+            vh.dishNameView.setText(dishText);
 
             return v;
         }
@@ -111,67 +119,13 @@ public class PartiesActivity extends ListActivity {
         private class ViewHolder {
             ProfilePictureView hostPictureView;
             TextView partnersView;
-            TextView dishView;
+            TextView roleView;
+            TextView statusView;
+            ImageView dishImageView;
+            TextView dishNameView;
             int position;
         }
 
-    }
-
-    public static class PartiesAdapter extends SectionedAdapter<PartiesArrayAdapter, Party.Status> {
-
-        private static final Ordering<Party.Status> statusOrdering = new Ordering<Party.Status>() {
-            @Override
-            public int compare(@Nullable Party.Status left, @Nullable Party.Status right) {
-                return -Ints.compare(left.ordinal(), right.ordinal());
-            }
-        };
-
-        private final Context context;
-
-        public PartiesAdapter(PartiesArrayAdapter sourceAdapter) {
-            super(sourceAdapter);
-            this.context = sourceAdapter.getContext();
-        }
-
-        protected Context getContext() {
-            return context;
-        }
-
-        @Override
-        protected Party.Status getSectionKey(int sourcePosition) {
-            return getSource().getItem(sourcePosition).getStatus();
-        }
-
-        @Override
-        protected Comparator<Party.Status> getSectionOrdering() {
-            return statusOrdering;
-        }
-
-        @Override
-        protected View getHeaderView(Party.Status status, View convertView, ViewGroup parent) {
-            View v = convertView;
-            ViewHolder vh;
-            if (v == null) {
-                v = View.inflate(getContext(), R.layout.party_list_status_header, null);
-                vh = new ViewHolder();
-                vh.titleView = (TextView) v.findViewById(R.id.text1);
-                v.setTag(vh);
-            } else {
-                vh = (ViewHolder) v.getTag();
-            }
-
-            String titleText = getContext().getString(status.getStringResource());
-
-            vh.status = status;
-            vh.titleView.setText(titleText);
-
-            return v;
-        }
-
-        private class ViewHolder {
-            TextView titleView;
-            Party.Status status;
-        }
     }
 
     private class PartiesLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Party>> {

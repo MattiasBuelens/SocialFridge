@@ -31,6 +31,12 @@
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
 
+    <!-- Party member role -->
+    <string name="party_role_host">Host</string>
+    <string name="party_role_partner">Partner</string>
+    <string name="party_role_invitee">Invitee</string>
+    <string name="party_role_unknown">Unknown</string>
+
     <!-- Party status -->
     <string name="party_status_inviting">Inviting</string>
     <string name="party_status_planning">Planning</string>

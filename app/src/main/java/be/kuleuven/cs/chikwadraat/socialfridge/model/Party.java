@@ -60,8 +60,16 @@ public class Party implements Parcelable {
     }
 
     public PartyMember getHost() {
+        return getPartner(getHostID());
+    }
+
+    public PartyMember getPartner(User user) {
+        return getPartner(user.getId());
+    }
+
+    public PartyMember getPartner(String userID) {
         for (PartyMember partner : getPartners()) {
-            if (isHost(partner.getUserID())) {
+            if (partner.getUserID().equals(userID)) {
                 return partner;
             }
         }
@@ -77,12 +85,7 @@ public class Party implements Parcelable {
     }
 
     public boolean isInParty(String userID) {
-        for (PartyMember partner : getPartners()) {
-            if (partner.getUserID().equals(userID)) {
-                return true;
-            }
-        }
-        return false;
+        return getPartner(userID) != null;
     }
 
     public Status getStatus() {
@@ -153,18 +156,24 @@ public class Party implements Parcelable {
 
     public enum Status {
 
-        INVITING(R.string.party_status_inviting),
-        PLANNING(R.string.party_status_planning),
-        PLANNED(R.string.party_status_planned);
+        INVITING(R.string.party_status_inviting, R.color.party_status_inviting_background),
+        PLANNING(R.string.party_status_planning, R.color.party_status_planning_background),
+        PLANNED(R.string.party_status_planned, R.color.party_status_planned_background);
 
-        private final int resourceID;
+        private final int stringResID;
+        private final int colorResID;
 
-        Status(int resourceID) {
-            this.resourceID = resourceID;
+        Status(int stringResID, int colorResID) {
+            this.stringResID = stringResID;
+            this.colorResID = colorResID;
         }
 
         public int getStringResource() {
-            return resourceID;
+            return stringResID;
+        }
+
+        public int getColorResource() {
+            return colorResID;
         }
 
     }

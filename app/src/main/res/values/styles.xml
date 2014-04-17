@@ -93,4 +93,22 @@
         <item name="android:dividerHeight">0dp</item>
     </style>
 
+    <!-- Tags -->
+    <style name="AppTheme.Tag">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/tag_label_size</item>
+        <item name="android:textColor">@color/tag_label_color</item>
+        <item name="android:background">@color/tag_background</item>
+        <item name="android:paddingLeft">@dimen/tag_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/tag_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/tag_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/tag_padding_vertical</item>
+        <item name="android:layout_marginBottom">@dimen/tag_margin_bottom</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
 </resources>

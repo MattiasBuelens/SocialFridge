@@ -22,6 +22,9 @@
     <!-- Indentation before the text label above the dish photo in the dish detail view -->
     <dimen name="dish_detail_photo_label_indent">18dip</dimen>
 
+    <!-- Vertical margin between small pictures -->
+    <dimen name="picture_small_vertical_margin">5dp</dimen>
+
     <!-- Headers -->
     <dimen name="header_size">21sp</dimen>
     <dimen name="sub_header_size">15sp</dimen>
@@ -40,5 +43,11 @@
     <dimen name="card_inner_padding_right">10dp</dimen>
     <dimen name="card_shadow">3dp</dimen>
     <dimen name="card_title">16sp</dimen>
+
+    <!-- Tags -->
+    <dimen name="tag_label_size">14sp</dimen>
+    <dimen name="tag_padding_horizontal">5dp</dimen>
+    <dimen name="tag_padding_vertical">3dp</dimen>
+    <dimen name="tag_margin_bottom">3dp</dimen>
 
 </resources>
