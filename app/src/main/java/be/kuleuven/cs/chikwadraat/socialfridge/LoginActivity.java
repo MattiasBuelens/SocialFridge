@@ -19,6 +19,7 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.facebook.FacebookRequestException;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmHelper;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 

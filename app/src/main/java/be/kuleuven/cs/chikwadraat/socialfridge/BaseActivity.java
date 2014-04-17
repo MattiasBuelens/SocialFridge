@@ -18,6 +18,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.facebook.FacebookRequestException;
 import be.kuleuven.cs.chikwadraat.socialfridge.widget.ProgressDialogFragment;
 
 /**
