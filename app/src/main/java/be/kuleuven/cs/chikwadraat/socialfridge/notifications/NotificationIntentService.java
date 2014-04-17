@@ -59,12 +59,6 @@ public class NotificationIntentService extends BaseIntentService {
             // Received party invite from GCM
             // Show notification if necessary
             issueUpdateNotification(message);
-        } else if (action.equals(NotificationConstants.ACTION_VIEW_PARTY)) {
-            // View action on party update notification
-            // Cancel notification first
-            nm.cancel(NotificationConstants.NOTIFICATION_ID);
-            // View party
-            startActivity(makeViewIntent(message));
         }
     }
 
@@ -84,6 +78,7 @@ public class NotificationIntentService extends BaseIntentService {
                         .setSmallIcon(R.drawable.ic_stat_fridge)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
+                        .setAutoCancel(true)
                                 //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS)
                 /*
@@ -101,10 +96,10 @@ public class NotificationIntentService extends BaseIntentService {
                                 getString(R.string.notif_action_decline), piDecline);
 
         /*
-         * Clicking the notification itself acts the same
-         * as the Choose slots action.
+         * Clicking the notification itself opens the Reply to Invite activity.
          */
-        builder.setContentIntent(piChooseSlots);
+        PendingIntent piInviteReply = PendingIntent.getActivity(this, 0, makeReplyIntent(message), PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(piInviteReply);
 
         nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
     }
@@ -134,11 +129,14 @@ public class NotificationIntentService extends BaseIntentService {
                         .setSmallIcon(R.drawable.ic_stat_fridge)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
+                        .setAutoCancel(true)
                                 //.setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
 
-        PendingIntent piViewParty = makeActionIntent(NotificationConstants.ACTION_VIEW_PARTY, message);
-
+        /*
+         * Clicking the notification itself opens the View Party activity.
+         */
+        PendingIntent piViewParty = PendingIntent.getActivity(this, 0, makeViewIntent(message), PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(piViewParty);
 
         nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
