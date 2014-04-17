@@ -51,13 +51,15 @@ public class NotificationIntentService extends BaseIntentService {
         } else if (action.equals(NotificationConstants.ACTION_CHOOSE_SLOTS)) {
             // Choose slots action on party invite notification
             // Cancel notification first
-            nm.cancel(NotificationConstants.NOTIFICATION_ID);
+            String tag = Long.toString(message.getPartyID());
+            nm.cancel(tag, NotificationConstants.NOTIFICATION_PARTY_INVITE);
             // Open reply activity
             startActivity(makeReplyIntent(message));
         } else if (action.equals(NotificationConstants.ACTION_DECLINE)) {
             // Decline action on party invite notification
             // Cancel notification first
-            nm.cancel(NotificationConstants.NOTIFICATION_ID);
+            String tag = Long.toString(message.getPartyID());
+            nm.cancel(tag, NotificationConstants.NOTIFICATION_PARTY_INVITE);
             // TODO Decline invite
         } else if (action.equals(NotificationConstants.ACTION_PARTY_UPDATE)) {
             // Received party invite from GCM
@@ -106,7 +108,8 @@ public class NotificationIntentService extends BaseIntentService {
         PendingIntent piInviteReply = PendingIntent.getActivity(this, 0, makeReplyIntent(message), PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(piInviteReply);
 
-        nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
+        String tag = Long.toString(message.getPartyID());
+        nm.notify(tag, NotificationConstants.NOTIFICATION_PARTY_INVITE, builder.build());
     }
 
     private void issueUpdateNotification(GcmMessage message) {
@@ -148,7 +151,8 @@ public class NotificationIntentService extends BaseIntentService {
         PendingIntent piViewParty = PendingIntent.getActivity(this, 0, makeViewIntent(message), PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(piViewParty);
 
-        nm.notify(NotificationConstants.NOTIFICATION_ID, builder.build());
+        String tag = Long.toString(message.getPartyID());
+        nm.notify(tag, NotificationConstants.NOTIFICATION_PARTY_UPDATE, builder.build());
     }
 
     private PendingIntent makeActionIntent(String action, GcmMessage message) {

@@ -14,7 +14,8 @@ public abstract class NotificationConstants {
     public static final String ACTION_DECLINE = NOTIFICATION_ADDRESS + ".ACTION_DECLINE";
     public static final String ACTION_PARTY_UPDATE = NOTIFICATION_ADDRESS + ".ACTION_PARTY_UPDATE";
 
-    public static final int NOTIFICATION_ID = 1;
+    public static final int NOTIFICATION_PARTY_INVITE = 1;
+    public static final int NOTIFICATION_PARTY_UPDATE = 2;
 
     public static final String EXTRA_MESSAGE = NOTIFICATION_ADDRESS + ".EXTRA_MESSAGE";
 
