@@ -47,7 +47,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:19.+"
 
     // Facebook SDK
-    compile "com.facebook:facebook-android-sdk:3.7"
+    compile "com.facebook:facebook-android-sdk:3.8.0"
 
     // Client libraries
     compile "be.kuleuven.cs.chikwadraat:socialfridge-endpoint:v2-+"

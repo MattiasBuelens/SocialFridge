@@ -4,10 +4,14 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v4.app.NotificationCompat;
+
+import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseIntentService;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.facebook.FacebookAPI;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.GcmMessage;
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.InviteReplyActivity;
@@ -76,6 +80,7 @@ public class NotificationIntentService extends BaseIntentService {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat_fridge)
+                        .setLargeIcon(getUserLargeIcon(message.getHostUserID()))
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
                         .setAutoCancel(true)
@@ -106,16 +111,19 @@ public class NotificationIntentService extends BaseIntentService {
 
     private void issueUpdateNotification(GcmMessage message) {
         PartyUpdateReason reason = message.getUpdateReason();
+        String iconUserID;
         String contentTitle;
         String contentText;
 
         if (reason.equals(PartyUpdateReason.JOINED)) {
             String partnerName = message.getUpdateReasonUserName();
+            iconUserID = message.getUpdateReasonUserID();
             contentTitle = getString(R.string.notif_party_joined_title);
             contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
         } else if (reason.equals(PartyUpdateReason.DONE)) {
             // TODO Host shouldn't be notified, need to check this
             String hostName = message.getHostUserName();
+            iconUserID = message.getHostUserID();
             contentTitle = getString(R.string.notif_party_done_title);
             contentText = getString(R.string.notif_party_done_content, hostName, "dinner");
         } else {
@@ -127,6 +135,7 @@ public class NotificationIntentService extends BaseIntentService {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat_fridge)
+                        .setLargeIcon(getUserLargeIcon(iconUserID))
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
                         .setAutoCancel(true)
@@ -165,6 +174,16 @@ public class NotificationIntentService extends BaseIntentService {
         // TODO Flags correct?
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
+    }
+
+    private Bitmap getUserLargeIcon(String userID) {
+        try {
+            int width = getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
+            int height = getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
+            return FacebookAPI.getProfilePicture(userID, width, height);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 }
