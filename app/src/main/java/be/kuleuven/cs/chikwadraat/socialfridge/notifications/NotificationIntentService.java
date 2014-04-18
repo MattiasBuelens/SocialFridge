@@ -184,7 +184,7 @@ public class NotificationIntentService extends BaseIntentService {
         try {
             int width = getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
             int height = getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
-            return FacebookAPI.getProfilePicture(userID, width, height);
+            return new FacebookAPI().getProfilePicture(userID, width, height);
         } catch (IOException e) {
             return null;
         }
