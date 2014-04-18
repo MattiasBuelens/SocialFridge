@@ -42,6 +42,7 @@ dependencies {
     compile project(":shared")
 
     compile "com.google.guava:guava:16.+"
+    compile "com.mcxiaoke.volley:library:1.0.+"
 
     // Support libraries
     compile "com.android.support:support-v4:19.+"

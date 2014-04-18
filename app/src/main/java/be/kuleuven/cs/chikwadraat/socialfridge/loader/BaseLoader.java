@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Application;
-import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 
 /**
  * Base class for async task loaders.
@@ -133,12 +132,7 @@ public abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
     }
 
     protected void trackException(Exception e) {
-        // TODO Fairly hackish...
-        if (getContext() instanceof Application) {
-            ((Application) getContext()).trackException(e);
-        } else if (getContext() instanceof BaseActivity) {
-            ((BaseActivity) getContext()).trackException(e);
-        }
+        Application.get().trackException(e);
     }
 
 }

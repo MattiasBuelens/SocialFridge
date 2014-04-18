@@ -19,11 +19,11 @@ public abstract class BaseIntentService extends IntentService {
     }
 
     public Tracker getTracker() {
-        return ((Application) getApplication()).getTracker();
+        return Application.get().getTracker();
     }
 
     public void trackException(Exception e) {
-        ((Application) getApplication()).trackException(e);
+        Application.get().trackException(e);
     }
 
 }
