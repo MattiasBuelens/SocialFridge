@@ -33,7 +33,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
  * UI for choosing time slots or as yet declining the invitation.
  * </p>
  */
-public class InviteReplyActivity extends BasePartyActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Boolean> {
+public class InviteReplyActivity extends BasePartyActivity implements View.OnClickListener, ObservableAsyncTask.Listener<Void, Party> {
 
     private static final String TAG = "InviteReplyActivity";
 
@@ -146,23 +146,24 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     }
 
     @Override
-    public void onResult(Boolean isJoined) {
+    public void onResult(Party party) {
         removeTask();
         hideProgressDialog();
 
+        boolean isJoined = (party != null);
         if (isJoined) {
-            onJoined();
+            onJoined(party);
         } else {
             onDeclined();
         }
     }
 
-    private void onJoined() {
+    private void onJoined(Party party) {
         Log.d(TAG, "Party successfully joined");
         getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Accept").build());
 
-        // Reload party
-        reloadParty();
+        // Cache updated party
+        cacheParty(party);
 
         // View party
         Intent intent = new Intent(this, ViewPartyActivity.class);
@@ -195,7 +196,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     public void onProgress(Void... progress) {
     }
 
-    private static abstract class JoinDeclineTask extends ObservableAsyncTask<Void, Void, Boolean> {
+    private static abstract class JoinDeclineTask extends ObservableAsyncTask<Void, Void, Party> {
 
         protected final Context context;
         protected final long partyID;
@@ -222,10 +223,10 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         }
 
         @Override
-        protected Boolean run(Void... unused) throws IOException {
+        protected Party run(Void... unused) throws IOException {
             TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(TimeSlot.toEndpoint(timeSlots));
-            parties().acceptInvite(partyID, Session.getActiveSession().getAccessToken(), timeSlotCollection).execute();
-            return true;
+            String accessToken = Session.getActiveSession().getAccessToken();
+            return new Party(parties().acceptInvite(partyID, accessToken, timeSlotCollection).execute());
         }
 
     }
@@ -237,9 +238,10 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         }
 
         @Override
-        protected Boolean run(Void... unused) throws IOException {
-            parties().declineInvite(partyID, Session.getActiveSession().getAccessToken()).execute();
-            return false;
+        protected Party run(Void... unused) throws IOException {
+            String accessToken = Session.getActiveSession().getAccessToken();
+            parties().declineInvite(partyID, accessToken).execute();
+            return null;
         }
 
     }
