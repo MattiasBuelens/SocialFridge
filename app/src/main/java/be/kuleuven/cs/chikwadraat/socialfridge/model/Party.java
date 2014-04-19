@@ -104,6 +104,14 @@ public class Party implements Parcelable {
         return getStatus() == Status.PLANNED;
     }
 
+    public boolean isDisbanded() {
+        return getStatus() == Status.DISBANDED;
+    }
+
+    public boolean isCompleted() {
+        return isPlanned() && new Date().after(getDate());
+    }
+
     public List<TimeSlot> getTimeSlots() {
         return timeSlots;
     }
@@ -158,7 +166,8 @@ public class Party implements Parcelable {
 
         INVITING(R.string.party_status_inviting, R.color.party_status_inviting_background),
         PLANNING(R.string.party_status_planning, R.color.party_status_planning_background),
-        PLANNED(R.string.party_status_planned, R.color.party_status_planned_background);
+        PLANNED(R.string.party_status_planned, R.color.party_status_planned_background),
+        DISBANDED(R.string.party_status_disbanded, R.color.party_status_disbanded_background);
 
         private final int stringResID;
         private final int colorResID;

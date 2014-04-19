@@ -166,6 +166,15 @@ public class Party {
         setDate(chosenTimeSlot.getBeginDate());
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public boolean isDisbanded() {
+        return getStatus() == Status.DISBANDED;
+    }
+
+    public void setDisbanded() {
+        setStatus(Status.DISBANDED);
+    }
+
     /**
      * Party date.
      * When {@link #isPlanned() not planned yet}, the time part is not yet configured and should be ignored.
@@ -176,6 +185,11 @@ public class Party {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public boolean isCompleted() {
+        return isPlanned() && new Date().after(getDate());
     }
 
     /**
@@ -488,7 +502,12 @@ public class Party {
         /**
          * Party planned.
          */
-        PLANNED;
+        PLANNED,
+
+        /**
+         * Party disbanded.
+         */
+        DISBANDED;
 
         @Override
         public String toString() {

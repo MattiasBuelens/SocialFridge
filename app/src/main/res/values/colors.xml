@@ -40,5 +40,6 @@
     <color name="party_status_inviting_background">@color/ics_blue</color>
     <color name="party_status_planning_background">@color/ics_dark_orange</color>
     <color name="party_status_planned_background">@color/ics_dark_green</color>
+    <color name="party_status_disbanded_background">@color/ics_dark_red</color>
 
 </resources>

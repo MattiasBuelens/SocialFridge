@@ -401,6 +401,43 @@ public class PartyEndpoint extends BaseEndpoint {
         return party;
     }
 
+
+    /**
+     * Disband a party.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "parties.disband", path = "party/{partyID}/disband", httpMethod = ApiMethod.HttpMethod.GET)
+    public Party disband(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        Party party = transact(new Work<Party, ServiceException>() {
+            @Override
+            public Party run() throws ServiceException {
+                Party party = getParty(partyID, true);
+                // User must be host
+                if (!userID.equals(party.getHostID())) {
+                    throw new UnauthorizedException("User must be party host to disband");
+                }
+                // Party must not be completed
+                if (party.isCompleted()) {
+                    throw new ConflictException("Party is already completed");
+                }
+                // Set disbanded
+                party.setDisbanded();
+                // Save
+                ofy().save().entities(party).now();
+                return party;
+            }
+        });
+        // Send update to party members
+        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
+                .reason(PartyUpdateReason.DONE) // TODO Add update reason for disbanding
+                .recipients(party.getVisibleUsers())
+                .build());
+        return party;
+    }
+
     protected Party getParty(long partyID, boolean full) throws ServiceException {
         Party party = getPartyUnsafe(partyID, full);
         if (party == null) {
