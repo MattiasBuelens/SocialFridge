@@ -243,14 +243,15 @@ public abstract class BaseActivity extends ActionBarActivity {
      * @param exception The exception.
      */
     public void handleException(Exception exception) {
-        String message;
+        String message = exception.getMessage();
         if (exception instanceof FacebookRequestException) {
             handleFacebookError(((FacebookRequestException) exception).getError());
             return;
         } else if (exception instanceof GoogleJsonResponseException) {
-            message = ((GoogleJsonResponseException) exception).getDetails().getMessage();
-        } else {
-            message = exception.getMessage();
+            GoogleJsonResponseException jsonException = (GoogleJsonResponseException) exception;
+            if (jsonException.getDetails() != null) {
+                message = jsonException.getDetails().getMessage();
+            }
         }
 
         new AlertDialog.Builder(this)
