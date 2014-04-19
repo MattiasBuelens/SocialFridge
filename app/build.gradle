@@ -16,6 +16,7 @@ android {
     }
     buildTypes {
         debug {
+            packageNameSuffix ".debug"
             signingConfig signingConfigs.debug
         }
         release {
