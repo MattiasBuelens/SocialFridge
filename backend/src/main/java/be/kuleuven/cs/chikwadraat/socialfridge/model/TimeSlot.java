@@ -5,6 +5,7 @@ import com.googlecode.objectify.annotation.Embed;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,33 +15,33 @@ import java.util.Map;
 @Embed
 public class TimeSlot {
 
-    private int beginHour;
-    private int endHour;
+    private Date beginDate;
+    private Date endDate;
     private boolean available;
 
     public TimeSlot() {
     }
 
-    public TimeSlot(int beginHour, int endHour, boolean available) {
-        this.beginHour = beginHour;
-        this.endHour = endHour;
+    public TimeSlot(Date beginDate, Date endDate, boolean available) {
+        this.beginDate = beginDate;
+        this.endDate = endDate;
         this.available = available;
     }
 
-    public int getBeginHour() {
-        return beginHour;
+    public Date getBeginDate() {
+        return beginDate;
     }
 
-    public void setBeginHour(int beginHour) {
-        this.beginHour = beginHour;
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
     }
 
-    public int getEndHour() {
-        return endHour;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setEndHour(int endHour) {
-        this.endHour = endHour;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isAvailable() {
@@ -52,16 +53,16 @@ public class TimeSlot {
     }
 
     protected TimeSlot copy() {
-        return new TimeSlot(getBeginHour(), getEndHour(), isAvailable());
+        return new TimeSlot(getBeginDate(), getEndDate(), isAvailable());
     }
 
     public static Collection<TimeSlot> merge(Iterable<TimeSlot> slots) {
-        Map<Integer, TimeSlot> merged = new HashMap<Integer, TimeSlot>();
+        Map<Date, TimeSlot> merged = new HashMap<Date, TimeSlot>();
         for (TimeSlot slot : slots) {
-            TimeSlot mergedSlot = merged.get(slot.getBeginHour());
+            TimeSlot mergedSlot = merged.get(slot.getBeginDate());
             if (mergedSlot == null) {
                 // New slot
-                merged.put(slot.getBeginHour(), slot.copy());
+                merged.put(slot.getBeginDate(), slot.copy());
             } else if (slot.isAvailable() && mergedSlot.isAvailable()) {
                 // Still available
                 mergedSlot.setAvailable(true);
@@ -77,13 +78,13 @@ public class TimeSlot {
         return merge(Iterables.concat(slots));
     }
 
-    public static class BeginHourComparator implements Comparator<TimeSlot> {
+    public static final Comparator<TimeSlot> beginDateComparator = new Comparator<TimeSlot>() {
 
         @Override
         public int compare(TimeSlot left, TimeSlot right) {
-            return Integer.compare(left.getBeginHour(), right.getBeginHour());
+            return left.getBeginDate().compareTo(right.getBeginDate());
         }
 
-    }
+    };
 
 }

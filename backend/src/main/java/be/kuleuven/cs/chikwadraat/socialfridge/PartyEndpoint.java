@@ -383,7 +383,7 @@ public class PartyEndpoint extends BaseEndpoint {
                     throw new ConflictException("Party must be still planning");
                 }
                 // Time slot must be available
-                if (!party.isAvailable(timeSlot.getBeginHour(), timeSlot.getEndHour())) {
+                if (!party.isAvailable(timeSlot.getBeginDate(), timeSlot.getEndDate())) {
                     throw new ConflictException("Not all partners are available on the given time slot");
                 }
                 // Set planned

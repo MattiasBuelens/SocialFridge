@@ -11,7 +11,6 @@ import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.Nullable;
 
@@ -165,16 +163,7 @@ public class Party {
 
     public void setPlanned(TimeSlot chosenTimeSlot) {
         setStatus(Status.PLANNED);
-        // Create date for time slot
-        // TODO This is a dirty fix, find a better way to deal with timezone of host!
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Brussels"));
-        calendar.setTime(getDate());
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, chosenTimeSlot.getBeginHour());
-        // Store data
-        setDate(calendar.getTime());
+        setDate(chosenTimeSlot.getBeginDate());
     }
 
     /**
@@ -316,19 +305,23 @@ public class Party {
     protected void setTimeSlots(Collection<TimeSlot> timeSlots) {
         this.timeSlots.clear();
         this.timeSlots.addAll(timeSlots);
-        Collections.sort(this.timeSlots, new TimeSlot.BeginHourComparator());
+        Collections.sort(this.timeSlots, TimeSlot.beginDateComparator);
     }
 
-    public TimeSlot getTimeSlot(int beginHour, int endHour) {
+    public TimeSlot getTimeSlot(Date beginDate, Date endDate) {
         for (TimeSlot slot : getTimeSlots()) {
-            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+            if (slot.getBeginDate().equals(beginDate) && slot.getEndDate().equals(endDate)) {
                 return slot;
             }
         }
         return null;
     }
 
-    public boolean isAvailable(int beginHour, int endHour) {
+    public boolean isAvailable(TimeSlot timeSlot) {
+        return isAvailable(timeSlot.getBeginDate(), timeSlot.getEndDate());
+    }
+
+    public boolean isAvailable(Date beginHour, Date endHour) {
         TimeSlot slot = getTimeSlot(beginHour, endHour);
         return slot != null && slot.isAvailable();
     }

@@ -8,6 +8,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -138,9 +139,9 @@ public class PartyMember {
         this.timeSlots = timeSlots;
     }
 
-    public TimeSlot getTimeSlot(int beginHour, int endHour) {
+    public TimeSlot getTimeSlot(Date beginDate, Date endDate) {
         for (TimeSlot slot : getTimeSlots()) {
-            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+            if (slot.getBeginDate().equals(beginDate) && slot.getEndDate().equals(endDate)) {
                 return slot;
             }
         }
