@@ -26,32 +26,10 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 public class TimeSlotsFragment extends Fragment {
     private static final String ARG_TIME_SLOTS = "time_slots";
 
-    private ArrayList<TimeSlotSelection> defaultTimeSlotSelections;
-    private ArrayList<TimeSlotSelection> timeSlotSelections;
+    private ArrayList<TimeSlotSelection> timeSlotSelections = new ArrayList<TimeSlotSelection>();
 
     private GridView timeSlotGrid;
     private TimeSlotSelectionArrayAdapter timeSlotAdapter;
-
-    /**
-     * Create a new time slots fragment.
-     *
-     * @param defaultTimeSlotSelections Default time slot selections.
-     * @return A new instance of fragment TimeSlotsFragment.
-     */
-    public static TimeSlotsFragment newInstance(List<TimeSlotSelection> defaultTimeSlotSelections) {
-        TimeSlotsFragment fragment = new TimeSlotsFragment();
-        fragment.setDefaultTimeSlots(defaultTimeSlotSelections);
-        return fragment;
-    }
-
-    /**
-     * Set the default time slot selections.
-     *
-     * @param defaultTimeSlotSelections The default time slot selections.
-     */
-    public void setDefaultTimeSlots(List<TimeSlotSelection> defaultTimeSlotSelections) {
-        this.defaultTimeSlotSelections = new ArrayList<TimeSlotSelection>(defaultTimeSlotSelections);
-    }
 
     public TimeSlotsFragment() {
         // Required empty public constructor
@@ -77,15 +55,6 @@ public class TimeSlotsFragment extends Fragment {
             timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
         }
 
-        if (timeSlotSelections == null) {
-            // Initialize from defaults
-            if (defaultTimeSlotSelections != null) {
-                timeSlotSelections = new ArrayList<TimeSlotSelection>(defaultTimeSlotSelections);
-            } else {
-                timeSlotSelections = new ArrayList<TimeSlotSelection>();
-            }
-        }
-
         timeSlotAdapter = new TimeSlotSelectionArrayAdapter(getActivity(), timeSlotSelections);
         timeSlotGrid.setAdapter(timeSlotAdapter);
     }
@@ -100,7 +69,6 @@ public class TimeSlotsFragment extends Fragment {
     public List<TimeSlotSelection> getTimeSlots() {
         return timeSlotSelections;
     }
-
 
     public TimeSlotSelection getTimeSlot(Date beginDate, Date endDate) {
         for (TimeSlotSelection selection : getTimeSlots()) {

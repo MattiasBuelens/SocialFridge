@@ -32,7 +32,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Create party activity.
  */
-public class CreatePartyActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Party> {
+public class CreatePartyActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Party>, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = "CreatePartyActivity";
 
@@ -48,12 +48,9 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
 
-        List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
-//        slots.add(new TimeSlotSelection(17, 18, TimeSlotSelection.State.INCLUDED));
-//        slots.add(new TimeSlotSelection(18, 19, TimeSlotSelection.State.INCLUDED));
-//        slots.add(new TimeSlotSelection(19, 20, TimeSlotSelection.State.INCLUDED));
-//        slots.add(new TimeSlotSelection(20, 21, TimeSlotSelection.State.INCLUDED));
-        timeSlotsFragment.setDefaultTimeSlots(slots);
+        dayGroup.setOnCheckedChangeListener(this);
+
+        updateTimeSlotSelections();
 
         // Re-attach to registration task
         task = (CreatePartyTask) getLastCustomNonConfigurationInstance();
@@ -88,6 +85,13 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         }
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (group == dayGroup) {
+            updateTimeSlotSelections();
+        }
+    }
+
     private Date getPartyDate() {
         int checkedDayId = dayGroup.getCheckedRadioButtonId();
         Calendar calendar = Calendar.getInstance();
@@ -95,7 +99,43 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
             // Tomorrow
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
+        // Clear the time
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    private List<TimeSlotSelection> getTimeSlotSelections() {
+        return timeSlotsFragment.getTimeSlots();
+    }
+
+    private void updateTimeSlotSelections() {
+        // Create new selections
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(getPartyDate());
+        List<TimeSlotSelection> slots = new ArrayList<TimeSlotSelection>();
+        // TODO Externalize begin and end hours
+        for (int hour = 17; hour <= 20; hour++) {
+            // Set begin and end dates
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            Date beginDate = calendar.getTime();
+            calendar.set(Calendar.HOUR_OF_DAY, hour + 1);
+            Date endDate = calendar.getTime();
+            TimeSlotSelection.State state = TimeSlotSelection.State.INCLUDED;
+
+            // Use state of old selection with same dates
+            TimeSlotSelection oldSelection = timeSlotsFragment.getTimeSlot(beginDate, endDate);
+            if (oldSelection != null) {
+                state = oldSelection.getState();
+            }
+
+            // Add new selection
+            slots.add(new TimeSlotSelection(beginDate, endDate, state));
+        }
+
+        timeSlotsFragment.setTimeSlots(slots);
     }
 
     private List<TimeSlot> getTimeSlots() {
