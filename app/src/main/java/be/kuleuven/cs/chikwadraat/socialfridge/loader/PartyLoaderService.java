@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -24,9 +25,6 @@ public class PartyLoaderService extends BaseIntentService {
     private static final String TAG = "PartyLoaderService";
 
     public static final String ACTION_PARTY_LOAD = "party_load";
-    public static final String ACTION_PARTY_RELOAD = "party_reload";
-    public static final String ACTION_PARTY_INVALIDATE = "party_invalidate";
-    public static final String ACTION_PARTY_SET = "party_set";
     public static final String EXTRA_PARTY_ID = "party_id";
 
     public static final String ACTION_PARTY_UPDATE = "party_update";
@@ -35,13 +33,33 @@ public class PartyLoaderService extends BaseIntentService {
     /*
      * Static cache.
      */
-    private static Cache<Long, Party> cache = CacheBuilder.newBuilder()
+    private static final Cache<Long, Party> cache = CacheBuilder.newBuilder()
             .expireAfterWrite(5000, TimeUnit.SECONDS)
             .maximumSize(20)
             .build();
 
     public PartyLoaderService() {
         super("PartyLoaderService");
+    }
+
+    public static void startLoad(Context context, long partyID) {
+        Intent loadIntent = new Intent(context, PartyLoaderService.class);
+        loadIntent.setAction(PartyLoaderService.ACTION_PARTY_LOAD);
+        loadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, partyID);
+        context.startService(loadIntent);
+    }
+
+    public static void startReload(Context context, long partyID) {
+        invalidateParty(partyID);
+        startLoad(context, partyID);
+    }
+
+    public static void invalidateParty(long partyID) {
+        cache.invalidate(partyID);
+    }
+
+    public static void cacheParty(Party party) {
+        cache.put(party.getID(), party);
     }
 
     @Override
@@ -53,17 +71,6 @@ public class PartyLoaderService extends BaseIntentService {
         if (action.equals(ACTION_PARTY_LOAD)) {
             // Load party if needed
             loadAndBroadcast(partyID);
-        } else if (action.equals(ACTION_PARTY_INVALIDATE)) {
-            // Invalidate cached party
-            invalidateParty(partyID);
-        } else if (action.equals(ACTION_PARTY_RELOAD)) {
-            // Invalidate and load
-            invalidateParty(partyID);
-            loadAndBroadcast(partyID);
-        } else if (action.equals(ACTION_PARTY_SET)) {
-            // Set party
-            Party party = intent.getParcelableExtra(EXTRA_PARTY_OBJECT);
-            cacheParty(party);
         }
     }
 
@@ -100,14 +107,6 @@ public class PartyLoaderService extends BaseIntentService {
         if (party != null) {
             broadcastParty(party);
         }
-    }
-
-    private void invalidateParty(long partyID) {
-        cache.invalidate(partyID);
-    }
-
-    private void cacheParty(Party party) {
-        cache.put(party.getID(), party);
     }
 
 }

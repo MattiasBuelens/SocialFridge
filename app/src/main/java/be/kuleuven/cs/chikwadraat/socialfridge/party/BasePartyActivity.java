@@ -98,34 +98,21 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      * Load the party.
      */
     protected void loadParty() {
-        // Send load request
-        Intent reloadIntent = new Intent(this, PartyLoaderService.class);
-        reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_LOAD);
-        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, getPartyID());
-        startService(reloadIntent);
+        PartyLoaderService.startLoad(this, getPartyID());
     }
 
     /**
      * Reload the party.
      */
     protected void reloadParty() {
-        // Send reload request
-        Intent reloadIntent = new Intent(this, PartyLoaderService.class);
-        reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_RELOAD);
-        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, getPartyID());
-        startService(reloadIntent);
+        PartyLoaderService.startReload(this, getPartyID());
     }
 
     /**
      * Cache the received party.
      */
     protected void cacheParty(Party party) {
-        // Send cache request
-        Intent reloadIntent = new Intent(this, PartyLoaderService.class);
-        reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_SET);
-        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, party.getID());
-        reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_OBJECT, party);
-        startService(reloadIntent);
+        PartyLoaderService.cacheParty(party);
     }
 
     /**

@@ -72,10 +72,7 @@ public class GcmIntentService extends BaseIntentService {
                 notificationIntent.putExtra(NotificationConstants.EXTRA_MESSAGE, message);
                 startService(notificationIntent);
                 // Reload party
-                Intent reloadIntent = new Intent(this, PartyLoaderService.class);
-                reloadIntent.setAction(PartyLoaderService.ACTION_PARTY_RELOAD);
-                reloadIntent.putExtra(PartyLoaderService.EXTRA_PARTY_ID, partyID);
-                startService(reloadIntent);
+                PartyLoaderService.startReload(this, partyID);
                 break;
             case PARTY_INVITE:
                 // Notify user about party invite
