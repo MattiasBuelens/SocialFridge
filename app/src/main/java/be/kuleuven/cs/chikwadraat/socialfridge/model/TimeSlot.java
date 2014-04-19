@@ -3,42 +3,46 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.api.client.util.DateTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Adapter for {@link be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot TimeSlot} endpoint model.
  */
 public class TimeSlot implements Parcelable {
 
-    private int beginHour;
-    private int endHour;
+    private Date beginDate;
+    private Date endDate;
     private boolean available;
 
-    public TimeSlot(int beginHour, int endHour, boolean isAvailable) {
-        this.beginHour = beginHour;
-        this.endHour = endHour;
+    public TimeSlot(Date beginDate, Date endDate, boolean isAvailable) {
+        this.beginDate = beginDate;
+        this.endDate = endDate;
         this.available = isAvailable;
     }
 
     public TimeSlot(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot model) {
-        this.beginHour = model.getBeginHour();
-        this.endHour = model.getEndHour();
+        this.beginDate = new Date(model.getBeginDate().getValue());
+        this.endDate = new Date(model.getEndDate().getValue());
         this.available = model.getAvailable();
     }
 
     public TimeSlot(Parcel in) {
-        this.beginHour = in.readInt();
-        this.endHour = in.readInt();
+        this.beginDate = new Date(in.readLong());
+        this.endDate = new Date(in.readLong());
         this.available = (in.readByte() == 1);
     }
 
-    public int getBeginHour() {
-        return beginHour;
+    public Date getBeginDate() {
+        return beginDate;
     }
 
-    public int getEndHour() {
-        return endHour;
+    public Date getEndDate() {
+        return endDate;
     }
 
     public boolean isAvailable() {
@@ -60,8 +64,10 @@ public class TimeSlot implements Parcelable {
     }
 
     public be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot toEndpoint() {
+        DateTime beginDateTime = new DateTime(getBeginDate(), TimeZone.getDefault());
+        DateTime endDateTime = new DateTime(getEndDate(), TimeZone.getDefault());
         return new be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot()
-                .setBeginHour(getBeginHour()).setEndHour(getEndHour()).setAvailable(isAvailable());
+                .setBeginDate(beginDateTime).setEndDate(endDateTime).setAvailable(isAvailable());
     }
 
     public static List<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlot> toEndpoint(List<TimeSlot> slots) {
@@ -79,8 +85,8 @@ public class TimeSlot implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(getBeginHour());
-        dest.writeInt(getEndHour());
+        dest.writeLong(getBeginDate().getTime());
+        dest.writeLong(getEndDate().getTime());
         dest.writeByte((byte) (isAvailable() ? 1 : 0));
     }
 

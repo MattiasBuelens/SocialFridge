@@ -80,13 +80,13 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private void reconfigureTimeSlotsFragment(Collection<TimeSlot> receivedSlots) {
         List<TimeSlotSelection> newSelections = new ArrayList<TimeSlotSelection>();
         for (TimeSlot slot : receivedSlots) {
-            TimeSlotSelection selection = timeSlotsFragment.getTimeSlot(slot.getBeginHour(), slot.getEndHour());
+            TimeSlotSelection selection = timeSlotsFragment.getTimeSlot(slot.getBeginDate(), slot.getEndDate());
             if (selection == null) {
                 // New time slot selection, probably on first load
                 TimeSlotSelection.State state = slot.isAvailable()
                         ? TimeSlotSelection.State.INCLUDED
                         : TimeSlotSelection.State.DISABLED;
-                selection = new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
+                selection = new TimeSlotSelection(slot.getBeginDate(), slot.getEndDate(), state);
             } else {
                 // Existing selection, disable if no longer available
                 if (!slot.isAvailable()) {
@@ -113,7 +113,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private List<TimeSlot> getTimeSlots() {
         List<TimeSlot> result = new ArrayList<TimeSlot>();
         for (TimeSlotSelection selection : timeSlotsFragment.getTimeSlots()) {
-            result.add(new TimeSlot(selection.getBeginHour(), selection.getEndHour(), selection.isIncluded()));
+            result.add(new TimeSlot(selection.getBeginDate(), selection.getEndDate(), selection.isIncluded()));
         }
         return result;
     }

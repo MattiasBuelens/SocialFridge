@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.GridView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
@@ -100,10 +102,10 @@ public class TimeSlotsFragment extends Fragment {
     }
 
 
-    public TimeSlotSelection getTimeSlot(int beginHour, int endHour) {
+    public TimeSlotSelection getTimeSlot(Date beginDate, Date endDate) {
         for (TimeSlotSelection selection : getTimeSlots()) {
-            if (beginHour == selection.getBeginHour() &&
-                    endHour == selection.getEndHour()) {
+            if (selection.getBeginDate().equals(beginDate) &&
+                    selection.getEndDate().equals(endDate)) {
                 return selection;
             }
         }
@@ -139,7 +141,9 @@ public class TimeSlotsFragment extends Fragment {
 
             TimeSlotSelection slot = getItem(position);
             vh.position = position;
-            String text = slot.getBeginHour() + "h - " + slot.getEndHour() + "h";
+            String beginDateText = DateFormat.getTimeFormat(getContext()).format(slot.getBeginDate());
+            String endDateText = DateFormat.getTimeFormat(getContext()).format(slot.getEndDate());
+            String text = getContext().getString(R.string.party_time_slot_format, beginDateText, endDateText);
             vh.toggleButton.setTextOff(text);
             vh.toggleButton.setTextOn(text);
             vh.toggleButton.setChecked(slot.isIncluded());

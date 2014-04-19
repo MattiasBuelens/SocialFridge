@@ -30,6 +30,7 @@
     <string name="party_candidates_summary">Invite friends with matching fridges</string>
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
+    <string name="party_time_slot_format">%1$s to %2$s</string>
 
     <!-- Party member role -->
     <string name="party_role_host">Host</string>

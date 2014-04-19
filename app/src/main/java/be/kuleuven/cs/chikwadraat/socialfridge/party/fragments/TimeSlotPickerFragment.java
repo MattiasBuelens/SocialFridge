@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.GridView;
 import android.widget.RadioButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
@@ -92,9 +94,9 @@ public class TimeSlotPickerFragment extends Fragment {
         return pickedTimeSlot;
     }
 
-    protected TimeSlotSelection getTimeSlot(int beginHour, int endHour) {
+    protected TimeSlotSelection getTimeSlot(Date beginDate, Date endDate) {
         for (TimeSlotSelection slot : getTimeSlots()) {
-            if (slot.getBeginHour() == beginHour && slot.getEndHour() == endHour) {
+            if (slot.getBeginDate().equals(beginDate) && slot.getEndDate().equals(endDate)) {
                 return slot;
             }
         }
@@ -104,7 +106,7 @@ public class TimeSlotPickerFragment extends Fragment {
     protected void setPickedTimeSlot(TimeSlotSelection timeSlot) {
         if (timeSlot != null) {
             // Find own time slot
-            timeSlot = getTimeSlot(timeSlot.getBeginHour(), timeSlot.getEndHour());
+            timeSlot = getTimeSlot(timeSlot.getBeginDate(), timeSlot.getEndDate());
             // Reject unavailable time slots
             if (!timeSlot.isIncluded()) {
                 timeSlot = null;
@@ -181,7 +183,9 @@ public class TimeSlotPickerFragment extends Fragment {
             TimeSlotSelection slot = getItem(position);
             boolean isChecked = (getCheckedPosition() == position);
             vh.position = position;
-            String text = slot.getBeginHour() + "h - " + slot.getEndHour() + "h";
+            String beginDateText = DateFormat.getTimeFormat(getContext()).format(slot.getBeginDate());
+            String endDateText = DateFormat.getTimeFormat(getContext()).format(slot.getEndDate());
+            String text = getContext().getString(R.string.party_time_slot_format, beginDateText, endDateText);
             vh.radioButton.setText(text);
             vh.radioButton.setChecked(isChecked);
             vh.radioButton.setEnabled(slot.isIncluded());

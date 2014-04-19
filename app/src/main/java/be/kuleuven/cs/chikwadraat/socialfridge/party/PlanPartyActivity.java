@@ -68,7 +68,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         TimeSlotSelection.State state = slot.isAvailable()
                 ? TimeSlotSelection.State.INCLUDED
                 : TimeSlotSelection.State.DISABLED;
-        return new TimeSlotSelection(slot.getBeginHour(), slot.getEndHour(), state);
+        return new TimeSlotSelection(slot.getBeginDate(), slot.getEndDate(), state);
     }
 
     private List<TimeSlotSelection> toSelections(List<TimeSlot> slots) {

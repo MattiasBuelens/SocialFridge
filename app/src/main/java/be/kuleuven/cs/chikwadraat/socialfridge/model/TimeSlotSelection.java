@@ -3,47 +3,49 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 
 /**
  * Created by vital.dhaveloose on 31/03/2014.
  */
 public class TimeSlotSelection implements Parcelable {
 
-    private int beginHour;
-    private int endHour;
+    private Date beginDate;
+    private Date endDate;
     private State state;
     private static final State defaultState = State.UNSPECIFIED;
 
-    public TimeSlotSelection(int beginHour, int endHour, State state) {
-        this.beginHour = beginHour;
-        this.endHour = endHour;
+    public TimeSlotSelection(Date beginDate, Date endDate, State state) {
+        this.beginDate = beginDate;
+        this.endDate = endDate;
         this.state = state;
     }
 
-    public TimeSlotSelection(int beginHour, int endHour) {
-        this(beginHour, endHour, defaultState);
+    public TimeSlotSelection(Date beginDate, Date endDate) {
+        this(beginDate, endDate, defaultState);
     }
 
     protected TimeSlotSelection(Parcel in) {
-        this.beginHour = in.readInt();
-        this.endHour = in.readInt();
+        this.beginDate = new Date(in.readLong());
+        this.endDate = new Date(in.readLong());
         this.state = State.valueOf(in.readString());
     }
 
-    public int getBeginHour() {
-        return beginHour;
+    public Date getBeginDate() {
+        return beginDate;
     }
 
-    public void setBeginHour(int beginHour) {
-        this.beginHour = beginHour;
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
     }
 
-    public int getEndHour() {
-        return endHour;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setEndHour(int endHour) {
-        this.endHour = endHour;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public State getState() {
@@ -77,13 +79,13 @@ public class TimeSlotSelection implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(getBeginHour());
-        dest.writeInt(getEndHour());
+        dest.writeLong(getBeginDate().getTime());
+        dest.writeLong(getEndDate().getTime());
         dest.writeString(getState().name());
     }
 
     public TimeSlot toTimeSlot() {
-        return new TimeSlot(getBeginHour(), getEndHour(), isIncluded());
+        return new TimeSlot(getBeginDate(), getEndDate(), isIncluded());
     }
 
     public static final Creator<TimeSlotSelection> CREATOR = new Creator<TimeSlotSelection>() {
