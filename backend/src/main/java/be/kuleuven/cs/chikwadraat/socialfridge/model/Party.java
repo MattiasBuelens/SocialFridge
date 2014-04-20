@@ -4,6 +4,7 @@ import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Ordering;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -42,6 +43,16 @@ public class Party {
 
     public static class Partial {
     }
+
+    /*
+     * Comparators.
+     */
+    public static final Ordering<Party> dateComparator = new Ordering<Party>() {
+        @Override
+        public int compare(Party left, Party right) {
+            return left.getDate().compareTo(right.getDate());
+        }
+    };
 
     /**
      * Party ID.
@@ -124,6 +135,8 @@ public class Party {
         // Update members and partners
         updateMember(member);
         updatePartner(member);
+        // Add to party
+        host.addParty(this);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -206,8 +219,7 @@ public class Party {
     /**
      * Members.
      */
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Set<Ref<PartyMember>> getMemberKeys() {
+    protected Set<Ref<PartyMember>> getMemberKeys() {
         return members;
     }
 
@@ -285,6 +297,18 @@ public class Party {
 
     protected void updatePartner(PartyMember member) {
         updateTimeSlots();
+    }
+
+    /**
+     * Invitees.
+     */
+    public Collection<PartyMember> getInvitees() {
+        return Collections2.filter(getMembers(), new Predicate<PartyMember>() {
+            @Override
+            public boolean apply(@Nullable PartyMember member) {
+                return member.isInvited();
+            }
+        });
     }
 
     /**
@@ -379,6 +403,8 @@ public class Party {
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
             updateMember(member);
         }
+        // Add to party
+        invitee.addParty(this);
     }
 
     /**
@@ -392,30 +418,13 @@ public class Party {
         if (ref == null) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited.");
         }
-        cancelInvite(ref.get());
-    }
-
-    protected void cancelInvite(PartyMember invitee) throws IllegalArgumentException {
-        if (!invitee.cancelInvite()) {
+        PartyMember member = ref.get();
+        if (!member.cancelInvite()) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited or is already in the party.");
         }
-        updateMember(invitee);
-    }
-
-    /**
-     * Cancel all open invites.
-     *
-     * @return The user IDs of canceled invitees.
-     */
-    public List<Ref<User>> cancelInvites() {
-        List<Ref<User>> canceledUserIDs = new ArrayList<Ref<User>>();
-        for (PartyMember member : getMembers()) {
-            if (member.isInvited()) {
-                cancelInvite(member);
-                canceledUserIDs.add(User.getRef(member.getUserID()));
-            }
-        }
-        return canceledUserIDs;
+        updateMember(member);
+        // Remove from party
+        invitee.removeParty(this);
     }
 
     /**
@@ -441,6 +450,8 @@ public class Party {
         member.setTimeSlots(timeSlots);
         updateMember(member);
         updatePartner(member);
+        // Add to party (should already be added though)
+        invitee.addParty(this);
     }
 
     /**
@@ -463,6 +474,8 @@ public class Party {
          * We should never allow a user to be re-invited after he declined.
          */
         updateMember(member);
+        // Remove from party
+        invitee.removeParty(this);
     }
 
     /**
@@ -485,6 +498,8 @@ public class Party {
         }
         updateMember(member);
         updatePartner(member);
+        // Remove from party
+        invitee.removeParty(this);
     }
 
     public static enum Status {
