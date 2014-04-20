@@ -48,8 +48,6 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
 
-        dayGroup.setOnCheckedChangeListener(this);
-
         updateTimeSlotSelections();
 
         // Re-attach to registration task
@@ -83,6 +81,18 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dayGroup.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dayGroup.setOnCheckedChangeListener(null);
     }
 
     @Override

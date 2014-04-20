@@ -36,6 +36,16 @@ public class TimeSlotsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // Restore
+            timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -49,11 +59,6 @@ public class TimeSlotsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore
-            timeSlotSelections = savedInstanceState.getParcelableArrayList(ARG_TIME_SLOTS);
-        }
 
         timeSlotAdapter = new TimeSlotSelectionArrayAdapter(getActivity(), timeSlotSelections);
         timeSlotGrid.setAdapter(timeSlotAdapter);
