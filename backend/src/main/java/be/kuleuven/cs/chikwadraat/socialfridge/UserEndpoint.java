@@ -4,6 +4,7 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.common.collect.Ordering;
 import com.googlecode.objectify.Ref;
@@ -13,7 +14,6 @@ import java.util.List;
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
@@ -96,14 +96,14 @@ public class UserEndpoint extends BaseEndpoint {
      * @return The parties of a user.
      */
     @ApiMethod(name = "users.getParties", path = "user/party", httpMethod = ApiMethod.HttpMethod.GET)
-    public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
+    public CollectionResponse<Party> getParties(@Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         User user = getUser(userID);
         // Use reverse date ordering (recent dates first)
         Ordering<Party> dateOrdering = Party.dateComparator.reverse();
         // Sort user parties
         List<Party> parties = dateOrdering.immutableSortedCopy(user.getParties());
-        return new PartyCollection(parties);
+        return CollectionResponse.<Party>builder().setItems(parties).build();
     }
 
     /**

@@ -72,6 +72,7 @@ public class MessageWorker extends HttpServlet {
         taskDone(resp);
     }
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // Retrieve message

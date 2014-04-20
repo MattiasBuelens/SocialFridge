@@ -8,7 +8,8 @@
             <param-value>
                 be.kuleuven.cs.chikwadraat.socialfridge.UserEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.UserDeviceEndpoint,
-                be.kuleuven.cs.chikwadraat.socialfridge.PartyEndpoint
+                be.kuleuven.cs.chikwadraat.socialfridge.PartyEndpoint,
+                be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint
             </param-value>
         </init-param>
     </servlet>
@@ -30,6 +31,44 @@
         <web-resource-collection>
             <web-resource-name>queues</web-resource-name>
             <url-pattern>/_ah/queue/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <servlet>
+        <servlet-name>DishesServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.DishesServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DishesServlet</servlet-name>
+        <url-pattern>/admin/dishes</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>InsertDishServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.InsertDishServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InsertDishServlet</servlet-name>
+        <url-pattern>/admin/insertDish</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UpdateDishServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.UpdateDishServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateDishServlet</servlet-name>
+        <url-pattern>/admin/updateDish</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>admin</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>admin</role-name>

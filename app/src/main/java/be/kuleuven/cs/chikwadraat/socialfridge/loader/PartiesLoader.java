@@ -29,7 +29,7 @@ public class PartiesLoader extends BaseLoader<List<Party>> {
         Session session = Session.getActiveSession();
 
         try {
-            return Party.fromEndpoint(users.getParties(session.getAccessToken()).execute().getList());
+            return Party.fromEndpoint(users.getParties(session.getAccessToken()).execute().getItems());
         } catch (IOException e) {
             Log.e(TAG, "Error while loading parties: " + e.getMessage());
             trackException(e);

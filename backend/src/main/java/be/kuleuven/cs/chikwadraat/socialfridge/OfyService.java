@@ -4,6 +4,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
@@ -23,6 +24,7 @@ public class OfyService {
         ObjectifyService.register(Party.class);
         ObjectifyService.register(PartyMember.class);
         ObjectifyService.register(UserMessage.class);
+        ObjectifyService.register(Dish.class);
     }
 
     public static ObjectifyFactory factory() {

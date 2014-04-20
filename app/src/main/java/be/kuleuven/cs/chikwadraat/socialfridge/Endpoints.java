@@ -11,6 +11,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Dishes;
 
 /**
  * Endpoints access.
@@ -35,6 +36,10 @@ public class Endpoints {
 
     public static Parties parties(Context context) {
         return endpoint(context).parties();
+    }
+
+    public static Dishes dishes(Context context) {
+        return endpoint(context).dishes();
     }
 
     private static Endpoint endpoint(Context context) {
