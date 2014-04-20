@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 
 /**
@@ -25,11 +25,11 @@ public class PartiesLoader extends BaseLoader<List<Party>> {
 
     @Override
     public List<Party> loadInBackground() {
-        Parties parties = Endpoints.parties(getContext());
+        Users users = Endpoints.users(getContext());
         Session session = Session.getActiveSession();
 
         try {
-            return Party.fromEndpoint(parties.getParties(session.getAccessToken()).execute().getList());
+            return Party.fromEndpoint(users.getParties(session.getAccessToken()).execute().getList());
         } catch (IOException e) {
             Log.e(TAG, "Error while loading parties: " + e.getMessage());
             trackException(e);

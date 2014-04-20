@@ -52,23 +52,6 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Retrieves all parties for a user, most recent party first.
-     *
-     * @param accessToken The access token for authorization.
-     * @return The parties of a user.
-     */
-    @ApiMethod(name = "parties.getParties", path = "parties", httpMethod = ApiMethod.HttpMethod.GET)
-    public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
-        String userID = getUserID(accessToken);
-        User user = getUser(userID);
-        // Use reverse date ordering (recent dates first)
-        Ordering<Party> dateOrdering = Party.dateComparator.reverse();
-        // Sort user parties
-        List<Party> parties = dateOrdering.immutableSortedCopy(user.getParties());
-        return new PartyCollection(parties);
-    }
-
-    /**
      * Insert a party.
      *
      * @param builder     A builder describing the party to be inserted.

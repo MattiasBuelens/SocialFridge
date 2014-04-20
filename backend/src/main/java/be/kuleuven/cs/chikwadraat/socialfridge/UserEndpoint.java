@@ -5,9 +5,15 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.NotFoundException;
+import com.google.common.collect.Ordering;
+import com.googlecode.objectify.Ref;
+
+import java.util.List;
 
 import javax.inject.Named;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
@@ -79,6 +85,45 @@ public class UserEndpoint extends BaseEndpoint {
                 User user = getUser(id);
                 ofy().delete().entity(user).now();
                 return user;
+            }
+        });
+    }
+
+    /**
+     * Retrieves all parties for a user, most recent party first.
+     *
+     * @param accessToken The access token for authorization.
+     * @return The parties of a user.
+     */
+    @ApiMethod(name = "users.getParties", path = "user/party", httpMethod = ApiMethod.HttpMethod.GET)
+    public PartyCollection getParties(@Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        User user = getUser(userID);
+        // Use reverse date ordering (recent dates first)
+        Ordering<Party> dateOrdering = Party.dateComparator.reverse();
+        // Sort user parties
+        List<Party> parties = dateOrdering.immutableSortedCopy(user.getParties());
+        return new PartyCollection(parties);
+    }
+
+    /**
+     * Removes a party from a user.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "users.removeParty", path = "user/party/{partyID}", httpMethod = ApiMethod.HttpMethod.DELETE)
+    public void removeParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        transact(new VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                User user = getUser(userID);
+                // Remove from user's parties
+                Ref<Party> partyRef = Party.getRef(partyID);
+                user.removeParty(partyRef);
+                // Save
+                ofy().save().entity(user).now();
             }
         });
     }

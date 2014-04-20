@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -112,6 +113,14 @@ public class Party {
      */
     public Long getID() {
         return id;
+    }
+
+    public static Key<Party> getKey(long partyID) {
+        return Key.create(Party.class, partyID);
+    }
+
+    public static Ref<Party> getRef(long partyID) {
+        return Ref.create(getKey(partyID));
     }
 
     /**
