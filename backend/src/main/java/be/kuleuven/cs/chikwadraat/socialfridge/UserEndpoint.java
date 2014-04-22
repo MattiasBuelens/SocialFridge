@@ -17,6 +17,9 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.VoidWork;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.Work;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 
 
 @Api(

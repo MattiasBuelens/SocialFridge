@@ -13,16 +13,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint;
+import be.kuleuven.cs.chikwadraat.socialfridge.DishDAO;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
-
-import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * Created by Mattias on 20/04/2014.
  */
 public class InsertDishServlet extends HttpServlet {
 
+    private DishDAO dao = new DishDAO();
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     @Override
@@ -48,7 +47,7 @@ public class InsertDishServlet extends HttpServlet {
                 return;
             }
             dish.setPictureKey(blobs.remove(0));
-            dish = new DishEndpoint().updateDish(dish);
+            dish = dao.updateDish(dish);
 
             long dishID = dish.getID();
             resp.sendRedirect("/admin/dishes?inserted=" + dishID);

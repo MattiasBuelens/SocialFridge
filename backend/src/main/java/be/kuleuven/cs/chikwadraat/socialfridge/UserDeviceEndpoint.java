@@ -11,6 +11,8 @@ import javax.inject.Named;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.VoidWork;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 
 
 @Api(

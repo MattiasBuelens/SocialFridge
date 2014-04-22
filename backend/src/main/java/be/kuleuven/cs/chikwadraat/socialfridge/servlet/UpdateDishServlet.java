@@ -13,16 +13,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.DishDAO;
 import be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
-
-import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * Created by Mattias on 20/04/2014.
  */
 public class UpdateDishServlet extends HttpServlet {
 
+    private DishDAO dao = new DishDAO();
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     @Override
@@ -53,7 +53,7 @@ public class UpdateDishServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         try {
-            if(action.equals("update")) {
+            if (action.equals("update")) {
                 // Update dish
                 Dish dish = new Dish(dishID);
                 dish.setName(dishName);
@@ -62,18 +62,18 @@ public class UpdateDishServlet extends HttpServlet {
                     BlobKey pictureKey = blobs.remove(0);
                     dish.setPictureKey(pictureKey);
                 }
-                new DishEndpoint().updateDish(dish);
+                dao.updateDish(dish);
                 resp.sendRedirect("/admin/dishes?updated=" + dishID);
-            } else if(action.equals("delete")) {
+            } else if (action.equals("delete")) {
                 // Delete dish
-                new DishEndpoint().removeDish(dishID);
+                dao.removeDish(dishID);
                 resp.sendRedirect("/admin/dishes?deleted=" + dishID);
             }
         } catch (ServiceException e) {
             throw new ServletException(e);
         } finally {
             // Remove any leftover uploads
-            if(blobs != null && !blobs.isEmpty()) {
+            if (blobs != null && !blobs.isEmpty()) {
                 blobstoreService.delete(blobs.toArray(new BlobKey[blobs.size()]));
             }
         }

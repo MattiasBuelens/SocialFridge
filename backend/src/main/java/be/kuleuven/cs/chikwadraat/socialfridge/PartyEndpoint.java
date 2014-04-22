@@ -26,6 +26,8 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.Work;
+import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 
 
 @Api(
