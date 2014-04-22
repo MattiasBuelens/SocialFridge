@@ -3,13 +3,14 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
 
 /**
  * Dish.
@@ -85,20 +86,20 @@ public class Dish {
      */
     public String getPictureURL() {
         ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(getPictureKey());
-        return ImagesServiceFactory.getImagesService().getServingUrl(options);
+        return ImagesService.get().getServingUrl(options);
     }
 
     public String getPictureURL(int imageSize) {
         ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(getPictureKey())
                 .imageSize(imageSize);
-        return ImagesServiceFactory.getImagesService().getServingUrl(options);
+        return ImagesService.get().getServingUrl(options);
     }
 
     public String getPictureURL(int imageSize, boolean crop) {
         ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(getPictureKey())
                 .imageSize(imageSize)
                 .crop(crop);
-        return ImagesServiceFactory.getImagesService().getServingUrl(options);
+        return ImagesService.get().getServingUrl(options);
     }
 
     /**
