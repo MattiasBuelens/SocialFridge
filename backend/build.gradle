@@ -5,14 +5,14 @@ apply plugin: 'appengine'
 def appId = "socialfridge"
 def appVersion = 2
 
-def appengineVersion = "1.9.2"
+def appengineVersion = "1.9.3"
 
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "com.google.appengine:gradle-appengine-plugin:1.9.1"
+        classpath "com.google.appengine:gradle-appengine-plugin:1.9.2"
     }
 }
 
