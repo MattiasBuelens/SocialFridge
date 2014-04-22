@@ -77,13 +77,7 @@ public class PartiesActivity extends ListActivity {
             ViewHolder vh;
             if (v == null) {
                 v = View.inflate(getContext(), R.layout.party_list_item, null);
-                vh = new ViewHolder();
-                vh.hostPictureView = (ProfilePictureView) v.findViewById(R.id.host_pic);
-                vh.partnersView = (TextView) v.findViewById(R.id.partners);
-                vh.roleView = (TextView) v.findViewById(R.id.party_role);
-                vh.statusView = (TextView) v.findViewById(R.id.party_status);
-                vh.dishImageView = (ImageView) v.findViewById(R.id.dish_pic);
-                vh.dishNameView = (TextView) v.findViewById(R.id.dish_name);
+                vh = new ViewHolder(v);
                 v.setTag(vh);
             } else {
                 vh = (ViewHolder) v.getTag();
@@ -117,13 +111,22 @@ public class PartiesActivity extends ListActivity {
         }
 
         private class ViewHolder {
-            ProfilePictureView hostPictureView;
-            TextView partnersView;
-            TextView roleView;
-            TextView statusView;
-            ImageView dishImageView;
-            TextView dishNameView;
+            final ProfilePictureView hostPictureView;
+            final TextView partnersView;
+            final TextView roleView;
+            final TextView statusView;
+            final ImageView dishImageView;
+            final TextView dishNameView;
             int position;
+
+            private ViewHolder(View v) {
+                hostPictureView = (ProfilePictureView) v.findViewById(R.id.host_pic);
+                partnersView = (TextView) v.findViewById(R.id.partners);
+                roleView = (TextView) v.findViewById(R.id.party_role);
+                statusView = (TextView) v.findViewById(R.id.party_status);
+                dishImageView = (ImageView) v.findViewById(R.id.dish_pic);
+                dishNameView = (TextView) v.findViewById(R.id.dish_name);
+            }
         }
 
     }

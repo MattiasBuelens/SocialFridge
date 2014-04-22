@@ -60,6 +60,13 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/start_action_list_parties" />
 
+            <Button
+                android:id="@+id/action_list_dishes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/start_action_list_dishes" />
+
             <!--<Button
                 android:id="@+id/action_manage_fridge"
                 android:layout_width="match_parent"

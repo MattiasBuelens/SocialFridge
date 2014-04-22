@@ -9,9 +9,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Dishes;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Dishes;
 
 /**
  * Endpoints access.
