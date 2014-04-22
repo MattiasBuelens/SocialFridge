@@ -25,7 +25,7 @@ public class PartiesLoader extends BaseLoader<List<Party>> {
 
     @Override
     public List<Party> loadInBackground() {
-        Users users = Endpoints.users(getContext());
+        Users users = Endpoints.users();
         Session session = Session.getActiveSession();
 
         try {

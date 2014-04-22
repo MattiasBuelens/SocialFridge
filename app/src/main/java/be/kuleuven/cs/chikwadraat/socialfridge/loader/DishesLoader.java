@@ -23,7 +23,7 @@ public class DishesLoader extends BaseLoader<List<Dish>> {
 
     @Override
     public List<Dish> loadInBackground() {
-        Dishes dishes = Endpoints.dishes(getContext());
+        Dishes dishes = Endpoints.dishes();
 
         try {
             return Dish.fromEndpoint(dishes.getDishes().execute().getItems());

@@ -32,7 +32,7 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
 
     @Override
     public List<PartyMember> loadInBackground() {
-        Parties parties = Endpoints.parties(getContext());
+        Parties parties = Endpoints.parties();
         Session session = Session.getActiveSession();
 
         try {

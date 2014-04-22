@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -198,17 +197,15 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     private static abstract class JoinDeclineTask extends ObservableAsyncTask<Void, Void, Party> {
 
-        protected final Context context;
         protected final long partyID;
 
         private JoinDeclineTask(InviteReplyActivity activity, long partyID) {
             super(activity);
-            this.context = activity.getApplicationContext();
             this.partyID = partyID;
         }
 
         protected Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }

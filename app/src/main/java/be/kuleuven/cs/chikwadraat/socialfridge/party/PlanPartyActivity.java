@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -159,13 +158,11 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     private static class PlanTask extends ObservableAsyncTask<Void, Void, Party> {
 
-        private final Context context;
         private final long partyID;
         private final TimeSlot timeSlot;
 
         private PlanTask(PlanPartyActivity activity, long partyID, TimeSlot timeSlot) {
             super(activity);
-            this.context = activity.getApplicationContext();
             this.partyID = partyID;
             this.timeSlot = timeSlot;
         }
@@ -176,7 +173,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         }
 
         private Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }

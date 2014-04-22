@@ -218,7 +218,7 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
         }
 
         private Users users() {
-            return Endpoints.users(context);
+            return Endpoints.users();
         }
 
     }

@@ -79,7 +79,7 @@ public class PartyLoaderService extends BaseIntentService {
         if (party != null)
             return party;
 
-        Endpoint.Parties parties = Endpoints.parties(this);
+        Endpoint.Parties parties = Endpoints.parties();
         Session session = Session.getActiveSession();
         if (session == null || !session.isOpened())
             return null;

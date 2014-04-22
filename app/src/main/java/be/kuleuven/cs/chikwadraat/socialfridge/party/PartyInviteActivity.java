@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -140,11 +139,9 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     private class InviteTask extends AsyncTask<Void, Void, Exception> {
 
-        private final Context context;
         private final PartyMember candidate;
 
         private InviteTask(PartyMember candidate) {
-            this.context = getApplicationContext();
             this.candidate = candidate;
         }
 
@@ -171,18 +168,16 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         }
 
         private Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }
 
     private class CancelInviteTask extends AsyncTask<Void, Void, Exception> {
 
-        private final Context context;
         private final PartyMember candidate;
 
         private CancelInviteTask(PartyMember candidate) {
-            this.context = getApplicationContext();
             this.candidate = candidate;
         }
 
@@ -209,19 +204,17 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         }
 
         private Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }
 
     private static class CloseInvitesTask extends ObservableAsyncTask<Void, Void, Party> {
 
-        private final Context context;
         private final long partyID;
 
         private CloseInvitesTask(PartyInviteActivity activity, long partyID) {
             super(activity);
-            this.context = activity.getApplicationContext();
             this.partyID = partyID;
         }
 
@@ -231,7 +224,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         }
 
         private Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }

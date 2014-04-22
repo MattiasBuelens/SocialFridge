@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -209,12 +208,10 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
     protected static class CreatePartyTask extends ObservableAsyncTask<Void, Void, Party> {
 
-        private final Context context;
         private final PartyBuilder builder;
 
         protected CreatePartyTask(CreatePartyActivity activity, PartyBuilder builder) {
             super(activity);
-            this.context = activity.getApplicationContext();
             this.builder = builder;
         }
 
@@ -228,7 +225,7 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         }
 
         private Parties parties() {
-            return Endpoints.parties(context);
+            return Endpoints.parties();
         }
 
     }
