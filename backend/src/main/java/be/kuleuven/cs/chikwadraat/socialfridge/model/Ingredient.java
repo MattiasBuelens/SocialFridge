@@ -40,7 +40,14 @@ public class Ingredient {
     /**
      * Ingredient unit of measurement
      */
+    @Index
     private UnitOfMeasurement unitOfMeasurement;
+
+    @Index
+    private Double amount;
+
+    @Index
+    private Double defaultAmount;
 
     /**
      * Blob key of ingredient picture.
@@ -100,6 +107,28 @@ public class Ingredient {
 
     public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
         this.unitOfMeasurement = unitOfMeasurement;
+    }
+
+    /**
+     * Ingredient amount
+     */
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * Ingredient default amount
+     */
+    public Double getDefaultAmount() {
+        return defaultAmount;
+    }
+
+    public void setDefaultAmount(double defaultAmount) {
+        this.defaultAmount = defaultAmount;
     }
 
     /**
