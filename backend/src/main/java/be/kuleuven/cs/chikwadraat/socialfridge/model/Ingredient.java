@@ -40,7 +40,7 @@ public class Ingredient {
     /**
      * Ingredient unit of measurement
      */
-    private UnitOfMeasurement.Unit unit;
+    private UnitOfMeasurement unitOfMeasurement;
 
     /**
      * Blob key of ingredient picture.
@@ -94,12 +94,12 @@ public class Ingredient {
     /**
      * Ingredient unit of measurement
      */
-    public UnitOfMeasurement.Unit getUnit() {
-        return unit;
+    public UnitOfMeasurement getUnitOfMeasurement() {
+        return unitOfMeasurement;
     }
 
-    public void setUnitOfMeasurement(UnitOfMeasurement.Unit unit) {
-        this.unit = unit;
+    public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
+        this.unitOfMeasurement = unitOfMeasurement;
     }
 
     /**
