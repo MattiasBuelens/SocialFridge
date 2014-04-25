@@ -9,10 +9,10 @@ import com.google.appengine.api.images.OutputSettings;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.images.Transform;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.concurrent.Future;
+
+import be.kuleuven.cs.chikwadraat.socialfridge.util.NetworkUtils;
 
 /**
  * Created by Mattias on 22/04/2014.
@@ -40,12 +40,8 @@ public class ImagesService implements com.google.appengine.api.images.ImagesServ
      */
     protected String fixServiceUrl(String url) {
         if (Application.isDevelopment()) {
-            try {
-                String hostAddress = InetAddress.getLocalHost().getHostAddress();
-                url = url.replace("://0.0.0.0", "://" + hostAddress);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
+            String hostAddress = NetworkUtils.getPublicAddress().getHostAddress();
+            url = url.replace("://0.0.0.0", "://" + hostAddress);
         }
         return url;
     }
