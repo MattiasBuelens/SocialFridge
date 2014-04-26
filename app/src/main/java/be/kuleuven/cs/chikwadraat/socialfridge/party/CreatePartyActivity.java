@@ -3,9 +3,8 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.facebook.Session;
@@ -31,12 +30,13 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Create party activity.
  */
-public class CreatePartyActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Party>, RadioGroup.OnCheckedChangeListener {
+public class CreatePartyActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Party>, RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 
     private static final String TAG = "CreatePartyActivity";
 
     private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
+    private Button findPartnersButton;
     private CreatePartyTask task;
 
     @Override
@@ -46,7 +46,9 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
+        findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
 
+        findPartnersButton.setOnClickListener(this);
         updateTimeSlotSelections();
 
         // Re-attach to registration task
@@ -65,20 +67,11 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.done, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_done:
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.party_action_find_partners:
                 createParty();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
     }
 

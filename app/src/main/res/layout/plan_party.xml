@@ -1,41 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PlanPartyActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PlanPartyActivity">
+        android:layout_above="@+id/party_action_plan_party"
+        android:layout_alignParentTop="true">
 
-        <fragment
-            android:id="@+id/partners_fragment"
-            android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_party_details" />
-
-        <fragment
-            android:id="@+id/plan_time_slot_fragment"
-            android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            tools:layout="@layout/fragment_pick_timeslot" />
+            android:orientation="vertical">
 
-        <!-- TODO Bring me back in a later release -->
-        <!--<CheckBox
-            android:id="@+id/plan_check_add_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/party_plan_add_to_calendar" />-->
+            <fragment
+                android:id="@+id/partners_fragment"
+                android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_party_details" />
 
-    </LinearLayout>
+            <fragment
+                android:id="@+id/plan_time_slot_fragment"
+                android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_pick_timeslot" />
 
-</ScrollView>
+            <!-- TODO Bring me back in a later release -->
+            <!--<CheckBox
+                android:id="@+id/plan_check_add_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/party_plan_add_to_calendar" />-->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/party_action_plan_party"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/party_action_plan_party"
+        android:textAllCaps="true" />
+
+</RelativeLayout>

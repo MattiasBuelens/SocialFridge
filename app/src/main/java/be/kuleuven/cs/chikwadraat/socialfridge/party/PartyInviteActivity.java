@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -25,12 +24,13 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Activity to invite friends to a party.
  */
-public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Party> {
+public class PartyInviteActivity extends BasePartyActivity implements CandidatesFragment.CandidateListener, ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
 
     private static final String TAG = "PartyInviteActivity";
 
     private DetailsFragment detailsFragment;
     private CandidatesFragment candidatesFragment;
+    private Button confirmPartnersButton;
 
     private CloseInvitesTask task;
 
@@ -41,8 +41,10 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
         detailsFragment = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.details_fragment);
         candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.candidates_fragment);
+        confirmPartnersButton = (Button) findViewById(R.id.party_action_confirm_partners);
 
         candidatesFragment.addHeaderView(detailsFragment.getView());
+        confirmPartnersButton.setOnClickListener(this);
 
         // Re-attach to close invites task
         task = (CloseInvitesTask) getLastCustomNonConfigurationInstance();
@@ -70,20 +72,11 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.done, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_done:
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.party_action_confirm_partners:
                 closeInvites();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
     }
 

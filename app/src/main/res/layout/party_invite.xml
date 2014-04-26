@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.PartyInviteActivity">
 
-    <fragment
-        android:id="@+id/details_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_party_details" />
+        android:layout_above="@+id/party_action_confirm_partners"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/candidates_fragment"
-        android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment"
+        <fragment
+            android:id="@+id/details_fragment"
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_party_details" />
+
+        <fragment
+            android:id="@+id/candidates_fragment"
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_party_candidates" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/party_action_confirm_partners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_party_candidates" />
+        android:layout_alignParentBottom="true"
+        android:text="@string/party_action_confirm_partners"
+        android:textAllCaps="true" />
 
-</LinearLayout>
+</RelativeLayout>

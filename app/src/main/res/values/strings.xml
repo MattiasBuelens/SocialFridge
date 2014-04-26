@@ -61,6 +61,7 @@
     <string name="party_partner_status_invited">Invited</string>
     <string name="party_partner_status_accepted">Accepted</string>
     <string name="party_partner_status_declined">Declined</string>
+    <string name="party_action_confirm_partners">Confirm partners</string>
     <string name="party_close_invites_progress">Closing invites&#8230;</string>
 
     <!-- Reply to invite -->
@@ -75,6 +76,7 @@
     <string name="party_plan_pick_time_slot">Choose time slot</string>
     <string name="party_plan_bring">Bring</string>
     <string name="party_plan_add_to_calendar">Add to calendar</string>
+    <string name="party_action_plan_party">Plan party</string>
     <string name="party_plan_progress">Planning party&#8230;</string>
 
     <!-- View party -->

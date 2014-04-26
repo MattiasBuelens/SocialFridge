@@ -3,9 +3,8 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -26,11 +25,12 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 /**
  * Activity to plan a party.
  */
-public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Party> {
+public class PlanPartyActivity extends BasePartyActivity implements ObservableAsyncTask.Listener<Void, Party>, View.OnClickListener {
 
     private static final String TAG = "PlanPartyActivity";
 
     private TimeSlotPickerFragment timeSlotPicker;
+    private Button planPartyButton;
 
     private PlanTask task;
 
@@ -40,6 +40,9 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         setContentView(R.layout.plan_party);
 
         timeSlotPicker = (TimeSlotPickerFragment) getSupportFragmentManager().findFragmentById(R.id.plan_time_slot_fragment);
+        planPartyButton = (Button) findViewById(R.id.party_action_plan_party);
+
+        planPartyButton.setOnClickListener(this);
 
         // Re-attach to plan task
         task = (PlanTask) getLastCustomNonConfigurationInstance();
@@ -79,20 +82,11 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.done, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_done:
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.party_action_plan_party:
                 planParty();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
     }
 
