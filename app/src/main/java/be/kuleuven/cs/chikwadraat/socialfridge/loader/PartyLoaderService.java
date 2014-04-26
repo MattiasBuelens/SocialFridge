@@ -6,10 +6,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.facebook.Session;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseIntentService;
@@ -33,10 +33,20 @@ public class PartyLoaderService extends BaseIntentService {
     /*
      * Static cache.
      */
-    private static final Cache<Long, Party> cache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Long, Party> cache = CacheBuilder.newBuilder()
             .expireAfterWrite(5000, TimeUnit.SECONDS)
             .maximumSize(20)
-            .build();
+            .build(new CacheLoader<Long, Party>() {
+                @Override
+                public Party load(Long partyID) throws Exception {
+                    Endpoint.Parties parties = Endpoints.parties();
+                    Session session = Session.getActiveSession();
+                    if (session == null || !session.isOpened())
+                        return null;
+
+                    return new Party(parties.getParty(partyID, session.getAccessToken()).execute());
+                }
+            });
 
     public PartyLoaderService() {
         super("PartyLoaderService");
@@ -74,23 +84,15 @@ public class PartyLoaderService extends BaseIntentService {
         }
     }
 
-    private Party loadParty(long partyID) {
-        Party party = cache.getIfPresent(partyID);
-        if (party != null)
-            return party;
-
-        Endpoint.Parties parties = Endpoints.parties();
-        Session session = Session.getActiveSession();
-        if (session == null || !session.isOpened())
-            return null;
-
+    private Party loadParty(final long partyID) {
         try {
-            party = new Party(parties.getParty(partyID, session.getAccessToken()).execute());
-            cacheParty(party);
-            return party;
-        } catch (IOException e) {
-            Log.e(TAG, "Error while loading party: " + e.getMessage());
-            trackException(e);
+            return cache.get(partyID);
+        } catch (Throwable e) {
+            Throwable cause = e.getCause();
+            Log.e(TAG, "Error while loading party: " + cause.getMessage());
+            if (cause instanceof Exception) {
+                trackException((Exception) cause);
+            }
             return null;
         }
     }
