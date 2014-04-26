@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/party_action_remove"
+        android:icon="@drawable/ic_action_discard"
+        android:title="@string/party_action_delete"
+        custom:showAsAction="always|withText" />
+
+</menu>

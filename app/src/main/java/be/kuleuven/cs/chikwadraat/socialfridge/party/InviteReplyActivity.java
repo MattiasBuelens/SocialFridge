@@ -109,6 +109,11 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         }
     }
 
+    @Override
+    protected boolean allowRemoveParty() {
+        return false;
+    }
+
     private List<TimeSlot> getTimeSlots() {
         List<TimeSlot> result = new ArrayList<TimeSlot>();
         for (TimeSlotSelection selection : timeSlotsFragment.getTimeSlots()) {

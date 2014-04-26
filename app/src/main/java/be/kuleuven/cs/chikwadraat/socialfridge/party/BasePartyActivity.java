@@ -7,12 +7,17 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.facebook.Session;
 
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoaderService;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
@@ -22,13 +27,13 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
  */
 public abstract class BasePartyActivity extends BaseActivity implements PartyListener {
 
-    private static final String TAG = "BasePartyActivity";
-
     /**
      * Intent extra for the party ID.
      */
     public static final String EXTRA_PARTY_ID = "party_id";
+    private static final String TAG = "BasePartyActivity";
 
+    private Party party;
     private long partyID;
 
     private BroadcastReceiver partyUpdateReceiver = new BroadcastReceiver() {
@@ -57,6 +62,10 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     protected long getPartyID() {
         return partyID;
+    }
+
+    protected Party getParty() {
+        return party;
     }
 
     @Override
@@ -196,11 +205,99 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     @Override
     public void onPartyLoaded(Party party, User user) {
+        this.party = party;
+
         redirectIfNeeded(party, user);
+        supportInvalidateOptionsMenu();
     }
 
     @Override
     public void onPartyUnloaded() {
+        this.party = null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (allowRemoveParty()) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.party_remove, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (allowRemoveParty()) {
+            MenuItem removeItem = menu.findItem(R.id.party_action_remove);
+            boolean removeEnabled = false;
+
+            Party party = getParty();
+            User user = getLoggedInUser();
+            if (canRemoveParty(party, user)) {
+                // Set text
+                if (canDisbandParty(party, user)) {
+                    removeItem.setTitle(getString(R.string.party_action_disband));
+                    removeEnabled = true;
+                } else if (canDeleteParty(party, user)) {
+                    removeItem.setTitle(getString(R.string.party_action_delete));
+                    removeEnabled = true;
+                }
+            }
+
+            // Enable and show
+            removeItem.setVisible(removeEnabled);
+            removeItem.setEnabled(removeEnabled);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.party_action_remove:
+                removeParty();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    protected boolean allowRemoveParty() {
+        return true;
+    }
+
+    protected boolean canRemoveParty(Party party, User user) {
+        return party != null && user != null && allowRemoveParty();
+    }
+
+    protected boolean canDisbandParty(Party party, User user) {
+        return !canDeleteParty(party, user) && party.isHost(user);
+    }
+
+    protected boolean canDeleteParty(Party party, User user) {
+        return party.isCompleted() || party.isDisbanded();
+    }
+
+    protected void removeParty() {
+        Party party = getParty();
+        User user = getLoggedInUser();
+        if (!canRemoveParty(party, user)) return;
+
+        if (canDisbandParty(party, user)) {
+            disbandParty(party, user);
+        } else if (canDeleteParty(party, user)) {
+            deleteParty(party, user);
+        } else {
+            Log.i(TAG, "Illegal attempt to delete party");
+        }
+    }
+
+    protected void disbandParty(Party party, User user) {
+        // TODO
+    }
+
+    protected void deleteParty(Party party, User user) {
+        // TODO
     }
 
 }

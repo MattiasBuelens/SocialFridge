@@ -32,6 +32,8 @@
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
     <string name="party_time_slot_format">%1$s to %2$s</string>
+    <string name="party_action_disband">Disband</string>
+    <string name="party_action_delete">Delete</string>
 
     <!-- Party member role -->
     <string name="party_role_host">Host</string>
