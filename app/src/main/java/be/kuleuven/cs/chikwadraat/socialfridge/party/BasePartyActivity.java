@@ -1,9 +1,12 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,10 +16,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
+import com.google.common.base.Joiner;
 
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyLoaderService;
@@ -35,6 +42,8 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
 
     private Party party;
     private long partyID;
+
+    private RemovePartyTask removeTask;
 
     private BroadcastReceiver partyUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -284,20 +293,132 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         if (!canRemoveParty(party, user)) return;
 
         if (canDisbandParty(party, user)) {
-            disbandParty(party, user);
+            disbandParty(party);
         } else if (canDeleteParty(party, user)) {
-            deleteParty(party, user);
+            deleteParty(party);
         } else {
             Log.i(TAG, "Illegal attempt to delete party");
         }
     }
 
-    protected void disbandParty(Party party, User user) {
-        // TODO
+    protected void disbandParty(final Party party) {
+        int nbPartners = party.getPartners().size() - 1;
+        String invites = (party.isInviting())
+                ? getString(R.string.party_dialog_confirm_disband_invites)
+                : null;
+        String notify = (nbPartners > 0)
+                ? getResources().getQuantityString(R.plurals.party_dialog_confirm_disband_notify, nbPartners, nbPartners)
+                : null;
+        String message = Joiner.on('\n').skipNulls().join(invites, notify);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.party_dialog_confirm_disband_title)
+                .setMessage(Strings.emptyToNull(message))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doDisbandParty(party);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
-    protected void deleteParty(Party party, User user) {
-        // TODO
+    protected void deleteParty(final Party party) {
+        doDeleteParty(party);
+    }
+
+    protected void doDisbandParty(Party party) {
+        new RemovePartyTask(RemoveType.DISBAND, party.getID()).execute();
+    }
+
+    protected void doDeleteParty(Party party) {
+        new RemovePartyTask(RemoveType.DELETE, party.getID()).execute();
+    }
+
+    private void onPartyDisbanded(Party party) {
+        // Party disbanded
+        Log.d(TAG, "Party successfully disbanded");
+        hideProgressDialog();
+
+        // Cache updated party
+        cacheParty(party);
+
+        // Done
+        getTracker().send(new HitBuilders.EventBuilder("Party", "Disband").build());
+        finish();
+    }
+
+    private void onPartyDeleted(long partyID) {
+        // Party deleted
+        Log.d(TAG, "Party successfully deleted");
+        hideProgressDialog();
+
+        // Done
+        getTracker().send(new HitBuilders.EventBuilder("User", "DeleteParty").build());
+        finish();
+    }
+
+    private void onPartyRemoveError(Exception exception) {
+        Log.e(TAG, "Failed to remove party: " + exception.getMessage());
+        hideProgressDialog();
+        trackException(exception);
+
+        // Handle regular exception
+        handleException(exception);
+    }
+
+    private class RemovePartyTask extends AsyncTask<Void, Void, Party> {
+
+        private final RemoveType type;
+        private final long partyID;
+
+        private Exception exception;
+
+        private RemovePartyTask(RemoveType type, long partyID) {
+            this.type = type;
+            this.partyID = partyID;
+        }
+
+        @Override
+        protected Party doInBackground(Void... params) {
+            try {
+                String accessToken = Session.getActiveSession().getAccessToken();
+                switch (type) {
+                    case DISBAND:
+                        return new Party(Endpoints.parties().disband(partyID, accessToken).execute());
+                    case DELETE:
+                        Endpoints.users().removeParty(partyID, accessToken).execute();
+                        return null;
+                    default:
+                        throw new IllegalArgumentException("Unknown remove type: " + type);
+                }
+            } catch (Exception e) {
+                exception = e;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Party party) {
+            if (exception != null) {
+                onPartyRemoveError(exception);
+            } else {
+                switch (type) {
+                    case DISBAND:
+                        onPartyDisbanded(party);
+                        break;
+                    case DELETE:
+                        onPartyDeleted(partyID);
+                        break;
+                }
+            }
+        }
+
+    }
+
+    private enum RemoveType {
+        DISBAND, DELETE
     }
 
 }

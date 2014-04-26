@@ -35,6 +35,14 @@
     <string name="party_action_disband">Disband</string>
     <string name="party_action_delete">Delete</string>
 
+    <!-- Party dialogs -->
+    <string name="party_dialog_confirm_disband_title">Disband this party?</string>
+    <string name="party_dialog_confirm_disband_invites">All pending invites will be canceled.</string>
+    <plurals name="party_dialog_confirm_disband_notify">
+        <item quantity="one">One partner will be notified of the cancellation.</item>
+        <item quantity="other">%d partners will be notified of the cancellation.</item>
+    </plurals>
+
     <!-- Party member role -->
     <string name="party_role_host">Host</string>
     <string name="party_role_partner">Partner</string>
