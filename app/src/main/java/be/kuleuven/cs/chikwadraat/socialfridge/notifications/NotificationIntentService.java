@@ -124,11 +124,15 @@ public class NotificationIntentService extends BaseIntentService {
             contentTitle = getString(R.string.notif_party_joined_title);
             contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
         } else if (reason.equals(PartyUpdateReason.DONE)) {
-            // TODO Host shouldn't be notified, need to check this
             String hostName = message.getHostUserName();
             iconUserID = message.getHostUserID();
             contentTitle = getString(R.string.notif_party_done_title);
             contentText = getString(R.string.notif_party_done_content, hostName, "dinner");
+        } else if (reason.equals(PartyUpdateReason.DISBANDED)) {
+            String hostName = message.getHostUserName();
+            iconUserID = message.getHostUserID();
+            contentTitle = getString(R.string.notif_party_disbanded_title);
+            contentText = getString(R.string.notif_party_disbanded_content, hostName, "dinner");
         } else {
             // Unknown reason
             return;

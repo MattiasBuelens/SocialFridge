@@ -153,6 +153,14 @@ public class Party {
         return getMember(getHostID());
     }
 
+    public boolean isHost(String userID) {
+        return getHostID().equals(userID);
+    }
+
+    public boolean isHost(User user) {
+        return isHost(user.getID());
+    }
+
     /**
      * Party status.
      */
@@ -330,7 +338,16 @@ public class Party {
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<User> getVisibleUsers() {
-        return ofy().load().refs(getVisibleUserKeys()).values();
+        return getVisibleUsers(true);
+    }
+
+    public Collection<User> getVisibleUsers(boolean includeHost) {
+        Collection<Ref<User>> keys = getVisibleUserKeys();
+        if (!includeHost) {
+            keys = new HashSet<Ref<User>>(keys);
+            keys.remove(User.getRef(getHostID()));
+        }
+        return ofy().load().refs(keys).values();
     }
 
     protected void updateVisible(PartyMember member) {

@@ -110,7 +110,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // User must be host
-                if (!userID.equals(party.getHostID())) {
+                if (!party.isHost(userID)) {
                     throw new UnauthorizedException("User must be party host to invite friends");
                 }
                 // Add to invitees
@@ -149,7 +149,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 Party party = getParty(partyID, true);
                 // User must be host
-                if (!userID.equals(party.getHostID())) {
+                if (!party.isHost(userID)) {
                     throw new UnauthorizedException("User must be party host to manage invites");
                 }
                 // Cancel invite
@@ -268,7 +268,7 @@ public class PartyEndpoint extends BaseEndpoint {
         String userID = getUserID(accessToken);
         Party party = getParty(partyID, true);
         // User must be host
-        if (!userID.equals(party.getHostID())) {
+        if (!party.isHost(userID)) {
             throw new UnauthorizedException("User must be party host to invite friends");
         }
         // Retrieve current members
@@ -303,7 +303,7 @@ public class PartyEndpoint extends BaseEndpoint {
             public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // User must be host
-                if (!userID.equals(party.getHostID())) {
+                if (!party.isHost(userID)) {
                     throw new UnauthorizedException("User must be party host to close invites");
                 }
                 // Party must be inviting
@@ -337,7 +337,7 @@ public class PartyEndpoint extends BaseEndpoint {
             public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
                 // User must be host
-                if (!userID.equals(party.getHostID())) {
+                if (!party.isHost(userID)) {
                     throw new UnauthorizedException("User must be party host to plan");
                 }
                 // Party must be planning
@@ -355,10 +355,10 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-        // Send update to party members
+        // Send update to party members except host
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
-                .recipients(party.getVisibleUsers())
+                .recipients(party.getVisibleUsers(false))
                 .build());
         return party;
     }
@@ -377,8 +377,9 @@ public class PartyEndpoint extends BaseEndpoint {
             @Override
             public Party run() throws ServiceException {
                 Party party = getParty(partyID, true);
+                User user = getUser(userID);
                 // User must be host
-                if (!userID.equals(party.getHostID())) {
+                if (!party.isHost(user)) {
                     throw new UnauthorizedException("User must be party host to disband");
                 }
                 // Party must not be completed
@@ -387,17 +388,19 @@ public class PartyEndpoint extends BaseEndpoint {
                 }
                 // Set disbanded
                 party.setDisbanded();
+                // Remove from parties
+                user.removeParty(party);
                 // Save
-                ofy().save().entities(party).now();
+                ofy().save().entities(party, user).now();
                 return party;
             }
         });
         // Cancel open invites
         party = cancelInvites(party);
-        // Send update to party members
+        // Send update to party members except host
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
-                .reason(PartyUpdateReason.DONE) // TODO Add update reason for disbanding
-                .recipients(party.getVisibleUsers())
+                .reason(PartyUpdateReason.DISBANDED)
+                .recipients(party.getVisibleUsers(false))
                 .build());
         return party;
     }
