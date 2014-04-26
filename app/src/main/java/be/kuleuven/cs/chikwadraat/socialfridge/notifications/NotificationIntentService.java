@@ -118,24 +118,32 @@ public class NotificationIntentService extends BaseIntentService {
         String contentTitle;
         String contentText;
 
-        if (reason.equals(PartyUpdateReason.JOINED)) {
-            String partnerName = message.getUpdateReasonUserName();
-            iconUserID = message.getUpdateReasonUserID();
-            contentTitle = getString(R.string.notif_party_joined_title);
-            contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
-        } else if (reason.equals(PartyUpdateReason.DONE)) {
-            String hostName = message.getHostUserName();
-            iconUserID = message.getHostUserID();
-            contentTitle = getString(R.string.notif_party_done_title);
-            contentText = getString(R.string.notif_party_done_content, hostName, "dinner");
-        } else if (reason.equals(PartyUpdateReason.DISBANDED)) {
-            String hostName = message.getHostUserName();
-            iconUserID = message.getHostUserID();
-            contentTitle = getString(R.string.notif_party_disbanded_title);
-            contentText = getString(R.string.notif_party_disbanded_content, hostName, "dinner");
-        } else {
-            // Unknown reason
-            return;
+        switch (reason) {
+            case JOINED: {
+                String partnerName = message.getUpdateReasonUserName();
+                iconUserID = message.getUpdateReasonUserID();
+                contentTitle = getString(R.string.notif_party_joined_title);
+                contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
+                break;
+            }
+            case DONE: {
+                String hostName = message.getHostUserName();
+                iconUserID = message.getHostUserID();
+                contentTitle = getString(R.string.notif_party_done_title);
+                contentText = getString(R.string.notif_party_done_content, hostName, "dinner");
+                break;
+            }
+            case DISBANDED: {
+                String hostName = message.getHostUserName();
+                iconUserID = message.getHostUserID();
+                contentTitle = getString(R.string.notif_party_disbanded_title);
+                contentText = getString(R.string.notif_party_disbanded_content, hostName, "dinner");
+                break;
+            }
+            default: {
+                // Unknown reason
+                return;
+            }
         }
 
         // Constructs the Builder object.
