@@ -75,15 +75,15 @@ public class Party {
     /**
      * Members.
      */
-    @Load(Everything.class)
+    @Load
     private Set<Ref<PartyMember>> members = new HashSet<Ref<PartyMember>>();
 
     /**
-     * Visible users.
+     * Update recipients.
      */
-    @Load
+    @Load(Everything.class)
     @Index
-    private Set<Ref<User>> visibleUsers = new HashSet<Ref<User>>();
+    private Set<Ref<User>> updateRecipients = new HashSet<Ref<User>>();
 
     /**
      * Merged time slots from partners.
@@ -127,12 +127,16 @@ public class Party {
      * Host.
      */
     public String getHostID() {
-        return host.getKey().getName();
+        return getHostRef().getKey().getName();
+    }
+
+    protected Ref<User> getHostRef() {
+        return host;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public User getHost() {
-        return host.get();
+        return getHostRef().get();
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -141,11 +145,10 @@ public class Party {
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
         member.setTimeSlots(timeSlots);
-        // Update members and partners
+        // Update
         updateMember(member);
         updatePartner(member);
-        // Add to party
-        host.addParty(this);
+        addRecipient(host);
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -182,27 +185,14 @@ public class Party {
         return getStatus() == Status.PLANNING;
     }
 
-    public void setPlanning() {
-        setStatus(Status.PLANNING);
-    }
-
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isPlanned() {
         return getStatus() == Status.PLANNED;
     }
 
-    public void setPlanned(TimeSlot chosenTimeSlot) {
-        setStatus(Status.PLANNED);
-        setDate(chosenTimeSlot.getBeginDate());
-    }
-
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public boolean isDisbanded() {
         return getStatus() == Status.DISBANDED;
-    }
-
-    public void setDisbanded() {
-        setStatus(Status.DISBANDED);
     }
 
     /**
@@ -286,8 +276,6 @@ public class Party {
         }
         // Save member
         ofy().save().entity(member).now();
-        // Update
-        updateVisible(member);
         return member;
     }
 
@@ -329,20 +317,20 @@ public class Party {
     }
 
     /**
-     * Visible users.
+     * Update recipients.
      */
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<Ref<User>> getVisibleUserKeys() {
-        return visibleUsers;
+    public Collection<Ref<User>> getUpdateRecipientKeys() {
+        return updateRecipients;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Collection<User> getVisibleUsers() {
-        return getVisibleUsers(true);
+    public Collection<User> getUpdateRecipients() {
+        return getUpdateRecipients(true);
     }
 
-    public Collection<User> getVisibleUsers(boolean includeHost) {
-        Collection<Ref<User>> keys = getVisibleUserKeys();
+    public Collection<User> getUpdateRecipients(boolean includeHost) {
+        Collection<Ref<User>> keys = getUpdateRecipientKeys();
         if (!includeHost) {
             keys = new HashSet<Ref<User>>(keys);
             keys.remove(User.getRef(getHostID()));
@@ -350,13 +338,14 @@ public class Party {
         return ofy().load().refs(keys).values();
     }
 
-    protected void updateVisible(PartyMember member) {
-        Ref<User> userRef = member.getUserRef();
-        if (member.isVisible()) {
-            visibleUsers.add(userRef);
-        } else {
-            visibleUsers.remove(userRef);
-        }
+    public void addRecipient(User user) {
+        updateRecipients.add(Ref.create(user));
+        user.addParty(this);
+    }
+
+    public void removeRecipient(User user) {
+        updateRecipients.remove(Ref.create(user));
+        user.removeParty(this);
     }
 
     /**
@@ -407,10 +396,11 @@ public class Party {
      *
      * @param invitee The user to invite.
      * @throws IllegalArgumentException If the user cannot be invited because he declined an earlier invite.
+     * @throws IllegalStateException    If the party is no longer inviting.
      */
-    public void invite(User invitee) throws IllegalArgumentException {
+    public void invite(User invitee) throws IllegalArgumentException, IllegalStateException {
         if (!isInviting()) {
-            throw new IllegalArgumentException("Cannot invite user, no longer inviting.");
+            throw new IllegalStateException("Cannot invite user, no longer inviting.");
         }
         Ref<PartyMember> ref = getMember(invitee.getID());
         PartyMember member;
@@ -427,10 +417,9 @@ public class Party {
         } else {
             // Add invitee
             member = new PartyMember(this, invitee, PartyMember.Status.INVITED);
-            updateMember(member);
         }
-        // Add to party
-        invitee.addParty(this);
+        updateMember(member);
+        addRecipient(invitee);
     }
 
     /**
@@ -440,7 +429,7 @@ public class Party {
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
     public void cancelInvite(User invitee) throws IllegalArgumentException {
-        Ref<PartyMember> ref = getMember(invitee.getID());
+        Ref<PartyMember> ref = getMember(invitee);
         if (ref == null) {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited.");
         }
@@ -449,8 +438,7 @@ public class Party {
             throw new IllegalArgumentException("Cannot cancel user's invite, was not invited or is already in the party.");
         }
         updateMember(member);
-        // Remove from party
-        invitee.removeParty(this);
+        removeRecipient(invitee);
     }
 
     /**
@@ -459,12 +447,13 @@ public class Party {
      * @param invitee   The user of whom to accept the invite.
      * @param timeSlots The time slots chosen by the user.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
+     * @throws IllegalStateException    If the party is no longer inviting.
      */
-    public void acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException {
+    public void acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException, IllegalStateException {
         if (!isInviting()) {
-            throw new IllegalArgumentException("Cannot accept invite, no longer inviting.");
+            throw new IllegalStateException("Cannot accept invite, no longer inviting.");
         }
-        Ref<PartyMember> ref = getMember(invitee.getID());
+        Ref<PartyMember> ref = getMember(invitee);
         if (ref == null) {
             throw new IllegalArgumentException("Cannot accept invite, was not invited.");
         }
@@ -476,8 +465,6 @@ public class Party {
         member.setTimeSlots(timeSlots);
         updateMember(member);
         updatePartner(member);
-        // Add to party (should already be added though)
-        invitee.addParty(this);
     }
 
     /**
@@ -487,7 +474,7 @@ public class Party {
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      */
     public void declineInvite(User invitee) throws IllegalArgumentException {
-        Ref<PartyMember> ref = getMember(invitee.getID());
+        Ref<PartyMember> ref = getMember(invitee);
         if (ref == null) {
             throw new IllegalArgumentException("Cannot decline invite, was not invited.");
         }
@@ -500,21 +487,21 @@ public class Party {
          * We should never allow a user to be re-invited after he declined.
          */
         updateMember(member);
-        // Remove from party
-        invitee.removeParty(this);
+        removeRecipient(invitee);
     }
 
     /**
      * Make a user leave the party.
      *
-     * @param invitee The user to leave.
+     * @param user The user to leave.
      * @throws IllegalArgumentException If the user is the host or was not in the party.
+     * @throws IllegalStateException    If the party is no longer inviting.
      */
-    public void leave(User invitee) throws IllegalArgumentException {
+    public void leave(User user) throws IllegalArgumentException, IllegalStateException {
         if (!isInviting()) {
-            throw new IllegalArgumentException("Cannot leave, no longer inviting.");
+            throw new IllegalStateException("Cannot leave, no longer inviting.");
         }
-        Ref<PartyMember> ref = getMember(invitee.getID());
+        Ref<PartyMember> ref = getMember(user);
         if (ref == null) {
             throw new IllegalArgumentException("Cannot leave, was not in the party.");
         }
@@ -524,8 +511,53 @@ public class Party {
         }
         updateMember(member);
         updatePartner(member);
-        // Remove from party
-        invitee.removeParty(this);
+        removeRecipient(user);
+    }
+
+    /**
+     * Close the invites.
+     *
+     * @throws IllegalStateException If the party is no longer inviting.
+     */
+    public void closeInvites() throws IllegalStateException {
+        // Party must be inviting
+        if (!isInviting()) {
+            throw new IllegalStateException("Cannot close invites, no longer inviting.");
+        }
+        setStatus(Status.PLANNING);
+    }
+
+    /**
+     * Plan the party.
+     *
+     * @param timeSlot The chosen time slot.
+     * @throws IllegalArgumentException If not all partners are available on the given time slot.
+     * @throws IllegalStateException    If the party is no longer planning.
+     */
+    public void plan(TimeSlot timeSlot) throws IllegalArgumentException, IllegalStateException {
+        // Party must be planning
+        if (!isPlanning()) {
+            throw new IllegalStateException("Cannot plan, no longer planning.");
+        }
+        // Time slot must be available
+        if (!isAvailable(timeSlot.getBeginDate(), timeSlot.getEndDate())) {
+            throw new IllegalArgumentException("Not all partners are available on the given time slot.");
+        }
+        setStatus(Status.PLANNED);
+        setDate(timeSlot.getBeginDate());
+    }
+
+    /**
+     * Disband the party.
+     *
+     * @throws IllegalStateException If the party is already completed.
+     */
+    public void disband() throws IllegalStateException {
+        // Party must not be completed
+        if (isCompleted()) {
+            throw new IllegalStateException("Cannot disband, already completed.");
+        }
+        setStatus(Status.DISBANDED);
     }
 
     public static enum Status {
@@ -548,12 +580,7 @@ public class Party {
         /**
          * Party disbanded.
          */
-        DISBANDED;
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
+        DISBANDED
 
     }
 

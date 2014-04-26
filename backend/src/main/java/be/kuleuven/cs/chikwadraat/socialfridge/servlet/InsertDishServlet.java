@@ -51,8 +51,6 @@ public class InsertDishServlet extends HttpServlet {
 
             long dishID = dish.getID();
             resp.sendRedirect("/admin/dishes?inserted=" + dishID);
-        } catch (ServiceException e) {
-            throw new ServletException(e);
         } finally {
             // Remove any leftover uploads
             if (blobs != null && !blobs.isEmpty()) {

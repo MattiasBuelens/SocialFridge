@@ -1,18 +1,16 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
-import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.response.CollectionResponse;
-import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.Work;
 
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
-import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.Work;
-import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 
 
 public class DishDAO {
@@ -20,25 +18,11 @@ public class DishDAO {
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     /**
-     * Retrieves a dish by dish ID.
-     *
-     * @param id The dish ID.
-     * @return The retrieved dish.
-     */
-    public Dish getDish(long id) throws ServiceException {
-        Dish dish = getDishUnsafe(id);
-        if (dish == null) {
-            throw new NotFoundException("Dish not found.");
-        }
-        return dish;
-    }
-
-    /**
      * Retrieves all dishes.
      *
      * @return The retrieved dishes.
      */
-    public CollectionResponse<Dish> getDishes() throws ServiceException {
+    public CollectionResponse<Dish> getDishes() {
         List<Dish> dishes = ofy().load().type(Dish.class).order("name").list();
         return CollectionResponse.<Dish>builder().setItems(dishes).build();
     }
@@ -49,13 +33,13 @@ public class DishDAO {
      * @param dish The dish to be updated.
      * @return The updated dish.
      */
-    public Dish updateDish(final Dish dish) throws ServiceException {
-        return transact(new Work<Dish, ServiceException>() {
+    public Dish updateDish(final Dish dish) {
+        return ofy().transact(new Work<Dish>() {
             @Override
-            public Dish run() throws ServiceException {
+            public Dish run() {
                 Dish storedDish = null;
                 if (dish.getID() != null) {
-                    storedDish = getDishUnsafe(dish.getID());
+                    storedDish = Dish.getRef(dish.getID()).get();
                 }
                 if (storedDish != null) {
                     // Copy optional properties from stored dish
@@ -76,22 +60,20 @@ public class DishDAO {
     /**
      * Removes a dish.
      *
-     * @param id The dish ID to be deleted.
+     * @param dishRef The dish to be deleted.
      * @return The deleted user.
      */
-    public Dish removeDish(final long id) throws ServiceException {
-        return transact(new Work<Dish, ServiceException>() {
+    public Dish removeDish(final Ref<Dish> dishRef) {
+        return ofy().transact(new Work<Dish>() {
             @Override
-            public Dish run() throws ServiceException {
-                Dish dish = getDish(id);
-                ofy().delete().entity(dish).now();
+            public Dish run() {
+                Dish dish = dishRef.get();
+                if (dish != null) {
+                    ofy().delete().entity(dish).now();
+                }
                 return dish;
             }
         });
-    }
-
-    public Dish getDishUnsafe(long id) {
-        return ofy().load().type(Dish.class).id(id).now();
     }
 
 }

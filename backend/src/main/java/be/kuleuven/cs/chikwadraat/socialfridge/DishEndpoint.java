@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
+import com.google.api.server.spi.response.NotFoundException;
 
 import javax.inject.Named;
 
@@ -28,7 +29,11 @@ public class DishEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "dishes.getDish", path = "dish/{id}")
     public Dish getDish(@Named("id") long id) throws ServiceException {
-        return dao.getDish(id);
+        Dish dish = Dish.getRef(id).get();
+        if (dish == null) {
+            throw new NotFoundException("Dish not found.");
+        }
+        return dish;
     }
 
     /**

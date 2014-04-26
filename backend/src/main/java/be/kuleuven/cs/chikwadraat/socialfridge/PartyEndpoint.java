@@ -4,10 +4,12 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,9 +68,6 @@ public class PartyEndpoint extends BaseEndpoint {
             @Override
             public Party run() throws ServiceException {
                 User user = getUser(userID);
-                if (user == null) {
-                    throw new NotFoundException("User not found.");
-                }
                 // Create party
                 final Party party = new Party();
                 party.setDateCreated(new Date());
@@ -104,7 +103,7 @@ public class PartyEndpoint extends BaseEndpoint {
             @Override
             public Party run() throws ServiceException {
                 // Check if friend exists
-                final User friend = getUser(friendID);
+                final User friend = getUserUnsafe(friendID);
                 if (friend == null) {
                     throw new NotFoundException("Friend not found");
                 }
@@ -114,7 +113,11 @@ public class PartyEndpoint extends BaseEndpoint {
                     throw new UnauthorizedException("User must be party host to invite friends");
                 }
                 // Add to invitees
-                party.invite(friend);
+                try {
+                    party.invite(friend);
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
                 ofy().save().entities(party, friend).now();
                 return party;
@@ -153,7 +156,11 @@ public class PartyEndpoint extends BaseEndpoint {
                     throw new UnauthorizedException("User must be party host to manage invites");
                 }
                 // Cancel invite
-                party.cancelInvite(friend);
+                try {
+                    party.cancelInvite(friend);
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
                 ofy().save().entities(party, friend).now();
                 // Send cancel invite
@@ -186,7 +193,11 @@ public class PartyEndpoint extends BaseEndpoint {
                 User user = getUser(userID);
                 Party party = getParty(partyID, true);
                 // Accept invite
-                party.acceptInvite(user, timeSlots.getList());
+                try {
+                    party.acceptInvite(user, timeSlots.getList());
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
                 ofy().save().entities(party, user).now();
                 return party;
@@ -197,7 +208,7 @@ public class PartyEndpoint extends BaseEndpoint {
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
-                .recipients(party.getVisibleUsers())
+                .recipients(party.getUpdateRecipients())
                 .build());
         return party;
     }
@@ -217,7 +228,11 @@ public class PartyEndpoint extends BaseEndpoint {
                 User user = getUser(userID);
                 Party party = getParty(partyID, true);
                 // Decline invite
-                party.declineInvite(user);
+                try {
+                    party.declineInvite(user);
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
                 ofy().save().entities(party, user).now();
                 return party;
@@ -240,8 +255,12 @@ public class PartyEndpoint extends BaseEndpoint {
             public Party run() throws ServiceException {
                 User user = getUser(userID);
                 Party party = getParty(partyID, true);
-                // Leave
-                party.leave(user);
+                // Leave the party
+                try {
+                    party.leave(user);
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
                 ofy().save().entities(party, user).now();
                 return party;
@@ -252,7 +271,7 @@ public class PartyEndpoint extends BaseEndpoint {
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
-                .recipients(party.getVisibleUsers())
+                .recipients(party.getUpdateRecipients())
                 .build());
     }
 
@@ -310,10 +329,14 @@ public class PartyEndpoint extends BaseEndpoint {
                 if (!party.isInviting()) {
                     throw new ConflictException("Party must be still inviting");
                 }
-                // Set planning
-                party.setPlanning();
+                // Close invites
+                try {
+                    party.closeInvites();
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
+                }
                 // Save
-                ofy().save().entities(party).now();
+                ofy().save().entity(party).now();
                 return party;
             }
         });
@@ -340,25 +363,21 @@ public class PartyEndpoint extends BaseEndpoint {
                 if (!party.isHost(userID)) {
                     throw new UnauthorizedException("User must be party host to plan");
                 }
-                // Party must be planning
-                if (!party.isPlanning()) {
-                    throw new ConflictException("Party must be still planning");
+                // Plan the party
+                try {
+                    party.plan(timeSlot);
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
                 }
-                // Time slot must be available
-                if (!party.isAvailable(timeSlot.getBeginDate(), timeSlot.getEndDate())) {
-                    throw new ConflictException("Not all partners are available on the given time slot");
-                }
-                // Set planned
-                party.setPlanned(timeSlot);
                 // Save
-                ofy().save().entities(party).now();
+                ofy().save().entity(party).now();
                 return party;
             }
         });
         // Send update to party members except host
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
-                .recipients(party.getVisibleUsers(false))
+                .recipients(party.getUpdateRecipients(false))
                 .build());
         return party;
     }
@@ -382,14 +401,14 @@ public class PartyEndpoint extends BaseEndpoint {
                 if (!party.isHost(user)) {
                     throw new UnauthorizedException("User must be party host to disband");
                 }
-                // Party must not be completed
-                if (party.isCompleted()) {
-                    throw new ConflictException("Party is already completed");
+                // Disband the party
+                try {
+                    party.disband();
+                } catch (Exception e) {
+                    throw new ConflictException(e.getMessage());
                 }
-                // Set disbanded
-                party.setDisbanded();
-                // Remove from parties
-                user.removeParty(party);
+                // Remove from party
+                party.removeRecipient(user);
                 // Save
                 ofy().save().entities(party, user).now();
                 return party;
@@ -400,9 +419,51 @@ public class PartyEndpoint extends BaseEndpoint {
         // Send update to party members except host
         new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DISBANDED)
-                .recipients(party.getVisibleUsers(false))
+                .recipients(party.getUpdateRecipients(false))
                 .build());
         return party;
+    }
+
+    /**
+     * Retrieves all parties for a user, most recent party first.
+     *
+     * @param accessToken The access token for authorization.
+     * @return The parties of a user.
+     */
+    @ApiMethod(name = "users.getParties", path = "user/party", httpMethod = ApiMethod.HttpMethod.GET)
+    public CollectionResponse<Party> getParties(@Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        User user = getUser(userID);
+        // Use reverse date ordering (recent dates first)
+        Ordering<Party> dateOrdering = Party.dateComparator.reverse();
+        // Sort user parties
+        List<Party> parties = dateOrdering.immutableSortedCopy(user.getParties());
+        return CollectionResponse.<Party>builder().setItems(parties).build();
+    }
+
+    /**
+     * Removes a party from a user.
+     *
+     * @param partyID     The party ID.
+     * @param accessToken The access token for authorization.
+     */
+    @ApiMethod(name = "users.removeParty", path = "user/party/{partyID}", httpMethod = ApiMethod.HttpMethod.DELETE)
+    public void removeParty(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+        final String userID = getUserID(accessToken);
+        transact(new TransactUtils.VoidWork<ServiceException>() {
+            @Override
+            public void vrun() throws ServiceException {
+                Party party = getParty(partyID, true);
+                User user = getUser(userID);
+                if (!party.isCompleted() && !party.isDisbanded()) {
+                    throw new ConflictException("Cannot remove party, must be completed or disbanded.");
+                }
+                // Remove from party
+                party.removeRecipient(user);
+                // Save
+                ofy().save().entities(party, user).now();
+            }
+        });
     }
 
     /**
@@ -425,7 +486,11 @@ public class PartyEndpoint extends BaseEndpoint {
                     Party party = getParty(partyID, true);
                     User user = getUser(inviteeID);
                     // Cancel invite
-                    party.cancelInvite(user);
+                    try {
+                        party.cancelInvite(user);
+                    } catch (Exception e) {
+                        throw new ConflictException(e.getMessage());
+                    }
                     // Save
                     ofy().save().entities(party, user).now();
                     // Send cancel invite

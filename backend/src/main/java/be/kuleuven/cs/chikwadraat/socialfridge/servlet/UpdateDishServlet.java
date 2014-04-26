@@ -66,11 +66,9 @@ public class UpdateDishServlet extends HttpServlet {
                 resp.sendRedirect("/admin/dishes?updated=" + dishID);
             } else if (action.equals("delete")) {
                 // Delete dish
-                dao.removeDish(dishID);
+                dao.removeDish(Dish.getRef(dishID));
                 resp.sendRedirect("/admin/dishes?deleted=" + dishID);
             }
-        } catch (ServiceException e) {
-            throw new ServletException(e);
         } finally {
             // Remove any leftover uploads
             if (blobs != null && !blobs.isEmpty()) {
