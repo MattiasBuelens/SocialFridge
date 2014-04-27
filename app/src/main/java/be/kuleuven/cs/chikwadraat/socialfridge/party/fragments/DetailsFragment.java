@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
-
-import java.util.Date;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment;
@@ -34,6 +31,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
     private DishHeaderFragment dishHeader;
     private TextView dateView;
     private TextView placeView;
+    private TextView partnersView;
     private GridView partnersGrid;
     private PartnersListAdapter partnersAdapter;
 
@@ -60,6 +58,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
         dishHeader = (DishHeaderFragment) getChildFragmentManager().findFragmentById(R.id.dish_header);
         dateView = ((TextView) view.findViewById(R.id.party_date));
         placeView = ((TextView) view.findViewById(R.id.party_place));
+        partnersView = ((TextView) view.findViewById(R.id.party_partners));
         partnersGrid = (GridView) view.findViewById(R.id.party_partners_list);
 
         return view;
@@ -87,30 +86,18 @@ public class DetailsFragment extends Fragment implements PartyListener {
     public void onPartyLoaded(Party party, User user) {
         updateDate(party);
         updatePlace(party);
-        AdapterUtils.setAll(partnersAdapter, party.getPartners());
+        updatePartners(party);
     }
 
     @Override
     public void onPartyUnloaded() {
         clearDate();
         clearPlace();
-        partnersAdapter.clear();
+        clearPartners();
     }
 
     private void updateDate(Party party) {
-        Date date = party.getDate();
-        String dateText;
-        if (party.isPlanned()) {
-            // Fully planned, date and time available
-            dateText = getString(R.string.format_date_and_time,
-                    DateFormat.getDateFormat(getActivity()).format(date),
-                    DateFormat.getTimeFormat(getActivity()).format(date));
-        } else {
-            // Not planned, date only
-            dateText = getString(R.string.format_date_only,
-                    DateFormat.getDateFormat(getActivity()).format(date));
-        }
-        dateView.setText(dateText);
+        dateView.setText(party.formatDate(getActivity()));
     }
 
     private void clearDate() {
@@ -125,6 +112,21 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
     private void clearPlace() {
         placeView.setText("");
+    }
+
+    private void updatePartners(Party party) {
+        int nbOtherPartners = party.getPartners().size() - 1;
+        PartyMember host = party.getHost();
+        String partnersText = getResources().getQuantityString(R.plurals.party_partners, nbOtherPartners,
+                host.getUserName(), nbOtherPartners);
+        partnersView.setText(partnersText);
+
+        AdapterUtils.setAll(partnersAdapter, party.getPartners());
+    }
+
+    private void clearPartners() {
+        partnersView.setText("");
+        partnersAdapter.clear();
     }
 
     public class PartnersListAdapter extends ArrayAdapter<PartyMember> {

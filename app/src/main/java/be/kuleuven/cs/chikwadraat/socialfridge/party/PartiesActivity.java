@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.Session;
-import com.facebook.widget.ProfilePictureView;
 
 import java.util.List;
 
@@ -88,22 +87,23 @@ public class PartiesActivity extends ListActivity {
             PartyMember user = party.getPartner(getLoggedInUser());
             int nbOtherPartners = party.getPartners().size() - 1;
 
-            String othersText = getContext().getResources().getQuantityString(R.plurals.party_list_partners, nbOtherPartners, nbOtherPartners);
-            String partnersText = getContext().getString(R.string.party_list_members, host.getUserName(), othersText);
+            String partnersText = getContext().getResources().getQuantityString(R.plurals.party_partners, nbOtherPartners,
+                    host.getUserName(), nbOtherPartners);
             String roleText = getContext().getString(user.getRole().getStringResource());
             int roleColor = getContext().getResources().getColor(user.getRole().getColorResource());
             String statusText = getContext().getString(party.getStatus().getStringResource());
             int statusColor = getContext().getResources().getColor(party.getStatus().getColorResource());
+            String dateText = party.formatDate(getContext());
             String dishText = "Spaghetti Bolognese"; // TODO Dummy
             Drawable dishDrawable = getContext().getResources().getDrawable(R.drawable.detail_spaghetti); // TODO Dummy
 
             vh.position = position;
-            vh.hostPictureView.setProfileId(party.getHostID());
             vh.partnersView.setText(partnersText);
             vh.roleView.setText(roleText);
             vh.roleView.setBackgroundColor(roleColor);
             vh.statusView.setText(statusText);
             vh.statusView.setBackgroundColor(statusColor);
+            vh.dateView.setText(dateText);
             vh.dishImageView.setImageDrawable(dishDrawable);
             vh.dishNameView.setText(dishText);
 
@@ -111,19 +111,19 @@ public class PartiesActivity extends ListActivity {
         }
 
         private class ViewHolder {
-            final ProfilePictureView hostPictureView;
             final TextView partnersView;
             final TextView roleView;
             final TextView statusView;
+            final TextView dateView;
             final ImageView dishImageView;
             final TextView dishNameView;
             int position;
 
             private ViewHolder(View v) {
-                hostPictureView = (ProfilePictureView) v.findViewById(R.id.host_pic);
-                partnersView = (TextView) v.findViewById(R.id.partners);
+                partnersView = (TextView) v.findViewById(R.id.party_partners);
                 roleView = (TextView) v.findViewById(R.id.party_role);
                 statusView = (TextView) v.findViewById(R.id.party_status);
+                dateView = (TextView) v.findViewById(R.id.party_date);
                 dishImageView = (ImageView) v.findViewById(R.id.dish_pic);
                 dishNameView = (TextView) v.findViewById(R.id.dish_name);
             }

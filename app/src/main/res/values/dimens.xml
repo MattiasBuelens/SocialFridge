@@ -13,14 +13,17 @@
     <!-- Margin dividing text and other elements -->
     <dimen name="text_divider_margin">10dp</dimen>
 
+    <!-- Size of a dish photo thumbnail -->
+    <dimen name="dish_thumbnail_size">50dp</dimen>
+
     <!-- Height of a dish photo in detail view -->
-    <dimen name="dish_detail_photo_height">128dip</dimen>
+    <dimen name="dish_detail_photo_height">128dp</dimen>
 
     <!-- Height of the text label above the dish photo in the dish detail view -->
-    <dimen name="dish_detail_photo_label_height">45dip</dimen>
+    <dimen name="dish_detail_photo_label_height">45dp</dimen>
 
     <!-- Indentation before the text label above the dish photo in the dish detail view -->
-    <dimen name="dish_detail_photo_label_indent">18dip</dimen>
+    <dimen name="dish_detail_photo_label_indent">18dp</dimen>
 
     <!-- Vertical margin between small pictures -->
     <dimen name="picture_small_vertical_margin">5dp</dimen>
@@ -42,7 +45,7 @@
     <dimen name="card_inner_padding_left">10dp</dimen>
     <dimen name="card_inner_padding_right">10dp</dimen>
     <dimen name="card_shadow">3dp</dimen>
-    <dimen name="card_title">16sp</dimen>
+    <dimen name="card_title">18sp</dimen>
 
     <!-- Tags -->
     <dimen name="tag_label_size">14sp</dimen>

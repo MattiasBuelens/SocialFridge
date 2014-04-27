@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment">
 
-    <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
         android:id="@+id/final_time_slot_header"
         style="@style/AppTheme.HeaderSingleTitle"
         android:layout_width="match_parent"

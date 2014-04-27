@@ -36,11 +36,9 @@
             android:layout_toStartOf="@+id/candidate_actions"
             android:orientation="vertical">
 
-            <TextView
+            <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
                 android:id="@+id/candidate_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                style="@style/AppTheme.CardTitle"
                 tools:text="Candidate Name" />
 
             <!--<TextView

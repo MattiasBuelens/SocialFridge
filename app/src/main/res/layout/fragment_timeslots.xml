@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment">
 
-    <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+    <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
         style="@style/AppTheme.HeaderSingleTitle"
         android:text="@string/party_create_time_slots" />
 

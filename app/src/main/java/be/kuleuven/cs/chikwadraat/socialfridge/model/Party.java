@@ -1,7 +1,9 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -118,6 +120,19 @@ public class Party implements Parcelable {
 
     public Date getDate() {
         return date;
+    }
+
+    public String formatDate(Context context) {
+        if (isPlanned()) {
+            // Fully planned, date and time available
+            return context.getString(R.string.format_date_and_time,
+                    DateFormat.getDateFormat(context).format(getDate()),
+                    DateFormat.getTimeFormat(context).format(getDate()));
+        } else {
+            // Not planned, date only
+            return context.getString(R.string.format_date_only,
+                    DateFormat.getDateFormat(context).format(getDate()));
+        }
     }
 
     public Date getDateCreated() {

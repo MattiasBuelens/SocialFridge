@@ -12,7 +12,7 @@
         android:id="@+id/party_candidates_header"
         style="@style/AppTheme.Header">
 
-        <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightItalicTextView
+        <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
             style="@style/AppTheme.HeaderTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

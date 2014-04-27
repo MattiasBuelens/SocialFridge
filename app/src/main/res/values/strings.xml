@@ -26,9 +26,10 @@
     <string name="dishes_title">Dishes</string>
 
     <!-- Party -->
-    <string name="party_partners">Partners</string>
-    <string name="party_candidates">Candidates</string>
-    <string name="party_candidates_summary">Invite friends with matching fridges</string>
+    <plurals name="party_partners">
+        <item quantity="one">%1$s and %2$d partner</item>
+        <item quantity="other">%1$s and %2$d partners</item>
+    </plurals>
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
     <string name="party_time_slot_format">%1$s to %2$s</string>
@@ -66,6 +67,8 @@
 
     <!-- Invite to party -->
     <string name="party_invite_title">Invite to party</string>
+    <string name="party_candidates">Candidates</string>
+    <string name="party_candidates_summary">Invite friends with matching fridges</string>
     <string name="party_action_invite">Invite</string>
     <string name="party_action_cancel_invite">@android:string/cancel</string>
     <string name="party_partner_status_invited">Invited</string>
@@ -107,11 +110,6 @@
 
     <!-- List parties -->
     <string name="party_list_title">Your parties</string>
-    <string name="party_list_members">%1$s and %2$s</string>
-    <plurals name="party_list_partners">
-        <item quantity="one">1 other</item>
-        <item quantity="other">%d others</item>
-    </plurals>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>
