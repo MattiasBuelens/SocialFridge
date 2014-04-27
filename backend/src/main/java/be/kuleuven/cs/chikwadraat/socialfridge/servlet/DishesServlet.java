@@ -1,7 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 
-import com.google.api.server.spi.ServiceException;
-
 import java.io.IOException;
 import java.util.Collection;
 
@@ -22,12 +20,8 @@ public class DishesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            Collection<Dish> dishes = dao.getDishes().getItems();
-            req.setAttribute("dishes", dishes);
-        } catch (ServiceException e) {
-            throw new ServletException(e);
-        }
+        Collection<Dish> dishes = dao.getDishes().getItems();
+        req.setAttribute("dishes", dishes);
 
         getServletContext().getRequestDispatcher("/WEB-INF/admin/dishes.jsp").include(req, resp);
     }
