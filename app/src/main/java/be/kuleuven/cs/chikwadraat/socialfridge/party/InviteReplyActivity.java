@@ -86,13 +86,11 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
                         ? TimeSlotSelection.State.INCLUDED
                         : TimeSlotSelection.State.DISABLED;
                 selection = new TimeSlotSelection(slot.getBeginDate(), slot.getEndDate(), state);
-            } else {
-                // Existing selection, disable if no longer available
-                if (!slot.isAvailable()) {
-                    selection.setState(TimeSlotSelection.State.DISABLED);
-                }
             }
-            newSelections.add(selection);
+            // (Re-)add if still available
+            if (slot.isAvailable()) {
+                newSelections.add(selection);
+            }
         }
         timeSlotsFragment.setTimeSlots(newSelections);
     }
