@@ -34,16 +34,16 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
  */
 public abstract class BasePartyActivity extends BaseActivity implements PartyListener {
 
+    private static final String TAG = "BasePartyActivity";
+
     /**
      * Intent extra for the party ID.
      */
     public static final String EXTRA_PARTY_ID = "party_id";
-    private static final String TAG = "BasePartyActivity";
+    private static final String EXTRA_PARTY_OBJECT = "party_object";
 
-    private Party party;
     private long partyID;
-
-    private RemovePartyTask removeTask;
+    private Party party;
 
     private BroadcastReceiver partyUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -66,6 +66,13 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
             partyID = intent.getLongExtra(EXTRA_PARTY_ID, 0);
         } else {
             throw new IllegalArgumentException("Missing required party ID in intent");
+        }
+
+        if (savedInstanceState != null) {
+            party = savedInstanceState.getParcelable(EXTRA_PARTY_OBJECT);
+            if (party != null && party.getID() != partyID) {
+                party = null;
+            }
         }
     }
 
@@ -93,6 +100,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(EXTRA_PARTY_ID, partyID);
+        outState.putParcelable(EXTRA_PARTY_OBJECT, party);
     }
 
     @Override
