@@ -180,7 +180,7 @@ public class NotificationIntentService extends BaseIntentService {
         Intent intent = new Intent(this, InviteReplyActivity.class);
         intent.putExtra(InviteReplyActivity.EXTRA_PARTY_ID, message.getPartyID());
         // TODO Flags correct?
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 
@@ -188,7 +188,7 @@ public class NotificationIntentService extends BaseIntentService {
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(ViewPartyActivity.EXTRA_PARTY_ID, message.getPartyID());
         // TODO Flags correct?
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 
