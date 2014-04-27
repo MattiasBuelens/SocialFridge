@@ -93,7 +93,7 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:alue=".MainActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <service android:name=".notifications.NotificationIntentService" />
