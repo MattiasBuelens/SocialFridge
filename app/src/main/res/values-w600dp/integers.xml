@@ -3,4 +3,7 @@
     <!-- Party: partners grid column count -->
     <integer name="party_partners_grid_column_count">10</integer>
 
+    <!-- Party: time slots grid column count -->
+    <integer name="party_time_slots_grid_column_count">5</integer>
+
 </resources>

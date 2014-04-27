@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:numColumns="@integer/time_timeslots_grid_column_count"
+        android:numColumns="@integer/party_time_slots_grid_column_count"
         tools:listitem="@layout/time_slot_check" />
 
 </LinearLayout>

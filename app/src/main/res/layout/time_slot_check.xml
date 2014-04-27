@@ -10,7 +10,7 @@
         android:id="@+id/time_slot_toggle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:textOff="19h - 20h"
-        tools:textOn="19h - 20h" />
+        tools:textOff="19:00 to 20:00"
+        tools:textOn="19:00 to 20:00" />
 
 </LinearLayout>
