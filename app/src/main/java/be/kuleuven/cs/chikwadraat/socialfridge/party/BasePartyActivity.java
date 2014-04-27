@@ -181,9 +181,9 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
         if (targetActivity != null && !targetActivity.isAssignableFrom(ownClass)) {
             Intent intent = new Intent(this, targetActivity);
             intent.putExtra(EXTRA_PARTY_ID, party.getID());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
+            overridePendingTransition(0, 0);
         }
     }
 
