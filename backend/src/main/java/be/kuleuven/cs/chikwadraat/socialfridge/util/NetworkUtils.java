@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.util;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -23,7 +24,7 @@ public class NetworkUtils {
                 if (!current.isUp() || current.isLoopback() || current.isVirtual()) continue;
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
                 for (InetAddress address : Collections.list(addresses)) {
-                    if (!address.isLoopbackAddress()) {
+                    if (!address.isLoopbackAddress() && address instanceof Inet4Address) {
                         return address;
                     }
                 }
