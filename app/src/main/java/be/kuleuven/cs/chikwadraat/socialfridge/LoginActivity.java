@@ -72,6 +72,11 @@ public class LoginActivity extends BaseActivity implements ObservableAsyncTask.L
     }
 
     @Override
+    protected boolean allowUpNavigation() {
+        return false;
+    }
+
+    @Override
     protected boolean requiresLogin() {
         return false;
     }

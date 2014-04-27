@@ -44,6 +44,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
+    protected boolean allowUpNavigation() {
+        return false;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.start, menu);
         return true;
@@ -57,7 +62,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 logout();
                 return true;
         }
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

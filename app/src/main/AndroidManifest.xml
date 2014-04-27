@@ -35,31 +35,66 @@
 
         <activity
             android:name=".DishesActivity"
-            android:label="@string/dishes_title" />
+            android:label="@string/dishes_title"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <activity
             android:name=".party.CreatePartyActivity"
-            android:label="@string/party_create_title" />
+            android:label="@string/party_create_title"
+            android:parentActivityName=".DishesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DishesActivity" />
+        </activity>
 
         <activity
             android:name=".party.PartyInviteActivity"
-            android:label="@string/party_invite_title" />
+            android:label="@string/party_invite_title"
+            android:parentActivityName=".party.PartiesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".party.PartiesActivity" />
+        </activity>
 
         <activity
             android:name=".party.InviteReplyActivity"
-            android:label="@string/party_reply_title" />
+            android:label="@string/party_reply_title"
+            android:parentActivityName=".party.PartiesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".party.PartiesActivity" />
+        </activity>
 
         <activity
             android:name=".party.PlanPartyActivity"
-            android:label="@string/party_plan_title" />
+            android:label="@string/party_plan_title"
+            android:parentActivityName=".party.PartiesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".party.PartiesActivity" />
+        </activity>
 
         <activity
             android:name=".party.ViewPartyActivity"
-            android:label="@string/party_view_title" />
+            android:label="@string/party_view_title"
+            android:parentActivityName=".party.PartiesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".party.PartiesActivity" />
+        </activity>
 
         <activity
             android:name=".party.PartiesActivity"
-            android:label="@string/party_list_title" />
+            android:label="@string/party_list_title"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:alue=".MainActivity" />
+        </activity>
 
         <service android:name=".notifications.NotificationIntentService" />
 
