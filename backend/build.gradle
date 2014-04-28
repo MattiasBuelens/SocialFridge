@@ -68,6 +68,8 @@ appengine {
         }
 
         app {
+            // REMINDER: This is for downloading the app from appspot
+            // Change the uploaded app version in appengine-web.xml
             id = "${appId}"
             version = appVersion
         }
