@@ -11,6 +11,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Quantity;
 
 /**
  * Created by Milan Samyn on 23/04/2014.
@@ -38,10 +39,10 @@ public class Ingredient {
     private Category category;
 
     /**
-     * Ingredient unit of measurement
+     * Ingredient standard quantity
      */
     @Index
-    private UnitOfMeasurement unitOfMeasurement;
+    private Quantity standardQuantity;
 
     @Index
     private Double amount;
@@ -99,14 +100,14 @@ public class Ingredient {
     }
 
     /**
-     * Ingredient unit of measurement
+     * Ingredient standard quantity
      */
-    public UnitOfMeasurement getUnitOfMeasurement() {
-        return unitOfMeasurement;
+    public Quantity getStandardQuantity() {
+        return standardQuantity;
     }
 
-    public void setUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement) {
-        this.unitOfMeasurement = unitOfMeasurement;
+    public void setStandardQuantity(Quantity standardQuantity) {
+        this.standardQuantity = standardQuantity;
     }
 
     /**
