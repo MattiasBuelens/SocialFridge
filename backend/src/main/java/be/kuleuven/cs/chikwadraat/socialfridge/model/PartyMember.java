@@ -49,14 +49,6 @@ public class PartyMember {
      */
     private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
-    /**
-     * Upgrade the time slots to use full dates instead of just hours.
-     */
-    @OnLoad
-    private void upgradeTimeSlots() {
-        TimeSlot.upgradeDates(getTimeSlots(), party);
-    }
-
     public PartyMember() {
     }
 

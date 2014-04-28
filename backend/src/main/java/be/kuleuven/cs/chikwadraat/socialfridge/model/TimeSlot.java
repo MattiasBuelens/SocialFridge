@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.appengine.repackaged.com.google.common.collect.Iterables;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.IgnoreSave;
 
@@ -110,10 +109,6 @@ public class TimeSlot {
         return calendar.getTime();
     }
 
-    private boolean needsDateUpgrade() {
-        return (beginHour != null) || (endHour != null);
-    }
-
     private void upgradeDates(Date baseDate) {
         if (beginHour != null) {
             setBeginDate(upgradeDate(baseDate, beginHour));
@@ -131,24 +126,11 @@ public class TimeSlot {
      * Upgrade the time slots to use full dates instead of just hours.
      *
      * @param slots    The time slots to upgrade.
-     * @param partyRef A reference to the owning party.
-     *                 The {@link Party#getDate() party date} is used as base date.
+     * @param baseDate The base date.
      */
-    public static void upgradeDates(Collection<TimeSlot> slots, Ref<Party> partyRef) {
-        boolean needsUpgrade = false;
-        // Check if upgrade needed
+    public static void upgradeDates(Collection<TimeSlot> slots, Date baseDate) {
         for (TimeSlot slot : slots) {
-            if (slot.needsDateUpgrade()) {
-                needsUpgrade = true;
-                break;
-            }
-        }
-        if (needsUpgrade) {
-            // Do upgrade
-            Date partyDate = partyRef.get().getDate();
-            for (TimeSlot slot : slots) {
-                slot.upgradeDates(partyDate);
-            }
+            slot.upgradeDates(baseDate);
         }
     }
 

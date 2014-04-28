@@ -110,7 +110,10 @@ public class Party {
      */
     @OnLoad
     private void upgradeTimeSlots() {
-        TimeSlot.upgradeDates(getTimeSlots(), Ref.create(this));
+        TimeSlot.upgradeDates(getTimeSlots(), getDate());
+        for (PartyMember member : getMembers()) {
+            TimeSlot.upgradeDates(member.getTimeSlots(), getDate());
+        }
     }
 
     /**
