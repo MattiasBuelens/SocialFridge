@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.OnLoad;
 import com.googlecode.objectify.annotation.Parent;
 
 import java.util.ArrayList;
@@ -47,6 +48,14 @@ public class PartyMember {
      * Chosen time slots.
      */
     private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+
+    /**
+     * Upgrade the time slots to use full dates instead of just hours.
+     */
+    @OnLoad
+    private void upgradeTimeSlots() {
+        TimeSlot.upgradeDates(getTimeSlots(), party);
+    }
 
     public PartyMember() {
     }
@@ -121,11 +130,6 @@ public class PartyMember {
 
     public boolean needsInvite() {
         return !(isInParty() || isInvited());
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public boolean isVisible() {
-        return isInParty() || isInvited();
     }
 
     /**

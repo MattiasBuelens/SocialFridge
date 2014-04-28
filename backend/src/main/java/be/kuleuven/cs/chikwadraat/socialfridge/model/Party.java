@@ -7,10 +7,12 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.AlsoLoad;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.OnLoad;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,9 +88,30 @@ public class Party {
     private Set<Ref<User>> updateRecipients = new HashSet<Ref<User>>();
 
     /**
+     * When partners field is still present,
+     * fill in the update recipient fields.
+     */
+    private void upgradeRecipients(@AlsoLoad("partners") Set<Ref<PartyMember>> partners) {
+        for (PartyMember member : getMembers()) {
+            if (member.isInParty() || member.isInvited()) {
+                User user = member.getUserRef().get();
+                addRecipient(user);
+            }
+        }
+    }
+
+    /**
      * Merged time slots from partners.
      */
     private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+
+    /**
+     * Upgrade the time slots to use full dates instead of just hours.
+     */
+    @OnLoad
+    private void upgradeTimeSlots() {
+        TimeSlot.upgradeDates(getTimeSlots(), Ref.create(this));
+    }
 
     /**
      * Party date.
