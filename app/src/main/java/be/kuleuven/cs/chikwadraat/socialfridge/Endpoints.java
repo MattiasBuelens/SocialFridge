@@ -23,6 +23,12 @@ public class Endpoints {
     private static final boolean TESTING = false;
 
     /**
+     * Endpoint root URL for production setup.
+     * TODO Remove version prefix on release!
+     */
+    private static final String PRODUCTION_ROOT_URL = "https://2-dot-socialfridge.appspot.com/_ah/api/";
+
+    /**
      * Endpoint root URL for testing setup.
      * TODO Replace with own IP for testing
      */
@@ -57,6 +63,8 @@ public class Endpoints {
         builder.setApplicationName(Application.get().getString(R.string.app_name));
         if (TESTING) {
             builder.setRootUrl(TEST_ROOT_URL);
+        } else {
+            builder.setRootUrl(PRODUCTION_ROOT_URL);
         }
         return builder;
     }
