@@ -5,17 +5,31 @@ package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
  */
 public enum Unit {
 
-    KILOGRAM,
+    KILOGRAM ("kg", 1.00, Quantity.MASS),
 
-    GRAM,
+    GRAM ("g", 1000.00, Quantity.MASS),
 
-    LITRE,
+    LITRE ("l", 1.00, Quantity.VOLUME),
 
-    MILLILITRE;
+    MILLILITRE ("ml", 100.00, Quantity.VOLUME);
 
     private String label;
 
-    private Double standardConversionFactor;
+    private Double conversionFactor;
 
     private Quantity quantity;
+
+    private Unit(String label, Double conversionFactor, Quantity quantity) {
+        this.label = label;
+        this.conversionFactor = conversionFactor;
+        this.quantity = quantity;
+    }
+
+    public Double fromStandard(Double value) {
+        return value * conversionFactor;
+    }
+
+    public Double toStandard(Double value) {
+        return value / conversionFactor;
+    }
 }

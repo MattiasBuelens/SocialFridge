@@ -14,7 +14,10 @@ public final class Measure {
         this.unit = unit;
     }
 
-    public Measure convertTo(Unit unit) {
-        return null;
+    public Measure convertTo(Unit newUnit) {
+        // Example: 100 gram to ton
+        Double standardValue = unit.toStandard(value); // 100 gram =  0.1 kilogram
+        Double newValue = newUnit.fromStandard(standardValue); // 0.1 kilogram = 0.00001 ton
+        return new Measure(newValue, newUnit);
     }
 }
