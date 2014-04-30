@@ -1,23 +1,45 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created by Milan Samyn on 28/04/2014.
  */
-public final class Measure {
+public class Measure {
 
-    private Double value;
+    private final double standardValue;
+    private final Unit unit;
 
-    private Unit unit;
-
-    public Measure(Double value, Unit unit) {
-        this.value = value;
-        this.unit = unit;
+    public Measure(double value, Unit unit) {
+        this.unit = checkNotNull(unit);
+        this.standardValue = unit.toStandard(value);
     }
 
-    public Measure convertTo(Unit newUnit) {
-        // Example: 100 gram to ton
-        Double standardValue = unit.toStandard(value); // 100 gram =  0.1 kilogram
-        Double newValue = newUnit.fromStandard(standardValue); // 0.1 kilogram = 0.00001 ton
-        return new Measure(newValue, newUnit);
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public Quantity getQuantity() {
+        return getUnit().getQuantity();
+    }
+
+    protected double getStandardValue() {
+        return standardValue;
+    }
+
+    public double getValue() {
+        return getValue(getUnit());
+    }
+
+    public double getValue(Unit toUnit) {
+        if (!toUnit.getQuantity().equals(getQuantity())) {
+            throw new IllegalArgumentException("Cannot convert to different quantity: " + toUnit.getQuantity() + " differs from " + getQuantity());
+        }
+        return toUnit.fromStandard(getStandardValue());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%f.2 %s", getValue(), getUnit().getLabel());
     }
 }
