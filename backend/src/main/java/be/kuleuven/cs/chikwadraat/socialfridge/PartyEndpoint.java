@@ -39,6 +39,8 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 )
 public class PartyEndpoint extends BaseEndpoint {
 
+    private final UserMessageDAO messageDAO = new UserMessageDAO();
+
     /**
      * Retrieves a party.
      *
@@ -126,7 +128,7 @@ public class PartyEndpoint extends BaseEndpoint {
 
         // Send invite to friend
         User friend = getUser(friendID);
-        new UserMessageEndpoint().addMessages(Messages.partyInvited(party)
+        messageDAO.addMessages(Messages.partyInvited(party)
                 .invitee(friend)
                 .recipients(friend)
                 .build());
@@ -171,7 +173,7 @@ public class PartyEndpoint extends BaseEndpoint {
     }
 
     protected void sendCancelInvite(Party party, User invitee) throws ServiceException {
-        new UserMessageEndpoint().addMessages(Messages.partyInviteCanceled(party)
+        messageDAO.addMessages(Messages.partyInviteCanceled(party)
                         .invitee(invitee)
                         .recipients(invitee)
                         .build()
@@ -205,7 +207,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         User user = getUser(userID);
-        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
+        messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
                 .recipients(party.getUpdateRecipients())
@@ -268,7 +270,7 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Send update to party members
         User user = getUser(userID);
-        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
+        messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
                 .recipients(party.getUpdateRecipients())
@@ -375,7 +377,7 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // Send update to party members except host
-        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
+        messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
                 .recipients(party.getUpdateRecipients(false))
                 .build());
@@ -417,7 +419,7 @@ public class PartyEndpoint extends BaseEndpoint {
         // Cancel open invites
         party = cancelInvites(party);
         // Send update to party members except host
-        new UserMessageEndpoint().addMessages(Messages.partyUpdated(party)
+        messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DISBANDED)
                 .recipients(party.getUpdateRecipients(false))
                 .build());
