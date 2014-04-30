@@ -24,6 +24,8 @@
 
     <!-- Dishes -->
     <string name="dishes_title">Dishes</string>
+    <string name="dishes_search">Search</string>
+    <string name="dishes_search_hint">Search dishes</string>
 
     <!-- Party -->
     <plurals name="party_partners">

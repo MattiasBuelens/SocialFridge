@@ -46,6 +46,12 @@ public class Dish implements Parcelable {
         return thumbnailURL;
     }
 
+    @Override
+    public String toString() {
+        // Used for filtering
+        return getName();
+    }
+
     public static List<Dish> fromEndpoint(List<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Dish> dishes) {
         List<Dish> list = new ArrayList<Dish>();
         if (dishes != null) {

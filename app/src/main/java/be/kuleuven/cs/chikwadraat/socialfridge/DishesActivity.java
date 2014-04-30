@@ -1,10 +1,20 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,22 +30,108 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 /**
  * Dishes activity.
  */
-public class DishesActivity extends ListActivity {
+public class DishesActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String TAG = "DishesActivity";
     private static final int LOADER_PARTIES = 1;
 
+
     private DishesArrayAdapter dishesArrayAdapter;
+
+    private static final String STATE_QUERY = "dishes_search_query";
+    private SearchView searchView;
+    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_card_list);
 
+        if (savedInstanceState != null) {
+            searchQuery = savedInstanceState.getString(STATE_QUERY);
+        }
+
         dishesArrayAdapter = new DishesArrayAdapter();
         setListAdapter(dishesArrayAdapter);
 
         getSupportLoaderManager().initLoader(LOADER_PARTIES, null, new DishesLoaderCallbacks());
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.dish_search, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint(getString(R.string.dishes_search_hint));
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
+
+        if (!TextUtils.isEmpty(searchQuery)) {
+            String query = searchQuery;
+            MenuItemCompat.expandActionView(searchItem);
+            searchDishes(query);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    protected void handleIntent(Intent intent) {
+        if (intent == null) return;
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchDishes(query);
+        }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        searchDishes(newText);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // When the search is "committed" by the user, then hide the keyboard so the user can
+        // more easily browse the list of results.
+        if (searchView != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+            }
+            searchView.clearFocus();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onClose() {
+        searchDishes(null);
+        return false;
+    }
+
+    protected void searchDishes(String query) {
+        searchQuery = query;
+        if (searchView != null && !TextUtils.equals(searchView.getQuery(), query)) {
+            searchView.setQuery(searchQuery, false);
+        }
+        dishesArrayAdapter.getFilter().filter(query);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_QUERY, searchView.getQuery().toString());
     }
 
     @Override
