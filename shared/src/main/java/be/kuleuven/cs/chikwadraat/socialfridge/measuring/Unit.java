@@ -26,7 +26,7 @@ public enum Unit {
         }
     },
 
-    MILLILITRE("ml", 100d) {
+    MILLILITRE("ml", 1000d) {
         @Override
         public Quantity getQuantity() {
             return Quantity.VOLUME;
