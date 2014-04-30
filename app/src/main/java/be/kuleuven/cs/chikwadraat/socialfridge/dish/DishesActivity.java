@@ -1,4 +1,4 @@
-package be.kuleuven.cs.chikwadraat.socialfridge;
+package be.kuleuven.cs.chikwadraat.socialfridge.dish;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -23,6 +23,9 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.Application;
+import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.DishesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;

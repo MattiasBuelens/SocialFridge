@@ -11,6 +11,7 @@ import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 import com.google.android.gms.analytics.HitBuilders;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishesActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.fridge.FridgeActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
