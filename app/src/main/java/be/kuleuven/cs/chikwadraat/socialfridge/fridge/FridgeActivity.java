@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -32,13 +34,16 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 /**
  * Manage fridge activity.
  */
-public class FridgeActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+public class FridgeActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, MeasureDialog.OnMeasureSetListener {
 
     private static final String TAG = "FridgeActivity";
 
-    private ItemsArrayAdapter itemsArrayAdapter;
-
     private static final String STATE_QUERY = "fridge_search_query";
+    private static final String STATE_EDITING_ITEM = "fridge_editing_item";
+
+    private ItemsArrayAdapter itemsArrayAdapter;
+    private int editingItemPosition;
+
     private SearchView searchView;
     private String searchQuery;
 
@@ -49,6 +54,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
 
         if (savedInstanceState != null) {
             searchQuery = savedInstanceState.getString(STATE_QUERY);
+            editingItemPosition = savedInstanceState.getInt(STATE_EDITING_ITEM, -1);
         }
 
         itemsArrayAdapter = new ItemsArrayAdapter();
@@ -136,11 +142,34 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_QUERY, searchView.getQuery().toString());
+        outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         FridgeItem item = (FridgeItem) l.getItemAtPosition(position);
+        editingItemPosition = position;
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment current = getSupportFragmentManager().findFragmentByTag("dialog");
+        MeasureDialogFragment fragment;
+        if (current != null) {
+            fragment = (MeasureDialogFragment) current;
+        } else {
+            fragment = MeasureDialogFragment.newInstance();
+        }
+        fragment.setMeasure(item.getQuantity());
+        fragment.show(ft, "dialog");
+    }
+
+    @Override
+    public void onMeasureSet(Measure measure) {
+        if (editingItemPosition >= 0) {
+            FridgeItem item = (FridgeItem) getListView().getItemAtPosition(editingItemPosition);
+            item.setQuantity(measure);
+            itemsArrayAdapter.notifyDataSetChanged();
+        }
+        editingItemPosition = -1;
     }
 
     public class ItemsArrayAdapter extends ArrayAdapter<FridgeItem> {

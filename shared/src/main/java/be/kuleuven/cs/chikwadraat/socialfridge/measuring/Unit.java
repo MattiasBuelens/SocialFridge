@@ -72,8 +72,12 @@ public enum Unit {
         return "%." + getNbDecimals() + "f";
     }
 
+    public String formatNumber(double value) {
+        return String.format(getNumberFormat(), value);
+    }
+
     public String format(double value) {
-        String valueString = String.format(getNumberFormat(), value);
+        String valueString = formatNumber(value);
         if (getLabel().isEmpty()) {
             return valueString;
         } else {
