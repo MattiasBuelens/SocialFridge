@@ -6,6 +6,7 @@ import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Work;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class MessageWorker extends HttpServlet {
 
     private final Logger log = Logger.getLogger(MessageWorker.class.getName());
 
+    private final UserDAO userDAO = new UserDAO();
+    private final UserMessageDAO messageDAO = new UserMessageDAO();
+
     /**
      * Indicates to App Engine that this task should be retried.
      */
@@ -52,32 +56,12 @@ public class MessageWorker extends HttpServlet {
         resp.setStatus(200);
     }
 
-    /**
-     * Indicates that the message should be retried.
-     */
-    private void retrySend(HttpServletResponse resp, UserMessage message) {
-        // Update message
-        new UserMessageEndpoint().updateMessage(message);
-        // Retry task
-        retryTask(resp);
-    }
-
-    /**
-     * Indicates that the message is successfully sent to all user's devices.
-     */
-    private void sendDone(HttpServletResponse resp, UserMessage message) {
-        // Remove message
-        new UserMessageEndpoint().removeMessage(message);
-        // Task done
-        taskDone(resp);
-    }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // Retrieve message
-        Key<UserMessage> messageKey = Key.create(req.getParameter(PARAM_MESSAGE_KEY));
-        UserMessage message = ofy().load().key(messageKey).now();
+        final Key<UserMessage> messageKey = Key.create(req.getParameter(PARAM_MESSAGE_KEY));
+        UserMessage message = messageDAO.getMessage(messageKey);
         if (message == null) {
             // Message already deleted
             taskDone(resp);
@@ -90,16 +74,37 @@ public class MessageWorker extends HttpServlet {
                 .collapseKey(message.getCollapseKey())
                 .setData(message.getData())
                 .build();
-        List<String> regIDs = new ArrayList<String>(message.getReceivingDevices());
+        final List<String> regIDs = new ArrayList<String>(message.getReceivingDevices());
 
         // Send message
-        MulticastResult multicastResult;
+        final MulticastResult multicastResult;
         try {
             multicastResult = sender.send(msg, regIDs, NUM_RETRIES);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Exception sending " + msg, e);
             return;
         }
+
+        // Handle send result
+        boolean allDone = ofy().transact(new Work<Boolean>() {
+            @Override
+            public Boolean run() {
+                return handleSendResult(messageKey, regIDs, multicastResult);
+            }
+        });
+
+        // Check result
+        if (allDone) {
+            // Task done
+            taskDone(resp);
+        } else {
+            // Retry
+            retryTask(resp);
+        }
+    }
+
+    private boolean handleSendResult(Key<UserMessage> messageKey, List<String> regIDs, MulticastResult multicastResult) {
+        UserMessage message = messageDAO.getMessage(messageKey);
         List<Result> results = multicastResult.getResults();
         boolean allDone = true;
 
@@ -112,7 +117,7 @@ public class MessageWorker extends HttpServlet {
                 if (canonicalRegID != null) {
                     // If the registration ID changed, move the device
                     log.info("Registration ID changed for " + regID + " updating to " + canonicalRegID);
-                    new UserDeviceEndpoint().moveUserDevice(message.getUser(), regID, canonicalRegID);
+                    userDAO.moveUserDevice(message.getUserRef(), regID, canonicalRegID);
                 }
             }
         }
@@ -130,7 +135,7 @@ public class MessageWorker extends HttpServlet {
                         // If the device is no longer registered with GCM, remove it
                         log.warning("Registration ID " + regID + " no longer registered with GCM, removing");
                         message.removeReceivingDevice(regID);
-                        new UserDeviceEndpoint().unregisterUserDevice(message.getUser(), regID);
+                        userDAO.unregisterUserDevice(message.getUserRef(), regID);
                     }
                     if (error.equals(Constants.ERROR_UNAVAILABLE)) {
                         // GCM is currently unavailable, retry later
@@ -145,14 +150,15 @@ public class MessageWorker extends HttpServlet {
             }
         }
 
-        // Check result
         if (allDone) {
-            // Completed
-            sendDone(resp, message);
+            // All done, remove
+            messageDAO.removeMessage(message);
         } else {
-            // Retry
-            retrySend(resp, message);
+            // Not done yet, update
+            messageDAO.updateMessage(message);
         }
+
+        return allDone;
     }
 
 }

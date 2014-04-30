@@ -31,73 +31,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 )
 public class UserMessageEndpoint extends BaseEndpoint {
 
-    /**
-     * Adds user messages and queues them for sending.
-     *
-     * @param userMessages The new messages.
-     */
-    protected void addMessages(final Collection<UserMessage> userMessages) {
-        ofy().transact(new com.googlecode.objectify.VoidWork() {
-            @Override
-            public void vrun() {
-                // Save messages
-                Set<Key<UserMessage>> keys = ofy().save().entities(userMessages).now().keySet();
-                // Add to queue
-                Queue queue = QueueFactory.getQueue(MessageWorker.QUEUE);
-                List<TaskOptions> options = new ArrayList<TaskOptions>();
-                for (Key<UserMessage> key : keys) {
-                    options.add(TaskOptions.Builder
-                            .withParam(MessageWorker.PARAM_MESSAGE_KEY, key.getString()));
-                }
-                queue.add(ofy().getTransaction(), options);
-            }
-        });
-    }
-
-    /**
-     * Adds user messages and queues them for sending.
-     *
-     * @param userMessages The new messages.
-     */
-    protected void addMessages(final UserMessage... userMessages) {
-        addMessages(Arrays.asList(userMessages));
-    }
-
-    /**
-     * Updates a user's message.
-     *
-     * @param userMessage The updated message.
-     */
-    protected void updateMessage(final UserMessage userMessage) {
-        ofy().save().entity(userMessage).now();
-    }
-
-    /**
-     * Removes a user's message.
-     *
-     * @param userMessage The message to be deleted.
-     */
-    protected void removeMessage(final UserMessage userMessage) {
-        ofy().delete().entity(userMessage).now();
-    }
-
-    /**
-     * Removes a user's message.
-     *
-     * @param userID    The user ID owning the message.
-     * @param messageID The message ID to be deleted.
-     */
-    protected void removeMessage(final String userID, final long messageID) {
-        ofy().transact(new com.googlecode.objectify.VoidWork() {
-            @Override
-            public void vrun() {
-                UserMessage userMessage = getMessageUnsafe(userID, messageID);
-                if (userMessage != null) {
-                    removeMessage(userMessage);
-                }
-            }
-        });
-    }
+    private final UserMessageDAO dao = new UserMessageDAO();
 
     /**
      * Removes a user's message.
@@ -110,22 +44,8 @@ public class UserMessageEndpoint extends BaseEndpoint {
     @ApiMethod(name = "users.removeMessage", path = "user/{userID}/message/{messageID}")
     public void removeMessage(final @Named("userID") String userID, final @Named("messageID") long messageID, @Named("accessToken") String accessToken) throws ServiceException {
         checkAccess(accessToken, userID);
-        removeMessage(userID, messageID);
+        dao.removeMessage(userID, messageID);
     }
 
-    protected UserMessage getMessage(String userID, long messageID) throws ServiceException {
-        UserMessage user = getMessageUnsafe(userID, messageID);
-        if (user == null) {
-            throw new NotFoundException("User not found.");
-        }
-        return user;
-    }
-
-    protected UserMessage getMessageUnsafe(String userID, long messageID) {
-        return ofy().load().type(UserMessage.class)
-                .parent(User.getKey(userID))
-                .id(messageID)
-                .now();
-    }
 
 }

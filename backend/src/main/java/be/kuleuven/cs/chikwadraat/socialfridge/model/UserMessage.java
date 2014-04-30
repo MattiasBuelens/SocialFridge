@@ -1,5 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -62,8 +63,16 @@ public class UserMessage {
         return id;
     }
 
-    public User getUser() {
-        return user.get();
+    public static Key<UserMessage> getKey(String userID, long messageID) {
+        return Key.create(User.getKey(userID), UserMessage.class, messageID);
+    }
+
+    public static Ref<UserMessage> getRef(String userID, long messageID) {
+        return Ref.create(getKey(userID, messageID));
+    }
+
+    public Ref<User> getUserRef() {
+        return user;
     }
 
     public Collection<String> getReceivingDevices() {

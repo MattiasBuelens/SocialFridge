@@ -54,4 +54,68 @@ public class UserDAO {
         });
     }
 
+    public void registerUserDevice(final Ref<User> userRef, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                User user = userRef.get();
+                if (user == null) return;
+                user.addDevice(registrationID);
+                ofy().save().entity(user).now();
+            }
+        });
+    }
+
+    public void registerUserDevice(final String userID, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                registerUserDevice(User.getRef(userID), registrationID);
+            }
+        });
+    }
+
+    public void unregisterUserDevice(final Ref<User> userRef, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                User user = userRef.get();
+                if (user == null) return;
+                user.removeDevice(registrationID);
+                ofy().save().entity(user).now();
+            }
+        });
+    }
+
+    public void unregisterUserDevice(final String userID, final String registrationID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                unregisterUserDevice(User.getRef(userID), registrationID);
+            }
+        });
+    }
+
+    public void moveUserDevice(final Ref<User> userRef, final String oldRegID, final String newRegID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                User user = userRef.get();
+                if (user == null) return;
+                user.removeDevice(oldRegID);
+                user.addDevice(newRegID);
+                ofy().save().entity(user).now();
+            }
+        });
+    }
+
+    public void moveUserDevice(final String userID, final String oldRegID, final String newRegID) {
+        ofy().transact(new com.googlecode.objectify.VoidWork() {
+            @Override
+            public void vrun() {
+                moveUserDevice(User.getRef(userID), oldRegID, newRegID);
+            }
+        });
+    }
+
 }
