@@ -7,7 +7,6 @@
         android:id="@+id/search"
         android:icon="@drawable/abc_ic_search"
         android:title="@string/dishes_search"
-        android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
         compat:actionViewClass="android.support.v7.widget.SearchView"
         compat:showAsAction="collapseActionView|ifRoom" />
 
