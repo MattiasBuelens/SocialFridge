@@ -5,35 +5,35 @@ package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
  */
 public enum Unit {
 
-    KILOGRAM("kg", 1d, "%.3f") {
+    KILOGRAM("kg", 1d, 3) {
         @Override
         public Quantity getQuantity() {
             return Quantity.MASS;
         }
     },
 
-    GRAM("g", 1000d, "%.1f") {
+    GRAM("g", 1000d, 0) {
         @Override
         public Quantity getQuantity() {
             return Quantity.MASS;
         }
     },
 
-    LITRE("l", 1d, "%.3f") {
+    LITRE("l", 1d, 3) {
         @Override
         public Quantity getQuantity() {
             return Quantity.VOLUME;
         }
     },
 
-    MILLILITRE("ml", 1000d, "%.0f") {
+    MILLILITRE("ml", 1000d, 0) {
         @Override
         public Quantity getQuantity() {
             return Quantity.VOLUME;
         }
     },
 
-    PIECES("pcs", 1d, "%.0f") {
+    PIECES("pcs", 1d, 0) {
         @Override
         public Quantity getQuantity() {
             return Quantity.DIMENSIONLESS;
@@ -42,12 +42,12 @@ public enum Unit {
 
     private final String label;
     private final Double conversionFactor;
-    private final String numberFormat;
+    private final int decimals;
 
-    private Unit(String label, double conversionFactor, String numberFormat) {
+    private Unit(String label, double conversionFactor, int decimals) {
         this.label = label;
         this.conversionFactor = conversionFactor;
-        this.numberFormat = numberFormat;
+        this.decimals = decimals;
     }
 
     public abstract Quantity getQuantity();
@@ -64,8 +64,12 @@ public enum Unit {
         return value / conversionFactor;
     }
 
-    public String getNumberFormat() {
-        return numberFormat;
+    public int getNbDecimals() {
+        return decimals;
+    }
+
+    protected String getNumberFormat() {
+        return "%." + getNbDecimals() + "f";
     }
 
     public String format(double value) {
