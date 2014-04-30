@@ -24,9 +24,9 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
 /**
@@ -66,7 +66,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.dish_search, menu);
+        inflater.inflate(R.menu.fridge_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -146,7 +146,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
     public class ItemsArrayAdapter extends ArrayAdapter<FridgeItem> {
 
         public ItemsArrayAdapter() {
-            super(FridgeActivity.this, R.layout.dish_list_item);
+            super(FridgeActivity.this, R.layout.fridge_list_item);
         }
 
         @Override
@@ -154,7 +154,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
             View v = convertView;
             ViewHolder vh;
             if (v == null) {
-                v = View.inflate(getContext(), R.layout.dish_list_item, null);
+                v = View.inflate(getContext(), R.layout.fridge_list_item, null);
                 vh = new ViewHolder(v);
                 v.setTag(vh);
             } else {
@@ -165,22 +165,26 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
 
             String nameText = item.getName();
             Drawable picture = item.getPicture(getContext());
+            String quantityText = item.getQuantity().toString();
 
             vh.position = position;
             vh.nameView.setText(nameText);
             vh.pictureView.setImageDrawable(picture);
+            vh.quantityView.setText(quantityText);
 
             return v;
         }
 
         private class ViewHolder {
             TextView nameView;
+            TextView quantityView;
             ImageView pictureView;
             int position;
 
             private ViewHolder(View v) {
-                nameView = (TextView) v.findViewById(R.id.dish_name);
-                pictureView = (ImageView) v.findViewById(R.id.dish_pic);
+                nameView = (TextView) v.findViewById(R.id.ingredient_name);
+                pictureView = (ImageView) v.findViewById(R.id.ingredient_pic);
+                quantityView = (TextView) v.findViewById(R.id.item_quantity);
             }
         }
 

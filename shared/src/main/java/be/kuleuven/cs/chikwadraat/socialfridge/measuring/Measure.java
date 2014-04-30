@@ -40,6 +40,6 @@ public class Measure {
 
     @Override
     public String toString() {
-        return String.format("%f.2 %s", getValue(), getUnit().getLabel());
+        return getUnit().format(getValue());
     }
 }

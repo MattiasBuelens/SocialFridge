@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/dish_pic"
+            android:id="@+id/ingredient_pic"
             android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_small"
             android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_small"
             android:layout_alignParentLeft="true"
@@ -23,15 +23,30 @@
             tools:src="@drawable/eggs" />
 
         <TextView
-            android:id="@+id/dish_name"
-            android:layout_width="match_parent"
+            android:id="@+id/ingredient_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="@dimen/text_divider_margin"
             android:layout_marginStart="@dimen/text_divider_margin"
-            android:layout_toEndOf="@+id/dish_pic"
-            android:layout_toRightOf="@+id/dish_pic"
+            android:layout_toEndOf="@+id/ingredient_pic"
+            android:layout_toLeftOf="@+id/item_quantity"
+            android:layout_toRightOf="@+id/ingredient_pic"
+            android:layout_toStartOf="@+id/item_quantity"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Dish Name" />
+            tools:text="Ingredient Name" />
+
+        <TextView
+            android:id="@+id/item_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/text_divider_margin"
+            android:layout_marginStart="@dimen/text_divider_margin"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="6 pcs" />
 
     </RelativeLayout>
 

@@ -5,8 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
-
 /**
  *
  */
@@ -28,6 +26,7 @@ public class FridgeItem implements Parcelable {
         this.id = in.readLong();
         this.name = in.readString();
         this.pictureResId = in.readInt();
+        this.quantity = in.readParcelable(null);
     }
 
     public long getID() {
@@ -40,6 +39,14 @@ public class FridgeItem implements Parcelable {
 
     public int getPictureResource() {
         return pictureResId;
+    }
+
+    public Measure getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Measure quantity) {
+        this.quantity = quantity;
     }
 
     public Drawable getPicture(Context context) {
@@ -61,7 +68,7 @@ public class FridgeItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(getID());
         dest.writeString(getName());
-        dest.writeInt(getPictureResource());
+        dest.writeParcelable(getQuantity(), 0);
     }
 
     public static final Creator<FridgeItem> CREATOR = new Creator<FridgeItem>() {

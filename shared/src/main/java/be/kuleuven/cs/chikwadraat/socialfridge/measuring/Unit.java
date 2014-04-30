@@ -5,35 +5,35 @@ package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
  */
 public enum Unit {
 
-    KILOGRAM("kg", 1d) {
+    KILOGRAM("kg", 1d, "%.3f") {
         @Override
         public Quantity getQuantity() {
             return Quantity.MASS;
         }
     },
 
-    GRAM("g", 1000d) {
+    GRAM("g", 1000d, "%.1f") {
         @Override
         public Quantity getQuantity() {
             return Quantity.MASS;
         }
     },
 
-    LITRE("l", 1d) {
+    LITRE("l", 1d, "%.3f") {
         @Override
         public Quantity getQuantity() {
             return Quantity.VOLUME;
         }
     },
 
-    MILLILITRE("ml", 1000d) {
+    MILLILITRE("ml", 1000d, "%.0f") {
         @Override
         public Quantity getQuantity() {
             return Quantity.VOLUME;
         }
     },
 
-    PIECES("pcs", 1d) {
+    PIECES("pcs", 1d, "%.0f") {
         @Override
         public Quantity getQuantity() {
             return Quantity.DIMENSIONLESS;
@@ -42,10 +42,12 @@ public enum Unit {
 
     private final String label;
     private final Double conversionFactor;
+    private final String numberFormat;
 
-    private Unit(String label, double conversionFactor) {
+    private Unit(String label, double conversionFactor, String numberFormat) {
         this.label = label;
         this.conversionFactor = conversionFactor;
+        this.numberFormat = numberFormat;
     }
 
     public abstract Quantity getQuantity();
@@ -61,4 +63,18 @@ public enum Unit {
     public double toStandard(double value) {
         return value / conversionFactor;
     }
+
+    public String getNumberFormat() {
+        return numberFormat;
+    }
+
+    public String format(double value) {
+        String valueString = String.format(getNumberFormat(), value);
+        if (getLabel().isEmpty()) {
+            return valueString;
+        } else {
+            return valueString + " " + getLabel();
+        }
+    }
+
 }
