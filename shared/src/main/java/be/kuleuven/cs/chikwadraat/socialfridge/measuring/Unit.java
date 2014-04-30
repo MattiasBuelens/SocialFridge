@@ -5,31 +5,60 @@ package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
  */
 public enum Unit {
 
-    KILOGRAM ("kg", 1.00, Quantity.MASS),
+    KILOGRAM("kg", 1d) {
+        @Override
+        public Quantity getQuantity() {
+            return Quantity.MASS;
+        }
+    },
 
-    GRAM ("g", 1000.00, Quantity.MASS),
+    GRAM("g", 1000d) {
+        @Override
+        public Quantity getQuantity() {
+            return Quantity.MASS;
+        }
+    },
 
-    LITRE ("l", 1.00, Quantity.VOLUME),
+    LITRE("l", 1d) {
+        @Override
+        public Quantity getQuantity() {
+            return Quantity.VOLUME;
+        }
+    },
 
-    MILLILITRE ("ml", 100.00, Quantity.VOLUME);
+    MILLILITRE("ml", 100d) {
+        @Override
+        public Quantity getQuantity() {
+            return Quantity.VOLUME;
+        }
+    },
 
-    private String label;
+    PIECES("pcs", 1d) {
+        @Override
+        public Quantity getQuantity() {
+            return Quantity.DIMENSIONLESS;
+        }
+    };
 
-    private Double conversionFactor;
+    private final String label;
+    private final Double conversionFactor;
 
-    private Quantity quantity;
-
-    private Unit(String label, Double conversionFactor, Quantity quantity) {
+    private Unit(String label, double conversionFactor) {
         this.label = label;
         this.conversionFactor = conversionFactor;
-        this.quantity = quantity;
     }
 
-    public Double fromStandard(Double value) {
+    public abstract Quantity getQuantity();
+
+    public String getLabel() {
+        return label;
+    }
+
+    public double fromStandard(double value) {
         return value * conversionFactor;
     }
 
-    public Double toStandard(Double value) {
+    public double toStandard(double value) {
         return value / conversionFactor;
     }
 }

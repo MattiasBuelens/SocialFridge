@@ -1,7 +1,9 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -9,22 +11,32 @@ import java.util.List;
  */
 public enum Quantity {
 
-    VOLUME (Unit.LITRE, Arrays.asList(Unit.MILLILITRE)),
+    VOLUME(Unit.LITRE, Arrays.asList(Unit.MILLILITRE)),
 
-    MASS (Unit.KILOGRAM, Arrays.asList(Unit.GRAM));
+    MASS(Unit.KILOGRAM, Arrays.asList(Unit.GRAM)),
+
+    DIMENSIONLESS(Unit.PIECES);
 
     private Unit standardUnit;
+    private ImmutableList<Unit> derivedUnits;
 
-    private List<Unit> derivedUnits;
+    private Quantity(Unit standardUnit) {
+        this(standardUnit, Collections.<Unit>emptyList());
+    }
 
-    private Quantity(Unit standardUnit, List derivedUnits) {
+    private Quantity(Unit standardUnit, List<Unit> derivedUnits) {
         this.standardUnit = standardUnit;
-        this.derivedUnits = derivedUnits;
+        this.derivedUnits = ImmutableList.copyOf(derivedUnits);
+    }
+
+    public Unit getStandardUnit() {
+        return standardUnit;
     }
 
     public List<Unit> getUnits() {
-        List<Unit> units = new ArrayList<Unit>(derivedUnits);
-        units.add(standardUnit);
-        return units;
+        return ImmutableList.<Unit>builder()
+                .add(getStandardUnit())
+                .addAll(derivedUnits)
+                .build();
     }
 }
