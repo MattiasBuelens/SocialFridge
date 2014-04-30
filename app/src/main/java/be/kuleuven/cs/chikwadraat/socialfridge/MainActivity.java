@@ -12,6 +12,7 @@ import com.facebook.widget.ProfilePictureView;
 import com.google.android.gms.analytics.HitBuilders;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.fridge.FridgeActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartiesActivity;
 
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.action_create_party).setOnClickListener(this);
         findViewById(R.id.action_list_parties).setOnClickListener(this);
         findViewById(R.id.action_list_dishes).setOnClickListener(this);
+        findViewById(R.id.action_manage_fridge).setOnClickListener(this);
 
         if (savedInstanceState != null) {
             // TODO Initialize stuff
@@ -80,6 +82,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             break;
             case R.id.action_list_dishes: {
                 Intent intent = new Intent(this, DishesActivity.class);
+                startActivity(intent);
+            }
+            break;
+            case R.id.action_manage_fridge: {
+                Intent intent = new Intent(this, FridgeActivity.class);
                 startActivity(intent);
             }
             break;

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardOuter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        style="@style/AppTheme.CardInner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/dish_pic"
+            android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_small"
+            android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_small"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/eggs" />
+
+        <TextView
+            android:id="@+id/dish_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_divider_margin"
+            android:layout_marginStart="@dimen/text_divider_margin"
+            android:layout_toEndOf="@+id/dish_pic"
+            android:layout_toRightOf="@+id/dish_pic"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="Dish Name" />
+
+    </RelativeLayout>
+
+    <!--suppress AndroidLintContentDescription -->
+    <ImageView
+        style="@style/AppTheme.CardShadow"
+        android:scaleType="centerCrop" />
+
+</LinearLayout>

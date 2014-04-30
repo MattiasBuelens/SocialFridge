@@ -111,6 +111,11 @@
     <!-- List parties -->
     <string name="party_list_title">Your parties</string>
 
+    <!-- Fridge -->
+    <string name="fridge_title">Your fridge</string>
+    <string name="fridge_search">Search</string>
+    <string name="fridge_search_hint">Search ingredients</string>
+
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>
     <string name="error_dialog_default_text">No response from server.</string>
