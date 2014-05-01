@@ -18,8 +18,10 @@
     <Spinner
         android:id="@+id/measure_unit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center_vertical"
-        tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+        android:paddingTop="@dimen/spinner_padding_vertical"
+        android:paddingBottom="@dimen/spinner_padding_vertical"
+        tools:listitem="@android:layout/simple_spinner_item" />
 
 </LinearLayout>

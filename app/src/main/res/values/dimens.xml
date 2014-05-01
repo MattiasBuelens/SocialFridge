@@ -10,6 +10,9 @@
     <!-- Vertical margin around list items -->
     <dimen name="list_item_margin">10dp</dimen>
 
+    <!-- Vertical padding around spinner items -->
+    <dimen name="spinner_padding_vertical">10dp</dimen>
+
     <!-- Margin dividing text and other elements -->
     <dimen name="text_divider_margin">10dp</dimen>
 
