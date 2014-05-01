@@ -157,7 +157,7 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
     private class UnitArrayAdapter extends ArrayAdapter<Unit> {
 
         public UnitArrayAdapter(Context context) {
-            super(context, android.R.layout.simple_spinner_item);
+            super(context, 0);
         }
 
         @Override

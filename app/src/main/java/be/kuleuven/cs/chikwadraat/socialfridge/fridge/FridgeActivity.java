@@ -139,13 +139,6 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(STATE_QUERY, searchView.getQuery().toString());
-        outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
-    }
-
-    @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         FridgeItem item = (FridgeItem) l.getItemAtPosition(position);
         editingItemPosition = position;
@@ -158,6 +151,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
         } else {
             fragment = MeasureDialogFragment.newInstance();
         }
+        fragment.setTitle(item.getName());
         fragment.setMeasure(item.getQuantity());
         fragment.show(ft, "dialog");
     }
@@ -170,6 +164,13 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
             itemsArrayAdapter.notifyDataSetChanged();
         }
         editingItemPosition = -1;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_QUERY, searchView.getQuery().toString());
+        outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
     }
 
     public class ItemsArrayAdapter extends ArrayAdapter<FridgeItem> {

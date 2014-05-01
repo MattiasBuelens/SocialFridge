@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -12,8 +11,10 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
  */
 public class MeasureDialogFragment extends DialogFragment implements MeasureDialog.OnMeasureSetListener {
 
-    private static final String MEASURE = "measure";
+    private static final String SAVED_TITLE = "title";
+    private static final String SAVED_MEASURE = "measure";
 
+    private String title;
     private Measure measure;
     private MeasureDialog.OnMeasureSetListener listener;
 
@@ -32,18 +33,32 @@ public class MeasureDialogFragment extends DialogFragment implements MeasureDial
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            measure = savedInstanceState.getParcelable(MEASURE);
+            title = savedInstanceState.getString(SAVED_TITLE);
+            measure = savedInstanceState.getParcelable(SAVED_MEASURE);
         }
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new MeasureDialog(getActivity(), this, measure);
+    public MeasureDialog onCreateDialog(Bundle savedInstanceState) {
+        MeasureDialog dialog = new MeasureDialog(getActivity(), this, measure);
+        dialog.setTitle(getTitle());
+        return dialog;
     }
 
     @Override
     public MeasureDialog getDialog() {
         return (MeasureDialog) super.getDialog();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        if (getDialog() != null) {
+            getDialog().setTitle(title);
+        }
     }
 
     public Measure getMeasure() {
@@ -89,7 +104,8 @@ public class MeasureDialogFragment extends DialogFragment implements MeasureDial
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(MEASURE, getMeasure());
+        outState.putString(SAVED_TITLE, getTitle());
+        outState.putParcelable(SAVED_MEASURE, getMeasure());
     }
 
 }

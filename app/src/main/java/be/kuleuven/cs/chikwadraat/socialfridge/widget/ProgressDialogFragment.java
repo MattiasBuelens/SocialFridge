@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.widget;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -12,7 +11,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
  */
 public class ProgressDialogFragment extends DialogFragment {
 
-    private static final String ARGS_MESSAGE = "message";
+    private static final String SAVED_MESSAGE = "message";
 
     private String message;
 
@@ -21,10 +20,8 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     public static ProgressDialogFragment newInstance(String message) {
-        Bundle args = new Bundle();
-        args.putString(ARGS_MESSAGE, message);
         ProgressDialogFragment fragment = new ProgressDialogFragment();
-        fragment.setArguments(args);
+        fragment.setMessage(message);
         return fragment;
     }
 
@@ -33,14 +30,12 @@ public class ProgressDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            message = savedInstanceState.getString(ARGS_MESSAGE);
-        } else if (getArguments() != null) {
-            message = getArguments().getString(ARGS_MESSAGE);
+            message = savedInstanceState.getString(SAVED_MESSAGE);
         }
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public ProgressDialog onCreateDialog(Bundle savedInstanceState) {
         final ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage(getMessage());
         dialog.setIndeterminate(true);
@@ -48,9 +43,8 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(ARGS_MESSAGE, message);
+    public ProgressDialog getDialog() {
+        return (ProgressDialog) super.getDialog();
     }
 
     public String getMessage() {
@@ -66,8 +60,14 @@ public class ProgressDialogFragment extends DialogFragment {
     public void setMessage(String message) {
         this.message = message;
         if (getDialog() != null) {
-            ((ProgressDialog) getDialog()).setMessage(message);
+            getDialog().setMessage(message);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_MESSAGE, message);
     }
 
 }
