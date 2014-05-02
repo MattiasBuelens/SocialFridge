@@ -14,39 +14,57 @@
 
         <ImageView
             android:id="@+id/ingredient_pic"
-            android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_small"
-            android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_small"
+            android:layout_width="@dimen/dish_thumbnail_size"
+            android:layout_height="@dimen/dish_thumbnail_size"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
             tools:src="@drawable/eggs" />
 
-        <TextView
-            android:id="@+id/ingredient_name"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/text_divider_margin"
             android:layout_marginLeft="@dimen/text_divider_margin"
+            android:layout_marginRight="@dimen/text_divider_margin"
             android:layout_marginStart="@dimen/text_divider_margin"
             android:layout_toEndOf="@+id/ingredient_pic"
-            android:layout_toLeftOf="@+id/item_quantity"
+            android:layout_toLeftOf="@+id/item_buttons"
             android:layout_toRightOf="@+id/ingredient_pic"
-            android:layout_toStartOf="@+id/item_quantity"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Ingredient Name" />
+            android:layout_toStartOf="@+id/item_buttons"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_quantity"
+            <TextView
+                android:id="@+id/ingredient_name"
+                style="@style/AppTheme.CardTitle"
+                tools:text="Ingredient Name" />
+
+            <TextView
+                android:id="@+id/item_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="6 pcs" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/item_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/text_divider_margin"
-            android:layout_marginStart="@dimen/text_divider_margin"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="6 pcs" />
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:padding="@dimen/borderless_button_padding"
+                android:src="@drawable/ic_action_discard_light" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

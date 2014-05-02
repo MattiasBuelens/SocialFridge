@@ -1,5 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.measuring;
 
+import java.util.Locale;
+
 /**
  * Created by Milan Samyn on 28/04/2014.
  */
@@ -73,10 +75,18 @@ public enum Unit {
     }
 
     public String formatNumber(double value) {
-        return String.format(getNumberFormat(), value);
+        return formatNumber(Locale.ROOT, value);
+    }
+
+    public String formatNumber(Locale locale, double value) {
+        return String.format(locale, getNumberFormat(), value);
     }
 
     public String format(double value) {
+        return format(Locale.ROOT, value);
+    }
+
+    public String format(Locale locale, double value) {
         String valueString = formatNumber(value);
         if (getLabel().isEmpty()) {
             return valueString;

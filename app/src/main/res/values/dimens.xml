@@ -10,8 +10,12 @@
     <!-- Vertical margin around list items -->
     <dimen name="list_item_margin">10dp</dimen>
 
+    <!-- Padding inside borderless button -->
+    <dimen name="borderless_button_padding">5dp</dimen>
+
     <!-- Vertical padding around spinner items -->
-    <dimen name="spinner_padding_vertical">10dp</dimen>
+    <dimen name="spinner_padding_vertical">15dp</dimen>
+    <dimen name="spinner_dropdown_padding_vertical">10dp</dimen>
 
     <!-- Margin dividing text and other elements -->
     <dimen name="text_divider_margin">10dp</dimen>
