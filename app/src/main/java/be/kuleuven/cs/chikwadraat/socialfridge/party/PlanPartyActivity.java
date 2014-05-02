@@ -6,21 +6,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotPickerFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
 
 /**
  * Activity to plan a party.
@@ -32,7 +32,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
     private TimeSlotPickerFragment timeSlotPicker;
     private Button planPartyButton;
 
-    private PlanTask task;
+    private PartyEndpointAsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         planPartyButton.setOnClickListener(this);
 
         // Re-attach to plan task
-        task = (PlanTask) getLastCustomNonConfigurationInstance();
+        task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -99,9 +99,17 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
             return;
         }
 
-        task = new PlanTask(this, getPartyID(), slot);
-        task.execute();
-        showProgressDialog(R.string.party_plan_progress);
+        try {
+            task = new PartyEndpointAsyncTask(this, parties().plan(
+                    getPartyID(),
+                    getSession().getAccessToken(),
+                    slot.toEndpoint()));
+            task.execute();
+            showProgressDialog(R.string.party_plan_progress);
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing plan party request: " + e.getMessage());
+            trackException(e);
+        }
     }
 
     private void removePlanTask() {
@@ -148,28 +156,6 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
 
     @Override
     public void onProgress(Void... progress) {
-    }
-
-    private static class PlanTask extends ObservableAsyncTask<Void, Void, Party> {
-
-        private final long partyID;
-        private final TimeSlot timeSlot;
-
-        private PlanTask(PlanPartyActivity activity, long partyID, TimeSlot timeSlot) {
-            super(activity);
-            this.partyID = partyID;
-            this.timeSlot = timeSlot;
-        }
-
-        @Override
-        protected Party run(Void... unused) throws Exception {
-            return new Party(parties().plan(partyID, Session.getActiveSession().getAccessToken(), timeSlot.toEndpoint()).execute());
-        }
-
-        private Parties parties() {
-            return Endpoints.parties();
-        }
-
     }
 
 }

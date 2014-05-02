@@ -1,23 +1,22 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.facebook.Session;
 
 import java.io.IOException;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.EndpointRequest;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.CollectionResponsePartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
 
 /**
  * Retrieves candidates for a party.
  */
-public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
-
-    private static final String TAG = "PartyCandidatesLoader";
+public class PartyCandidatesLoader extends EndpointLoader<List<PartyMember>, CollectionResponsePartyMember> {
 
     private final long partyID;
 
@@ -31,17 +30,13 @@ public class PartyCandidatesLoader extends BaseLoader<List<PartyMember>> {
     }
 
     @Override
-    public List<PartyMember> loadInBackground() {
-        Parties parties = Endpoints.parties();
-        Session session = Session.getActiveSession();
+    protected EndpointRequest<CollectionResponsePartyMember> createRequest() throws IOException {
+        return parties().getCandidates(partyID, Session.getActiveSession().getAccessToken());
+    }
 
-        try {
-            return parties.getCandidates(partyID, session.getAccessToken()).execute().getItems();
-        } catch (IOException e) {
-            Log.e(TAG, "Error while loading candidates: " + e.getMessage());
-            trackException(e);
-            return null;
-        }
+    @Override
+    protected List<PartyMember> parseResponse(CollectionResponsePartyMember response) {
+        return response.getItems();
     }
 
 }

@@ -1,37 +1,33 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.loader;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Dishes;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.EndpointRequest;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.CollectionResponseDish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.dishes;
 
 /**
  * Retrieves dishes.
  */
-public class DishesLoader extends BaseLoader<List<Dish>> {
-
-    private static final String TAG = "DishesLoader";
+public class DishesLoader extends EndpointLoader<List<Dish>, CollectionResponseDish> {
 
     public DishesLoader(Context context) {
         super(context);
     }
 
     @Override
-    public List<Dish> loadInBackground() {
-        Dishes dishes = Endpoints.dishes();
+    protected EndpointRequest<CollectionResponseDish> createRequest() throws IOException {
+        return dishes().getDishes();
+    }
 
-        try {
-            return Dish.fromEndpoint(dishes.getDishes().execute().getItems());
-        } catch (IOException e) {
-            Log.e(TAG, "Error while loading dishes: " + e.getMessage());
-            trackException(e);
-            return null;
-        }
+    @Override
+    protected List<Dish> parseResponse(CollectionResponseDish response) {
+        return Dish.fromEndpoint(response.getItems());
     }
 
 }

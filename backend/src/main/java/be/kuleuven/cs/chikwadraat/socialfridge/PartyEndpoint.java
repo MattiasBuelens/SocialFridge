@@ -222,7 +222,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.declineInvite", path = "party/{partyID}/declineInvite", httpMethod = ApiMethod.HttpMethod.GET)
-    public void declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party declineInvite(@Named("partyID") final long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
@@ -241,6 +241,7 @@ public class PartyEndpoint extends BaseEndpoint {
             }
         });
         // TODO Send update to host?
+        return party;
     }
 
     /**
@@ -285,7 +286,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @return The list of candidates.
      */
     @ApiMethod(name = "parties.getCandidates", path = "party/{partyID}/candidates", httpMethod = ApiMethod.HttpMethod.GET)
-    public List<PartyMember> getCandidates(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
+    public CollectionResponse<PartyMember> getCandidates(@Named("partyID") long partyID, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         Party party = getParty(partyID, true);
         // User must be host
@@ -307,7 +308,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 candidates.add(member);
             }
         }
-        return candidates;
+        return CollectionResponse.<PartyMember>builder().setItems(candidates).build();
     }
 
     /**

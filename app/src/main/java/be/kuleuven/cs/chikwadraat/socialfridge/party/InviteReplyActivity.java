@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
@@ -14,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
@@ -24,6 +21,8 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
 
 /**
  * Created by vital.dhaveloose on 29/03/2014.
@@ -40,7 +39,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private Button declineButton;
     private TimeSlotsFragment timeSlotsFragment;
 
-    private JoinDeclineTask task;
+    private PartyEndpointAsyncTask task;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +55,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         declineButton.setOnClickListener(this);
 
         // Re-attach to join/decline task
-        task = (JoinDeclineTask) getLastCustomNonConfigurationInstance();
+        task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -125,19 +124,33 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         // TODO Validate that at least one slot is checked
 
-        task = new JoinTask(this, getPartyID(), getTimeSlots());
-        task.execute();
-
-        showProgressDialog(R.string.party_join_progress);
+        try {
+            TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(TimeSlot.toEndpoint(getTimeSlots()));
+            task = new PartyEndpointAsyncTask(this, parties().acceptInvite(
+                    getPartyID(),
+                    getSession().getAccessToken(),
+                    timeSlotCollection));
+            task.execute();
+            showProgressDialog(R.string.party_join_progress);
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing accept invite request: " + e.getMessage());
+            trackException(e);
+        }
     }
 
     private void decline() {
         if (task != null) return;
 
-        task = new DeclineTask(this, getPartyID());
-        task.execute();
-
-        showProgressDialog(R.string.party_decline_progress);
+        try {
+            task = new PartyEndpointAsyncTask(this, parties().declineInvite(
+                    getPartyID(),
+                    getSession().getAccessToken()));
+            task.execute();
+            showProgressDialog(R.string.party_decline_progress);
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing decline invite request: " + e.getMessage());
+            trackException(e);
+        }
     }
 
     private void removeTask() {
@@ -152,11 +165,11 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         removeTask();
         hideProgressDialog();
 
-        boolean isJoined = (party != null);
+        boolean isJoined = party.isInParty(getLoggedInUser());
         if (isJoined) {
             onJoined(party);
         } else {
-            onDeclined();
+            onDeclined(party);
         }
     }
 
@@ -175,9 +188,12 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         finish();
     }
 
-    private void onDeclined() {
+    private void onDeclined(Party party) {
         Log.d(TAG, "Invite successfully declined");
         getTracker().send(new HitBuilders.EventBuilder("PartyInvite", "Decline").build());
+
+        // Cache updated party
+        cacheParty(party);
 
         // Declined invite, close
         finish();
@@ -196,54 +212,6 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     @Override
     public void onProgress(Void... progress) {
-    }
-
-    private static abstract class JoinDeclineTask extends ObservableAsyncTask<Void, Void, Party> {
-
-        protected final long partyID;
-
-        private JoinDeclineTask(InviteReplyActivity activity, long partyID) {
-            super(activity);
-            this.partyID = partyID;
-        }
-
-        protected Parties parties() {
-            return Endpoints.parties();
-        }
-
-    }
-
-    private static class JoinTask extends JoinDeclineTask {
-
-        private final List<TimeSlot> timeSlots;
-
-        private JoinTask(InviteReplyActivity activity, long partyID, List<TimeSlot> timeSlots) {
-            super(activity, partyID);
-            this.timeSlots = timeSlots;
-        }
-
-        @Override
-        protected Party run(Void... unused) throws IOException {
-            TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(TimeSlot.toEndpoint(timeSlots));
-            String accessToken = Session.getActiveSession().getAccessToken();
-            return new Party(parties().acceptInvite(partyID, accessToken, timeSlotCollection).execute());
-        }
-
-    }
-
-    private static class DeclineTask extends JoinDeclineTask {
-
-        private DeclineTask(InviteReplyActivity activity, long partyID) {
-            super(activity, partyID);
-        }
-
-        @Override
-        protected Party run(Void... unused) throws IOException {
-            String accessToken = Session.getActiveSession().getAccessToken();
-            parties().declineInvite(partyID, accessToken).execute();
-            return null;
-        }
-
     }
 
 }

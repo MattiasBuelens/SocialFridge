@@ -21,6 +21,8 @@ import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragmen
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
+
 /**
  * Activity to invite friends to a party.
  */
@@ -32,7 +34,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     private CandidatesFragment candidatesFragment;
     private Button confirmPartnersButton;
 
-    private CloseInvitesTask task;
+    private PartyEndpointAsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         confirmPartnersButton.setOnClickListener(this);
 
         // Re-attach to close invites task
-        task = (CloseInvitesTask) getLastCustomNonConfigurationInstance();
+        task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -83,9 +85,16 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     private void closeInvites() {
         if (task != null) return;
 
-        task = new CloseInvitesTask(this, getPartyID());
-        task.execute();
-        showProgressDialog(R.string.party_close_invites_progress);
+        try {
+            task = new PartyEndpointAsyncTask(this, parties().closeInvites(
+                    getPartyID(),
+                    getSession().getAccessToken()));
+            task.execute();
+            showProgressDialog(R.string.party_close_invites_progress);
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing close invites request: " + e.getMessage());
+            trackException(e);
+        }
     }
 
     private void removeCloseInvitesTask() {
@@ -194,26 +203,6 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                 trackException(exception);
                 // TODO Error handling?
             }
-        }
-
-        private Parties parties() {
-            return Endpoints.parties();
-        }
-
-    }
-
-    private static class CloseInvitesTask extends ObservableAsyncTask<Void, Void, Party> {
-
-        private final long partyID;
-
-        private CloseInvitesTask(PartyInviteActivity activity, long partyID) {
-            super(activity);
-            this.partyID = partyID;
-        }
-
-        @Override
-        protected Party run(Void... unused) throws Exception {
-            return new Party(parties().closeInvites(partyID, Session.getActiveSession().getAccessToken()).execute());
         }
 
         private Parties parties() {

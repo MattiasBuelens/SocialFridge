@@ -7,25 +7,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
-import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.api.client.util.DateTime;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
 
 /**
  * Create party activity.
@@ -37,7 +37,7 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
     private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
     private Button findPartnersButton;
-    private CreatePartyTask task;
+    private PartyEndpointAsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         updateTimeSlotSelections();
 
         // Re-attach to registration task
-        task = (CreatePartyTask) getLastCustomNonConfigurationInstance();
+        task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -157,9 +157,15 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         builder.setDate(new DateTime(getPartyDate()));
         builder.setHostTimeSlots(TimeSlot.toEndpoint(getTimeSlots()));
 
-        task = new CreatePartyTask(this, builder);
-        task.execute();
-        showProgressDialog(R.string.party_create_progress);
+        try {
+            task = new PartyEndpointAsyncTask(this, parties()
+                    .insertParty(getSession().getAccessToken(), builder));
+            task.execute();
+            showProgressDialog(R.string.party_create_progress);
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing party create request: " + e.getMessage());
+            trackException(e);
+        }
     }
 
     private void removeCreateTask() {
@@ -197,30 +203,6 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
     @Override
     public void onProgress(Void... progress) {
-    }
-
-    protected static class CreatePartyTask extends ObservableAsyncTask<Void, Void, Party> {
-
-        private final PartyBuilder builder;
-
-        protected CreatePartyTask(CreatePartyActivity activity, PartyBuilder builder) {
-            super(activity);
-            this.builder = builder;
-        }
-
-        protected void attach(CreatePartyActivity activity) {
-            super.attach(activity);
-        }
-
-        @Override
-        protected Party run(Void... unused) throws Exception {
-            return new Party(parties().insertParty(Session.getActiveSession().getAccessToken(), builder).execute());
-        }
-
-        private Parties parties() {
-            return Endpoints.parties();
-        }
-
     }
 
 }
