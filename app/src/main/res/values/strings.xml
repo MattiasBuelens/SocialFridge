@@ -118,6 +118,7 @@
     <string name="fridge_search">Search</string>
     <string name="fridge_search_hint">Search ingredients</string>
     <string name="fridge_add_ingredient">Add ingredients</string>
+    <string name="fridge_add_ingredients_progress">Opening Add ingredients#8230;</string>
 
     <!-- Measure picker -->
     <string name="measure_picker_done">Done</string>

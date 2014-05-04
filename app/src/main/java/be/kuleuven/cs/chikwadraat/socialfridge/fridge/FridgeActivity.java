@@ -3,45 +3,51 @@ package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
-import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.BasePartyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.party.PlanPartyActivity;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Manage fridge activity.
  */
-public class FridgeActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, MeasureDialog.OnMeasureSetListener {
+public class FridgeActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+        MeasureDialog.OnMeasureSetListener, ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener {
 
     private static final String TAG = "FridgeActivity";
+
+    private IngredientsFragment ingredientsFragment;
+    private Button addIngredientsButton;
+
+    private AddIngredientsTask task;
 
     private static final String STATE_QUERY = "fridge_search_query";
     private static final String STATE_EDITING_ITEM = "fridge_editing_item";
 
-    private ItemsArrayAdapter itemsArrayAdapter;
     private int editingItemPosition;
 
     private SearchView searchView;
@@ -50,21 +56,19 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.simple_card_list);
+        setContentView(R.layout.fridge_my_fridge);
+
+        ingredientsFragment = (IngredientsFragment) getSupportFragmentManager().findFragmentById(R.id.ingredients_fragment);
+        addIngredientsButton = (Button) findViewById(R.id.fridge_action_add_ingredients);
+
+        addIngredientsButton.setOnClickListener(this);
+
+        //TODO Re-attach to close invites task ?
 
         if (savedInstanceState != null) {
             searchQuery = savedInstanceState.getString(STATE_QUERY);
             editingItemPosition = savedInstanceState.getInt(STATE_EDITING_ITEM, -1);
         }
-
-        itemsArrayAdapter = new ItemsArrayAdapter();
-
-        // TODO Remove dummy items
-        List<FridgeItem> items = new ArrayList<FridgeItem>();
-        items.add(new FridgeItem("Eggs", R.drawable.eggs, new Measure(6, Unit.PIECES)));
-        AdapterUtils.setAll(itemsArrayAdapter, items);
-
-        setListAdapter(itemsArrayAdapter);
 
         handleIntent(getIntent());
     }
@@ -130,12 +134,49 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
         return false;
     }
 
+    @Override
+    public void onResult(Void v) {
+        // TODO WHAT TO DO HERE?
+    }
+
+    @Override
+    public void onError(Exception exception) {
+        Log.e(TAG, "Failed to go to add ingredients: " + exception.getMessage());
+        hideProgressDialog();
+        trackException(exception);
+
+        // Handle regular exception
+        handleException(exception);
+    }
+
+    @Override
+    public void onProgress(Void... progress) {
+        // do nothing
+    }
+
     protected void searchIngredients(String query) {
         searchQuery = query;
         if (searchView != null && !TextUtils.equals(searchView.getQuery(), query)) {
             searchView.setQuery(searchQuery, false);
         }
-        itemsArrayAdapter.getFilter().filter(query);
+        // TODO HOWTO itemsArrayAdapter.getFilter().filter(query);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fridge_action_add_ingredients:
+                addIngredients();
+                break;
+        }
+    }
+
+    private void addIngredients() {
+        if (task != null) return;
+
+        task = new AddIngredientsTask(this);
+        task.execute();
+        showProgressDialog(R.string.fridge_add_ingredients_progress);
     }
 
     @Override
@@ -161,7 +202,7 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
         if (editingItemPosition >= 0) {
             FridgeItem item = (FridgeItem) getListView().getItemAtPosition(editingItemPosition);
             item.setQuantity(measure);
-            itemsArrayAdapter.notifyDataSetChanged();
+            //TODO itemsArrayAdapter.notifyDataSetChanged();
         }
         editingItemPosition = -1;
     }
@@ -173,49 +214,16 @@ public class FridgeActivity extends ListActivity implements SearchView.OnQueryTe
         outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
     }
 
-    public class ItemsArrayAdapter extends ArrayAdapter<FridgeItem> {
+    private static class AddIngredientsTask extends ObservableAsyncTask<Void, Void, Void> {
 
-        public ItemsArrayAdapter() {
-            super(FridgeActivity.this, R.layout.fridge_list_item);
+        private AddIngredientsTask(FridgeActivity activity) {
+            super(activity);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            ViewHolder vh;
-            if (v == null) {
-                v = View.inflate(getContext(), R.layout.fridge_list_item, null);
-                vh = new ViewHolder(v);
-                v.setTag(vh);
-            } else {
-                vh = (ViewHolder) v.getTag();
-            }
-
-            FridgeItem item = getItem(position);
-
-            String nameText = item.getName();
-            Drawable picture = item.getPicture(getContext());
-            String quantityText = item.getQuantity().toString();
-
-            vh.position = position;
-            vh.nameView.setText(nameText);
-            vh.pictureView.setImageDrawable(picture);
-            vh.quantityView.setText(quantityText);
-
-            return v;
-        }
-
-        private class ViewHolder {
-            TextView nameView;
-            TextView quantityView;
-            ImageView pictureView;
-            int position;
-
-            private ViewHolder(View v) {
-                nameView = (TextView) v.findViewById(R.id.ingredient_name);
-                pictureView = (ImageView) v.findViewById(R.id.ingredient_pic);
-                quantityView = (TextView) v.findViewById(R.id.item_quantity);
-            }
+        protected Void run(Void... unused) throws Exception {
+            //TODO HOWTO return new Party(parties().closeInvites(partyID, Session.getActiveSession().getAccessToken()).execute());
+            return null;
         }
 
     }
