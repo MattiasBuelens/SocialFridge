@@ -114,9 +114,10 @@
     <string name="party_list_title">Your parties</string>
 
     <!-- Fridge -->
-    <string name="fridge_title">Your fridge</string>
+    <string name="fridge_title">My fridge</string>
     <string name="fridge_search">Search</string>
     <string name="fridge_search_hint">Search ingredients</string>
+    <string name="fridge_add_ingredient">Add ingredients</string>
 
     <!-- Measure picker -->
     <string name="measure_picker_done">Done</string>
