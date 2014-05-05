@@ -9,6 +9,8 @@ import com.googlecode.objectify.annotation.Id;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
@@ -35,6 +37,11 @@ public class User {
      * Parties.
      */
     private Set<Ref<Party>> parties = new HashSet<Ref<Party>>();
+
+    /**
+     * Fridge items.
+     */
+    private Set<Ref<FridgeItem>> fridge = new HashSet<Ref<FridgeItem>>();
 
     public User() {
     }
@@ -120,6 +127,17 @@ public class User {
 
     public void removeParty(Party party) {
         removeParty(Ref.create(party));
+    }
+
+    /**
+     * Fridge
+     */
+    public Collection<Ref<FridgeItem>> getFridgeRefs() {
+        return fridge;
+    }
+
+    public Collection<FridgeItem> getFridge() {
+        return ofy().load().refs(getFridgeRefs()).values();
     }
 
 }
