@@ -4,8 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,7 +23,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 /**
  * Dialog for specifying a {@link be.kuleuven.cs.chikwadraat.socialfridge.model.Measure}.
  */
-public class MeasureDialog extends AlertDialog implements DialogInterface.OnClickListener {
+public class MeasureDialog extends AlertDialog implements DialogInterface.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
 
     private static final String MEASURE_VALUE = "measure_value";
     private static final String MEASURE_UNIT = "measure_unit";
@@ -27,6 +31,8 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
     private EditText valueText;
     private Spinner unitSpinner;
     private UnitArrayAdapter unitAdapter;
+
+    private Unit previousMeasureUnit;
 
     private OnMeasureSetListener callback;
 
@@ -60,9 +66,14 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
         valueText = (EditText) view.findViewById(R.id.measure_value);
         unitSpinner = (Spinner) view.findViewById(R.id.measure_unit);
 
+        valueText.setOnEditorActionListener(this);
+
         unitAdapter = new UnitArrayAdapter(themeContext);
         unitSpinner.setAdapter(unitAdapter);
+        unitSpinner.setOnItemSelectedListener(this);
 
+        valueText.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     public MeasureDialog(Context context, OnMeasureSetListener callback, Measure measure) {
@@ -91,11 +102,11 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
     }
 
     private void update(double value, Unit unit) {
-        valueText.setText(unit.formatNumber(value));
-
+        previousMeasureUnit = unit;
         AdapterUtils.setAll(unitAdapter, unit.getQuantity().getUnits());
-        int unitPosition = unitAdapter.getPosition(unit);
-        unitSpinner.setSelection(unitPosition, true);
+
+        setMeasureUnit(unit, false);
+        setMeasureValue(value);
     }
 
     private double getMeasureValue() {
@@ -106,8 +117,21 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
         }
     }
 
+    private void setMeasureValue(double value) {
+        valueText.setText(getMeasureUnit().formatNumber(value));
+    }
+
     private Unit getMeasureUnit() {
         return (Unit) unitSpinner.getSelectedItem();
+    }
+
+    private void setMeasureUnit(Unit unit, boolean convert) {
+        if (!convert) {
+            previousMeasureUnit = unit;
+        }
+
+        int unitPosition = unitAdapter.getPosition(unit);
+        unitSpinner.setSelection(unitPosition, true);
     }
 
     public Measure getMeasure() {
@@ -120,7 +144,40 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            finish();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Unit newUnit = getMeasureUnit();
+        if (previousMeasureUnit != null && previousMeasureUnit != newUnit) {
+            // Convert from previous unit
+            Measure measure = new Measure(getMeasureValue(), previousMeasureUnit);
+            double convertedValue = measure.getValue(newUnit);
+            setMeasureValue(convertedValue);
+            previousMeasureUnit = newUnit;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        previousMeasureUnit = null;
+    }
+
+    protected void finish() {
         tryNotifyMeasureSet();
+        dismiss();
     }
 
     private void tryNotifyMeasureSet() {
@@ -130,12 +187,6 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
 
             callback.onMeasureSet(getMeasure());
         }
-    }
-
-    @Override
-    protected void onStop() {
-        tryNotifyMeasureSet();
-        super.onStop();
     }
 
     @Override
@@ -167,7 +218,7 @@ public class MeasureDialog extends AlertDialog implements DialogInterface.OnClic
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return createViewFromResource(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item);
+            return createViewFromResource(position, convertView, parent, R.layout.spinner_dropdown_item);
         }
 
         protected View createViewFromResource(int position, View convertView, ViewGroup parent, int resource) {

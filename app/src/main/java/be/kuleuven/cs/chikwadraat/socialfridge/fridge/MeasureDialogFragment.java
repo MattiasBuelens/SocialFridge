@@ -87,9 +87,13 @@ public class MeasureDialogFragment extends DialogFragment implements MeasureDial
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
+        if (getTargetFragment() != null && getTargetFragment() instanceof MeasureDialog.OnMeasureSetListener) {
+            // Attach to target fragment
+            listener = (MeasureDialog.OnMeasureSetListener) getTargetFragment();
+        } else if (activity instanceof MeasureDialog.OnMeasureSetListener) {
+            // Attach to activity
             listener = (MeasureDialog.OnMeasureSetListener) activity;
-        } catch (ClassCastException e) {
+        } else {
             throw new ClassCastException(activity.toString()
                     + " must implement OnMeasureSetListener");
         }

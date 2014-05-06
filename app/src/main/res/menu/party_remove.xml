@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/party_action_remove"
-        android:icon="@drawable/ic_action_discard"
+        android:icon="@drawable/ic_action_discard_dark"
         android:title="@string/party_action_delete"
         custom:showAsAction="always|withText" />
 
