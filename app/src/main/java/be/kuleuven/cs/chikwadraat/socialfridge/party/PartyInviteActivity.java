@@ -1,5 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +11,8 @@ import android.widget.Button;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
+import com.google.common.base.Joiner;
 
 import java.io.IOException;
 
@@ -83,6 +87,29 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
     }
 
     private void closeInvites() {
+
+        int nbPendingInvites = 0; //TODO
+
+        if(nbPendingInvites >= 0) {
+            String message = getResources().getQuantityString(R.plurals.party_dialog_confirm_close_inviting_withdraw,
+                    nbPendingInvites, nbPendingInvites);
+
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.party_dialog_confirm_close_inviting_title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doCloseInvites();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        }
+
+    }
+
+    private void doCloseInvites() {
         if (task != null) return;
 
         try {

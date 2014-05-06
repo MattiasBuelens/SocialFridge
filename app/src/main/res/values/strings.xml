@@ -45,6 +45,11 @@
         <item quantity="one">One partner will be notified of the cancellation.</item>
         <item quantity="other">%d partners will be notified of the cancellation.</item>
     </plurals>
+    <string name="party_dialog_confirm_close_inviting_title">Done inviting?</string>
+    <plurals name="party_dialog_confirm_close_inviting_withdraw">
+        <item quantity="one">One invite will be withdrawn.</item>
+        <item quantity="other">%d invites will be withdrawn.</item>
+    </plurals>
 
     <!-- Party member role -->
     <string name="party_role_host">Host</string>
