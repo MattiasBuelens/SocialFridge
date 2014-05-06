@@ -20,6 +20,7 @@ public class Party implements Parcelable {
     private final long id;
     private final String hostID;
     private final List<PartyMember> partners = new ArrayList<PartyMember>();
+    private final List<PartyMember> invitees = new ArrayList<PartyMember>();
     private final Status status;
     private final List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
     private final Date date;
@@ -29,6 +30,7 @@ public class Party implements Parcelable {
         this.id = model.getId();
         this.hostID = model.getHostID();
         this.partners.addAll(PartyMember.fromEndpoint(model.getPartners()));
+        this.invitees.addAll(PartyMember.fromEndpoint(model.getInvitees()));
         this.status = Status.valueOf(model.getStatus());
         this.timeSlots.addAll(TimeSlot.fromEndpoint(model.getTimeSlots()));
         this.date = new Date(model.getDate().getValue());
@@ -39,6 +41,7 @@ public class Party implements Parcelable {
         this.id = in.readLong();
         this.hostID = in.readString();
         in.readTypedList(this.partners, PartyMember.CREATOR);
+        in.readTypedList(this.invitees, PartyMember.CREATOR);
         this.status = Status.valueOf(in.readString());
         in.readTypedList(this.timeSlots, TimeSlot.CREATOR);
         this.date = new Date(in.readLong());
@@ -88,6 +91,31 @@ public class Party implements Parcelable {
 
     public boolean isInParty(String userID) {
         return getPartner(userID) != null;
+    }
+
+    public PartyMember getInvitee(User user) {
+        return getInvitee(user.getId());
+    }
+
+    public PartyMember getInvitee(String userID) {
+        for (PartyMember invitee : getInvitees()) {
+            if (invitee.getUserID().equals(userID)) {
+                return invitee;
+            }
+        }
+        return null;
+    }
+
+    public List<PartyMember> getInvitees() {
+        return invitees;
+    }
+
+    public boolean isInvited(User user) {
+        return isInvited(user.getId());
+    }
+
+    public boolean isInvited(String userID) {
+        return getInvitee(userID) != null;
     }
 
     public Status getStatus() {
