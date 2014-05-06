@@ -25,8 +25,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     private IngredientsFragment ingredientsFragment;
     private Button addIngredientsButton;
 
-    private AddIngredientsTask task;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,12 +51,13 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     @Override
     public void onResult(Void v) {
+        hideProgressDialog();
         // TODO WHAT TO DO HERE?
     }
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to go to add ingredients: " + exception.getMessage());
+        Log.e(TAG, "Failed to update/remove fridge item: " + exception.getMessage());
         hideProgressDialog();
         trackException(exception);
 
@@ -81,35 +80,17 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     }
 
     private void addIngredients() {
-        if (task != null) return;
-
-        task = new AddIngredientsTask(this);
-        task.execute();
-        showProgressDialog(R.string.fridge_add_ingredients_progress);
+        // TODO Launch activity
     }
 
     @Override
     public void onFridgeItemUpdated(FridgeItem item) {
-        // TODO
+        // TODO Update on backend
     }
 
     @Override
     public void onFridgeItemRemoved(FridgeItem item) {
-        // TODO
-    }
-
-    private static class AddIngredientsTask extends ObservableAsyncTask<Void, Void, Void> {
-
-        private AddIngredientsTask(FridgeActivity activity) {
-            super(activity);
-        }
-
-        @Override
-        protected Void run(Void... unused) throws Exception {
-            //TODO HOWTO return new Party(parties().closeInvites(partyID, Session.getActiveSession().getAccessToken()).execute());
-            return null;
-        }
-
+        // TODO Remove on backend
     }
 
 }
