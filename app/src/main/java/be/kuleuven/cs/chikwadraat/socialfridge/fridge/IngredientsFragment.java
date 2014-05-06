@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -170,9 +171,7 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
         if (editingItemPosition >= 0) {
             FridgeItem item = (FridgeItem) getListView().getItemAtPosition(editingItemPosition);
             item.setQuantity(measure);
-            if (listener != null) {
-                listener.onFridgeItemUpdated(item);
-            }
+            fireFridgeItemUpdated(item);
             ingredientsAdapter.notifyDataSetChanged();
         }
         editingItemPosition = -1;
@@ -215,6 +214,18 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
         }
     }
 
+    protected void fireFridgeItemUpdated(FridgeItem item) {
+        if (listener != null) {
+            listener.onFridgeItemUpdated(item);
+        }
+    }
+
+    protected void fireFridgeItemRemoved(FridgeItem item) {
+        if (listener != null) {
+            listener.onFridgeItemRemoved(item);
+        }
+    }
+
     public interface IngredientsListener {
 
         public void onFridgeItemUpdated(FridgeItem item);
@@ -223,7 +234,7 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
 
     }
 
-    public class IngredientsListAdapter extends ArrayAdapter<FridgeItem> {
+    public class IngredientsListAdapter extends ArrayAdapter<FridgeItem> implements View.OnClickListener {
 
         public IngredientsListAdapter(Context context, List<FridgeItem> items) {
             super(context, R.layout.fridge_list_item, items);
@@ -246,25 +257,43 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
             String nameText = item.getName();
             Drawable picture = item.getPicture(getContext());
             String quantityText = item.getQuantity().toString();
+            // TODO Add proper check if this is a fridge item
+            boolean inFridge = true;
 
             vh.position = position;
             vh.nameView.setText(nameText);
             vh.pictureView.setImageDrawable(picture);
             vh.quantityView.setText(quantityText);
+            vh.removeButton.setVisibility(inFridge ? View.VISIBLE : View.GONE);
+            vh.removeButton.setOnClickListener(this);
 
             return v;
+        }
+
+        @Override
+        public void onClick(View v) {
+            ViewHolder vh = (ViewHolder) v.getTag();
+            FridgeItem item = getItem(vh.position);
+            switch (v.getId()) {
+                case R.id.item_remove:
+                    remove(item);
+                    fireFridgeItemRemoved(item);
+                    break;
+            }
         }
 
         private class ViewHolder {
             TextView nameView;
             TextView quantityView;
             ImageView pictureView;
+            ImageButton removeButton;
             int position;
 
             private ViewHolder(View v) {
                 nameView = (TextView) v.findViewById(R.id.ingredient_name);
                 pictureView = (ImageView) v.findViewById(R.id.ingredient_pic);
                 quantityView = (TextView) v.findViewById(R.id.item_quantity);
+                removeButton = (ImageButton) v.findViewById(R.id.item_remove);
             }
         }
 
