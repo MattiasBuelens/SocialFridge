@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/ingredient_pic"
             android:layout_width="@dimen/dish_thumbnail_size"
             android:layout_height="@dimen/dish_thumbnail_size"

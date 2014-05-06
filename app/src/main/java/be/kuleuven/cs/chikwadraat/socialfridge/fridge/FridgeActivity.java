@@ -1,6 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,16 +13,18 @@ import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
 /**
  * Manage fridge activity.
  */
-public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener, IngredientsFragment.IngredientsListener {
+public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener, FridgeFragment.FridgeListener, IngredientsFragment.IngredientsListener {
 
     private static final String TAG = "FridgeActivity";
 
+    private FridgeFragment fridgeFragment;
     private IngredientsFragment ingredientsFragment;
     private Button addIngredientsButton;
 
@@ -30,6 +33,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_my_fridge);
 
+        fridgeFragment = (FridgeFragment) getSupportFragmentManager().findFragmentById(R.id.fridge_fragment);
         ingredientsFragment = (IngredientsFragment) getSupportFragmentManager().findFragmentById(R.id.ingredients_fragment);
         addIngredientsButton = (Button) findViewById(R.id.fridge_action_add_ingredients);
 
@@ -40,13 +44,17 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         // TODO Remove dummy items
         List<FridgeItem> items = new ArrayList<FridgeItem>();
         items.add(new FridgeItem("Eggs", R.drawable.eggs, new Measure(6, Unit.PIECES)));
+        fridgeFragment.setItems(items);
 
-        items.add(new FridgeItem("Lemons", R.drawable.lemons, new Measure(1, Unit.PIECES)));
-        items.add(new FridgeItem("Babies", R.drawable.baby, new Measure(3, Unit.PIECES)));
-        items.add(new FridgeItem("Peppers", R.drawable.peppers, new Measure(2, Unit.PIECES)));
-        items.add(new FridgeItem("Tomatoes", R.drawable.tomatoes, new Measure(6, Unit.PIECES)));
-        items.add(new FridgeItem("Minced meat", R.drawable.minced_meat, new Measure(500, Unit.GRAM)));
-        ingredientsFragment.setIngredients(items);
+        // TODO Remove dummy ingredients
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+        ingredients.add(new Ingredient("Eggs", "Dairy", new Measure(6, Unit.PIECES)));
+        ingredients.add(new Ingredient("Lemons", "Fruit", new Measure(1, Unit.PIECES)));
+        ingredients.add(new Ingredient("Babies", "Fats", new Measure(3, Unit.PIECES)));
+        ingredients.add(new Ingredient("Peppers", "Vegetables", new Measure(2, Unit.PIECES)));
+        ingredients.add(new Ingredient("Tomatoes", "Fruit", new Measure(6, Unit.PIECES)));
+        ingredients.add(new Ingredient("Minced meat", "Meat", new Measure(500, Unit.GRAM)));
+        ingredientsFragment.setItems(ingredients);
     }
 
     @Override
@@ -80,7 +88,17 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     }
 
     private void addIngredients() {
-        // TODO Launch activity
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.show(ingredientsFragment);
+        ft.hide(fridgeFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void onFridgeItemAdded(FridgeItem item) {
+        // TODO Update on backend
     }
 
     @Override

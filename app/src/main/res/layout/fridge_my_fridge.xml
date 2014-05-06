@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.FridgeActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/fridge_fragment"
+            android:name="be.kuleuven.cs.chikwadraat.socialfridge.fridge.FridgeFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/fridge_action_add_ingredients"
+            android:layout_alignParentTop="true"
+            tools:layout="@layout/simple_card_list" />
+
+        <Button
+            android:id="@+id/fridge_action_add_ingredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/fridge_add_ingredient"
+            android:textAllCaps="true" />
+
+    </RelativeLayout>
+
     <fragment
         android:id="@+id/ingredients_fragment"
         android:name="be.kuleuven.cs.chikwadraat.socialfridge.fridge.IngredientsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/fridge_action_add_ingredients"
-        android:layout_alignParentTop="true"
-        tools:layout="@layout/simple_card_list" />
+        tools:layout="@layout/simple_card_list"
+        tools:visibility="gone" />
 
-    <Button
-        android:id="@+id/fridge_action_add_ingredients"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/fridge_add_ingredient"
-        android:textAllCaps="true" />
-
-</RelativeLayout>
+</FrameLayout>
