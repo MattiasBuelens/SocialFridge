@@ -14,8 +14,17 @@ public class Measure extends be.kuleuven.cs.chikwadraat.socialfridge.measuring.M
         super(value, unit);
     }
 
+    public Measure(be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure model) {
+        super(model.getValue(), model.getUnit());
+    }
+
     public Measure(Parcel in) {
         super(in.readDouble(), Unit.valueOf(in.readString()));
+    }
+
+    @Override
+    public Measure convertTo(Unit toUnit) {
+        return new Measure(super.convertTo(toUnit));
     }
 
     @Override

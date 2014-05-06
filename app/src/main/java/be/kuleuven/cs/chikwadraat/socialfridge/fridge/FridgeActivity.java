@@ -43,7 +43,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
         // TODO Remove dummy items
         List<FridgeItem> items = new ArrayList<FridgeItem>();
-        items.add(new FridgeItem("Eggs", R.drawable.eggs, new Measure(6, Unit.PIECES)));
+        items.add(new FridgeItem("John", new Ingredient("Eggs", "Dairy", new Measure(6, Unit.PIECES)), new Measure(6, Unit.PIECES), Unit.PIECES));
         fridgeFragment.setItems(items);
 
         // TODO Remove dummy ingredients

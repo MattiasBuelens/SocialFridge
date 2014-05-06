@@ -38,6 +38,10 @@ public class Measure {
         return toUnit.fromStandard(getStandardValue());
     }
 
+    public Measure convertTo(Unit toUnit) {
+        return new Measure(getValue(toUnit), toUnit);
+    }
+
     @Override
     public String toString() {
         return getUnit().format(getValue());

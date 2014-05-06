@@ -74,6 +74,18 @@ public class Ingredient implements Parcelable {
         return getName();
     }
 
+    public be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient toEndpoint() {
+        be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient model = new be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient();
+        model.setId(getID())
+                .setName(getName())
+                .setCategory(getCategory())
+                .setDefaultAmount(getDefaultMeasure().getValue())
+                .setDefaultUnit(getDefaultMeasure().getUnit().name())
+                .setPictureURL(getPictureURL())
+                .setThumbnailURL(getThumbnailURL());
+        return model;
+    }
+
     @Override
     public int describeContents() {
         return 0;
