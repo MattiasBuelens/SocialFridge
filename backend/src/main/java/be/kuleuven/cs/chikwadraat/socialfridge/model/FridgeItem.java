@@ -70,10 +70,19 @@ public class FridgeItem {
         return owner;
     }
 
+    public void setOwner(Ref<User> owner) {
+        this.owner = owner;
+    }
+
     public String getOwnerID() {
         return getOwnerRef().getKey().getName();
     }
 
+    public void setOwnerID(String ownerID) {
+        setOwner(User.getRef(ownerID));
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public User getOwner() {
         return getOwnerRef().get();
     }
@@ -86,6 +95,10 @@ public class FridgeItem {
         return ingredientID;
     }
 
+    public void setIngredientID(Long ingredientID) {
+        this.ingredientID = ingredientID;
+    }
+
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Ref<Ingredient> getIngredientRef() {
         return Ingredient.getRef(getIngredientID());
@@ -93,6 +106,10 @@ public class FridgeItem {
 
     public Ingredient getIngredient() {
         return getIngredientRef().get();
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        setIngredientID(ingredient.getID());
     }
 
     /**

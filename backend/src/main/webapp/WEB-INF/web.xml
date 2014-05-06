@@ -10,6 +10,7 @@
                 be.kuleuven.cs.chikwadraat.socialfridge.UserMessageEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.PartyEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint,
+                be.kuleuven.cs.chikwadraat.socialfridge.FridgeEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.IngredientEndpoint
             </param-value>
         </init-param>
