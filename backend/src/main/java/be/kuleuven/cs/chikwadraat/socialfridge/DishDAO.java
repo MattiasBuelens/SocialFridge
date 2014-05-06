@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge;
 
-import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.googlecode.objectify.Ref;
@@ -18,13 +17,22 @@ public class DishDAO {
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     /**
+     * Retrieves a dish by dish ID.
+     *
+     * @param id The dish ID.
+     * @return The retrieved dish.
+     */
+    public Dish getDish(long id) {
+        return Dish.getRef(id).get();
+    }
+
+    /**
      * Retrieves all dishes.
      *
      * @return The retrieved dishes.
      */
-    public CollectionResponse<Dish> getDishes() {
-        List<Dish> dishes = ofy().load().type(Dish.class).order("name").list();
-        return CollectionResponse.<Dish>builder().setItems(dishes).build();
+    public List<Dish> getDishes() {
+        return ofy().load().type(Dish.class).order("name").list();
     }
 
     /**
@@ -61,7 +69,7 @@ public class DishDAO {
      * Removes a dish.
      *
      * @param dishRef The dish to be deleted.
-     * @return The deleted user.
+     * @return The deleted dish.
      */
     public Dish removeDish(final Ref<Dish> dishRef) {
         return ofy().transact(new Work<Dish>() {

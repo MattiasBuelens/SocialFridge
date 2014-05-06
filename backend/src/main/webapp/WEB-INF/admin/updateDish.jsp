@@ -3,10 +3,11 @@
 <html lang="en">
 <head>
     <title>Edit dish</title>
-    <%@include file="/WEB-INF/includes/head.jsp" %>
+    <%@ include file="/WEB-INF/includes/head.jsp" %>
 </head>
 <body role="document">
 <div class="container" role="main">
+    <%@ include file="/WEB-INF/includes/admin-nav.jsp" %>
     <div class="page-header">
         <h1>Edit dish</h1>
     </div>
@@ -33,7 +34,8 @@
             <label for="dishPicture" class="col-sm-2 control-label">Picture:</label>
 
             <div class="col-sm-10">
-                <img src="${dish.thumbnailURL}" alt="${dish.name}" width="128"/>
+                <img src="${dish.thumbnailURL}" alt="${dish.name}" class="img-thumbnail"
+                     width="128"/>
 
                 <p>
                     <small>Upload a new picture if you want to replace the current.</small>

@@ -43,6 +43,10 @@ public class Dish {
         this.id = id;
     }
 
+    public Dish(String name) {
+        setName(name);
+    }
+
     public static Key<Dish> getKey(long dishID) {
         return Key.create(Dish.class, dishID);
     }

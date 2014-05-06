@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 
-import com.google.api.server.spi.ServiceException;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.DishDAO;
-import be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 
 /**
@@ -28,14 +26,12 @@ public class UpdateDishServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long dishID = Long.parseLong(req.getParameter("dishID"));
-        Dish dish;
-        try {
-            dish = new DishEndpoint().getDish(dishID);
-            req.setAttribute("dish", dish);
-        } catch (ServiceException e) {
+        Dish dish = dao.getDish(dishID);
+        if (dish == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        req.setAttribute("dish", dish);
 
         String submitURL = req.getRequestURI() + "?dishID=" + dishID;
         String formUrl = blobstoreService.createUploadUrl(submitURL);
@@ -48,7 +44,7 @@ public class UpdateDishServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         long dishID = Long.parseLong(req.getParameter("dishID"));
-        String dishName = req.getParameter("dishName");
+        String name = req.getParameter("dishName");
         List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
         String action = req.getParameter("action");
 
@@ -56,7 +52,7 @@ public class UpdateDishServlet extends HttpServlet {
             if (action.equals("update")) {
                 // Update dish
                 Dish dish = new Dish(dishID);
-                dish.setName(dishName);
+                dish.setName(name);
                 if (blobs != null && !blobs.isEmpty()) {
                     // Use first upload as picture
                     BlobKey pictureKey = blobs.remove(0);

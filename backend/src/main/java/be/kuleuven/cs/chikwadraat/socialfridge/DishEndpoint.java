@@ -7,6 +7,8 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
 
+import java.util.List;
+
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
@@ -29,7 +31,7 @@ public class DishEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "dishes.getDish", path = "dish/{id}")
     public Dish getDish(@Named("id") long id) throws ServiceException {
-        Dish dish = Dish.getRef(id).get();
+        Dish dish = dao.getDish(id);
         if (dish == null) {
             throw new NotFoundException("Dish not found.");
         }
@@ -43,7 +45,8 @@ public class DishEndpoint extends BaseEndpoint {
      */
     @ApiMethod(name = "dishes.getDishes", path = "dish")
     public CollectionResponse<Dish> getDishes() throws ServiceException {
-        return dao.getDishes();
+        List<Dish> dishes = dao.getDishes();
+        return CollectionResponse.<Dish>builder().setItems(dishes).build();
     }
 
 }

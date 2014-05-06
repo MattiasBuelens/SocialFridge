@@ -20,7 +20,7 @@ public class DishesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Collection<Dish> dishes = dao.getDishes().getItems();
+        Collection<Dish> dishes = dao.getDishes();
         req.setAttribute("dishes", dishes);
 
         getServletContext().getRequestDispatcher("/WEB-INF/admin/dishes.jsp").include(req, resp);

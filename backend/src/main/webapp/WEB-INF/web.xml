@@ -9,7 +9,8 @@
                 be.kuleuven.cs.chikwadraat.socialfridge.UserEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.UserMessageEndpoint,
                 be.kuleuven.cs.chikwadraat.socialfridge.PartyEndpoint,
-                be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint
+                be.kuleuven.cs.chikwadraat.socialfridge.DishEndpoint,
+                be.kuleuven.cs.chikwadraat.socialfridge.IngredientEndpoint
             </param-value>
         </init-param>
     </servlet>
@@ -63,6 +64,34 @@
     <servlet-mapping>
         <servlet-name>UpdateDishServlet</servlet-name>
         <url-pattern>/admin/updateDish</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>IngredientsServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.IngredientsServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>IngredientsServlet</servlet-name>
+        <url-pattern>/admin/ingredients</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>InsertIngredientServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.InsertIngredientServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InsertIngredientServlet</servlet-name>
+        <url-pattern>/admin/insertIngredient</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UpdateIngredientServlet</servlet-name>
+        <servlet-class>be.kuleuven.cs.chikwadraat.socialfridge.servlet.UpdateIngredientServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateIngredientServlet</servlet-name>
+        <url-pattern>/admin/updateIngredient</url-pattern>
     </servlet-mapping>
 
     <security-constraint>

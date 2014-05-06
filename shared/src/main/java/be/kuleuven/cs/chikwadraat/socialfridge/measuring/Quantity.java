@@ -39,4 +39,12 @@ public enum Quantity {
                 .addAll(derivedUnits)
                 .build();
     }
+
+    /**
+     * For JSTL.
+     */
+    public String getName() {
+        return name();
+    }
+
 }

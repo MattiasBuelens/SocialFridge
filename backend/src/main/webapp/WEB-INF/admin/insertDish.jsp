@@ -3,10 +3,11 @@
 <html lang="en">
 <head>
     <title>Add new dish</title>
-    <%@include file="/WEB-INF/includes/head.jsp" %>
+    <%@ include file="/WEB-INF/includes/head.jsp" %>
 </head>
 <body role="document">
 <div class="container" role="main">
+    <%@ include file="/WEB-INF/includes/admin-nav.jsp" %>
     <div class="page-header">
         <h1>Add new dish</h1>
     </div>

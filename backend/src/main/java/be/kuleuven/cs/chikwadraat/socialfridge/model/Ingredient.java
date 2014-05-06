@@ -11,7 +11,9 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Quantity;
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 
 /**
  * Created by Milan Samyn on 23/04/2014.
@@ -33,22 +35,20 @@ public class Ingredient {
     private String name;
 
     /**
-     * Ingredient category.
+     * Category.
      */
     @Index
     private Category category;
 
     /**
-     * Ingredient standard quantity
+     * Default amount.
      */
-    @Index
-    private Quantity standardQuantity;
+    private double defaultAmount;
 
-    @Index
-    private Double amount;
-
-    @Index
-    private Double defaultAmount;
+    /**
+     * Default unit.
+     */
+    private Unit defaultUnit;
 
     /**
      * Blob key of ingredient picture.
@@ -60,6 +60,12 @@ public class Ingredient {
 
     public Ingredient(long id) {
         this.id = id;
+    }
+
+    public Ingredient(String name, Category category, Measure defaultMeasure) {
+        setName(name);
+        setCategory(category);
+        setDefaultMeasure(defaultMeasure);
     }
 
     public static Key<Ingredient> getKey(long ingredientID) {
@@ -89,7 +95,7 @@ public class Ingredient {
     }
 
     /**
-     * Ingredient category.
+     * Category.
      */
     public Category getCategory() {
         return category;
@@ -100,29 +106,7 @@ public class Ingredient {
     }
 
     /**
-     * Ingredient standard quantity
-     */
-    public Quantity getStandardQuantity() {
-        return standardQuantity;
-    }
-
-    public void setStandardQuantity(Quantity standardQuantity) {
-        this.standardQuantity = standardQuantity;
-    }
-
-    /**
-     * Ingredient amount
-     */
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    /**
-     * Ingredient default amount
+     * Default amount.
      */
     public Double getDefaultAmount() {
         return defaultAmount;
@@ -130,6 +114,41 @@ public class Ingredient {
 
     public void setDefaultAmount(double defaultAmount) {
         this.defaultAmount = defaultAmount;
+    }
+
+    /**
+     * Default unit.
+     */
+    public Unit getDefaultUnit() {
+        return defaultUnit;
+    }
+
+    public void setDefaultUnit(Unit defaultUnit) {
+        this.defaultUnit = defaultUnit;
+    }
+
+    /**
+     * Get the quantity to express measures of this ingredient.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Quantity getQuantity() {
+        return getDefaultUnit().getQuantity();
+    }
+
+    /**
+     * Get the default measure when creating a fridge item for this ingredient.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Measure getDefaultMeasure() {
+        return new Measure(getDefaultAmount(), getDefaultUnit());
+    }
+
+    /**
+     * Set the default measure when creating a fridge item for this ingredient.
+     */
+    public void setDefaultMeasure(Measure defaultMeasure) {
+        setDefaultAmount(defaultMeasure.getValue());
+        setDefaultUnit(defaultMeasure.getUnit());
     }
 
     /**
@@ -172,25 +191,39 @@ public class Ingredient {
         return getPictureURL(THUMBNAIL_SIZE, true);
     }
 
-
     public static enum Category {
 
-        FATS,
+        FATS("Fats"),
 
-        DAIRY,
+        DAIRY("Dairy"),
 
-        MEAT,
+        MEAT("Meat"),
 
-        VEGETABLES,
+        VEGETABLES("Vegetables"),
 
-        CEREALS,
+        CEREALS("Cereals"),
 
-        FISH,
+        FISH("Fish"),
 
-        FRUIT;
+        FRUIT("Fruit");
 
+        private final String label;
+
+        private Category(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * For JSTL.
+         */
+        public String getName() {
+            return name();
+        }
     }
-
 
 
 }

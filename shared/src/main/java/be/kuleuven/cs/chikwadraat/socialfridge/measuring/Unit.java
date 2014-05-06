@@ -85,4 +85,11 @@ public enum Unit {
         }
     }
 
+    /**
+     * For JSTL.
+     */
+    public String getName() {
+        return name();
+    }
+
 }

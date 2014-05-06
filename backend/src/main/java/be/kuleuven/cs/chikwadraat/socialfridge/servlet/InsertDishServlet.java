@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 
-import com.google.api.server.spi.ServiceException;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -35,13 +34,12 @@ public class InsertDishServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String dishName = req.getParameter("dishName");
+        String name = req.getParameter("dishName");
         List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
 
         try {
             // Insert dish
-            Dish dish = new Dish();
-            dish.setName(dishName);
+            Dish dish = new Dish(name);
             if (blobs == null || blobs.isEmpty()) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
