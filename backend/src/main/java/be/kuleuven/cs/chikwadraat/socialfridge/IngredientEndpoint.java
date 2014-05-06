@@ -11,7 +11,9 @@ import java.util.List;
 
 import javax.inject.Named;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 
 @Api(
@@ -44,7 +46,7 @@ public class IngredientEndpoint extends BaseEndpoint {
      * @return The retrieved ingredients.
      */
     @ApiMethod(name = "ingredients.getIngredients", path = "ingredient")
-    public CollectionResponse<Ingredient> getDishes() throws ServiceException {
+    public CollectionResponse<Ingredient> getIngredients() throws ServiceException {
         List<Ingredient> ingredients = dao.getIngredients();
         return CollectionResponse.<Ingredient>builder().setItems(ingredients).build();
     }

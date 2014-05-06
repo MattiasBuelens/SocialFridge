@@ -8,10 +8,12 @@ import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
 @Api(
@@ -19,21 +21,21 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
         version = "v2",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
-public class FridgeEndpoint extends BaseEndpoint{
+public class FridgeEndpoint extends BaseEndpoint {
 
     private FridgeDAO dao = new FridgeDAO();
+    private IngredientDAO ingredientDAO = new IngredientDAO();
 
     /**
-     * Retrieves a fridge by user ID.
+     * Retrieves the user's fridge.
      *
-     * @param id          The user ID.
      * @param accessToken The access token for authorization.
      * @return The retrieved fridge.
      */
-    @ApiMethod(name = "users.getUser", path = "user/{id}")
-    public CollectionResponse<FridgeItem> getFridge(@Named("id") String id, @Named("accessToken") String accessToken) throws ServiceException {
-        checkAccess(accessToken, id);
-        User user = User.getRef(id).get();
+    @ApiMethod(name = "fridge.getFridge", path = "fridge/{id}")
+    public CollectionResponse<FridgeItem> getFridge(@Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        User user = User.getRef(userID).get();
         if (user == null) {
             throw new NotFoundException("Fridge item not found.");
         }
@@ -49,9 +51,9 @@ public class FridgeEndpoint extends BaseEndpoint{
      * @param accessToken The access token for authorization.
      * @return The updated fridge item.
      */
-    @ApiMethod(name = "users.updateUser", path = "user")
+    @ApiMethod(name = "fridge.updateItem", path = "fridge/item")
     public FridgeItem updateFridgeItem(final FridgeItem item, @Named("accessToken") String accessToken) throws ServiceException {
-        checkAccess(accessToken, item.getOwnerId());
+        checkAccess(accessToken, item.getOwnerID());
         return dao.updateFridgeItem(item);
     }
 
@@ -59,18 +61,38 @@ public class FridgeEndpoint extends BaseEndpoint{
      * Removes a fridge item.
      * It uses HTTP DELETE method.
      *
-     * @param userId          The user ID of the owner of the fridge item to be deleted.
-     * @param ingredientId    The ID of the ingredient of the fridge item to be deleted.
-     * @param accessToken The access token for authorization.
+     * @param ingredientId The ID of the ingredient of the fridge item to be deleted.
+     * @param accessToken  The access token for authorization.
      * @return The deleted fridge item.
      */
-    @ApiMethod(name = "users.removeUser", path = "user/{id}")
-    public FridgeItem removeFridgeItem(final @Named("userId") String userId, final @Named("ingredientId") Long ingredientId, @Named("accessToken") String accessToken) throws ServiceException {
-        checkAccess(accessToken, userId);
-        FridgeItem item = dao.removeFridgeItem(FridgeItem.getRef(userId,ingredientId));
+    @ApiMethod(name = "fridge.removeItem", path = "fridge/item/{id}")
+    public FridgeItem removeFridgeItem(final @Named("ingredientId") long ingredientId, @Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        FridgeItem item = dao.removeFridgeItem(FridgeItem.getRef(userID, ingredientId));
         if (item == null) {
             throw new NotFoundException("Fridge item not found.");
         }
         return item;
     }
+
+    /**
+     * Retrieves ingredients which can be added to a user's fridge.
+     *
+     * @return The ingredients not yet in the user's fridge.
+     */
+    @ApiMethod(name = "fridge.getIngredients", path = "fridge/ingredients")
+    public CollectionResponse<Ingredient> getIngredients(@Named("accessToken") String accessToken) throws ServiceException {
+        String userID = getUserID(accessToken);
+        // Get all ingredients
+        List<Ingredient> ingredients = ingredientDAO.getIngredients();
+        // Get user's fridge
+        User user = User.getRef(userID).get();
+        Collection<FridgeItem> fridge = dao.getFridge(user);
+        // Remove fridge items from ingredients
+        for (FridgeItem item : fridge) {
+            ingredients.remove(item.getIngredient());
+        }
+        return CollectionResponse.<Ingredient>builder().setItems(ingredients).build();
+    }
+
 }

@@ -9,8 +9,6 @@ import com.googlecode.objectify.annotation.Id;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
@@ -130,12 +128,14 @@ public class User {
     }
 
     /**
-     * Fridge
+     * Fridge.
      */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<Ref<FridgeItem>> getFridgeRefs() {
         return fridge;
     }
 
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<FridgeItem> getFridge() {
         return ofy().load().refs(getFridgeRefs()).values();
     }

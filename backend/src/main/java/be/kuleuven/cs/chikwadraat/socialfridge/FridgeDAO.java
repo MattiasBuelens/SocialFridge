@@ -23,18 +23,8 @@ public class FridgeDAO {
      * Inserts or updates a fridge item for a given user.
      */
     public FridgeItem updateFridgeItem(final FridgeItem item) {
-        return ofy().transact(new Work<FridgeItem>() {
-            @Override
-            public FridgeItem run() {
-                FridgeItem fridgeItem = null;
-                if (item.getOwnerId() != null && item.getIngredientId() != null) {
-                    fridgeItem = FridgeItem.getRef(item.getOwnerId(), item.getIngredientId()).get();
-                }
-                fridgeItem = item;
-                ofy().save().entity(fridgeItem).now();
-                return fridgeItem;
-            }
-        });
+        ofy().save().entity(item).now();
+        return item;
     }
 
     /**

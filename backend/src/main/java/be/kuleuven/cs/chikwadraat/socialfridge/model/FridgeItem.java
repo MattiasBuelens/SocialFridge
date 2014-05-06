@@ -1,15 +1,15 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import com.google.api.server.spi.config.AnnotationBoolean;
+import com.google.api.server.spi.config.ApiResourceProperty;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
-
-import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * FridgeItem.
@@ -29,12 +29,12 @@ public class FridgeItem {
      * Ingredient
      */
     @Id
-    private Long ingredientId;
+    private Long ingredientID;
 
     /**
-     * Value in standard unit of ingredient.
+     * Amount in standard unit of ingredient.
      */
-    private double standardValue;
+    private double standardAmount;
 
     /**
      * Unit chosen by owner.
@@ -44,9 +44,14 @@ public class FridgeItem {
     public FridgeItem() {
     }
 
-    public FridgeItem(Ref<User> owner, Long ingredientId) {
+    public FridgeItem(Ref<User> owner, long ingredientID) {
         this.owner = owner;
-        this.ingredientId = ingredientId;
+        this.ingredientID = ingredientID;
+    }
+
+    public FridgeItem(User owner, Ingredient ingredient) {
+        this.owner = Ref.create(owner);
+        this.ingredientID = ingredient.getID();
     }
 
     public static Key<FridgeItem> getKey(String userId, Long ingredientId) {
@@ -57,24 +62,73 @@ public class FridgeItem {
         return Ref.create(getKey(userId, ingredientId));
     }
 
-    public String getOwnerId() {
-        return owner.get().getID();
+    /**
+     * Owner.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<User> getOwnerRef() {
+        return owner;
     }
 
-    public Long getIngredientId() {
-        return ingredientId;
+    public String getOwnerID() {
+        return getOwnerRef().getKey().getName();
+    }
+
+    public User getOwner() {
+        return getOwnerRef().get();
     }
 
     /**
-     * Ingredient
+     * Ingredient.
      */
-    public Ingredient getIngredient() {
-        Ref<Ingredient> ref = Ingredient.getRef(ingredientId);
-        try {
-            return (ofy().load().ref(ref)).safe();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            throw e;
-        }
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Long getIngredientID() {
+        return ingredientID;
     }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<Ingredient> getIngredientRef() {
+        return Ingredient.getRef(getIngredientID());
+    }
+
+    public Ingredient getIngredient() {
+        return getIngredientRef().get();
+    }
+
+    /**
+     * Amount in standard unit of ingredient.
+     */
+    public double getStandardAmount() {
+        return standardAmount;
+    }
+
+    public void setStandardAmount(double standardAmount) {
+        this.standardAmount = standardAmount;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+
+    /**
+     * Standard unit of ingredient.
+     */
+    public Unit getStandardUnit() {
+        return getIngredient().getQuantity().getStandardUnit();
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Measure getMeasure() {
+        return new Measure(getStandardAmount(), getUnit());
+    }
+
+    public void setMeasure(Measure measure) {
+        setStandardAmount(measure.getValue(getStandardUnit()));
+        setUnit(measure.getUnit());
+    }
+
 }
