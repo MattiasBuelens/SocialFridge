@@ -49,16 +49,16 @@ public class FridgeItem {
         this.ingredientId = ingredientId;
     }
 
-    public static Key<FridgeItem> getKey(User owner, Long ingredientId) {
-        return Key.create(User.getKey(owner.getID()), FridgeItem.class, ingredientId);
+    public static Key<FridgeItem> getKey(String userId, Long ingredientId) {
+        return Key.create(User.getKey(userId), FridgeItem.class, ingredientId);
     }
 
-    public static Ref<FridgeItem> getRef(User owner, Long ingredientId) {
-        return Ref.create(getKey(owner, ingredientId));
+    public static Ref<FridgeItem> getRef(String userId, Long ingredientId) {
+        return Ref.create(getKey(userId, ingredientId));
     }
 
-    public User getOwner() {
-        return owner.get();
+    public String getOwnerId() {
+        return owner.get().getID();
     }
 
     public Long getIngredientId() {
