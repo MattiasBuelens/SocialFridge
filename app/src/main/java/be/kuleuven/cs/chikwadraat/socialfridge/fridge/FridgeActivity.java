@@ -43,7 +43,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
         // TODO Remove dummy items
         List<FridgeItem> items = new ArrayList<FridgeItem>();
-        items.add(new FridgeItem("John", new Ingredient("Eggs", "Dairy", new Measure(6, Unit.PIECES)), new Measure(6, Unit.PIECES), Unit.PIECES));
+        items.add(new FridgeItem("John", new Ingredient("Eggs", "Dairy", new Measure(6, Unit.PIECES)), new Measure(6, Unit.PIECES)));
         fridgeFragment.setItems(items);
 
         // TODO Remove dummy ingredients
@@ -98,16 +98,19 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     @Override
     public void onFridgeItemAdded(FridgeItem item) {
+        item.setOwnerID(getLoggedInUser().getId());
         // TODO Update on backend
     }
 
     @Override
     public void onFridgeItemUpdated(FridgeItem item) {
+        item.setOwnerID(getLoggedInUser().getId());
         // TODO Update on backend
     }
 
     @Override
     public void onFridgeItemRemoved(FridgeItem item) {
+        item.setOwnerID(getLoggedInUser().getId());
         // TODO Remove on backend
     }
 

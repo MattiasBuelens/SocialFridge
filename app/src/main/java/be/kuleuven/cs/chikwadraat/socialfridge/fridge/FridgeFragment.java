@@ -44,7 +44,7 @@ public class FridgeFragment extends AbstractFridgeFragment<FridgeItem> {
 
     @Override
     public Measure getMeasure(FridgeItem item) {
-        return item.getQuantity();
+        return item.getMeasure();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FridgeFragment extends AbstractFridgeFragment<FridgeItem> {
 
     @Override
     public void onItemUpdated(FridgeItem item, Measure measure) {
-        item.setQuantity(measure);
+        item.setMeasure(measure);
         if (listener != null) {
             listener.onFridgeItemUpdated(item);
         }

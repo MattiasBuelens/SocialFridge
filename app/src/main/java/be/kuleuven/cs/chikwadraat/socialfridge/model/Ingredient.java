@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Quantity;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 
 /**
@@ -66,6 +67,10 @@ public class Ingredient implements Parcelable {
 
     public String getThumbnailURL() {
         return thumbnailURL;
+    }
+
+    public Quantity getQuantity() {
+        return getDefaultMeasure().getQuantity();
     }
 
     @Override

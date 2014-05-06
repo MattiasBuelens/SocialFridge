@@ -134,6 +134,7 @@ public class FridgeItem {
     /**
      * Standard unit of ingredient.
      */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Unit getStandardUnit() {
         return getIngredient().getQuantity().getStandardUnit();
     }

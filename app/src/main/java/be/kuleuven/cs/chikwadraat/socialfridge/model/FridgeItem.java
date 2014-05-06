@@ -10,34 +10,38 @@ import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
  */
 public class FridgeItem implements Parcelable {
 
-    private final String ownerID;
+    private String ownerID;
     private final Ingredient ingredient;
-    private Unit standardUnit;
     private Measure measure;
 
-    public FridgeItem(String ownerID, Ingredient ingredient, Measure measure, Unit standardUnit) {
+    public FridgeItem(Ingredient ingredient, Measure measure) {
+        this(null, ingredient, measure);
+    }
+
+    public FridgeItem(String ownerID, Ingredient ingredient, Measure measure) {
         this.ownerID = ownerID;
         this.ingredient = ingredient;
-        this.standardUnit = standardUnit;
         setMeasure(measure);
     }
 
     public FridgeItem(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.FridgeItem model) {
         this.ownerID = model.getOwnerID();
         this.ingredient = new Ingredient(model.getIngredient());
-        this.standardUnit = Unit.valueOf(model.getStandardUnit());
         setMeasure(model.getStandardAmount(), Unit.valueOf(model.getUnit()));
     }
 
     public FridgeItem(Parcel in) {
         this.ownerID = in.readString();
         this.ingredient = in.readParcelable(null);
-        this.standardUnit = Unit.valueOf(in.readString());
         setMeasure((Measure) in.readParcelable(null));
     }
 
     public String getOwnerID() {
         return ownerID;
+    }
+
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
     }
 
     public Ingredient getIngredient() {
@@ -49,6 +53,9 @@ public class FridgeItem implements Parcelable {
     }
 
     public void setMeasure(Measure measure) {
+        if (!measure.getUnit().getQuantity().equals(getStandardUnit().getQuantity())) {
+            throw new IllegalArgumentException("Cannot convert " + measure.getUnit() + " to " + getStandardUnit());
+        }
         this.measure = measure;
     }
 
@@ -65,7 +72,7 @@ public class FridgeItem implements Parcelable {
     }
 
     public Unit getStandardUnit() {
-        return standardUnit;
+        return getIngredient().getQuantity().getStandardUnit();
     }
 
     @Override
@@ -79,8 +86,7 @@ public class FridgeItem implements Parcelable {
         model.setOwnerID(getOwnerID())
                 .setIngredient(getIngredient().toEndpoint())
                 .setStandardAmount(getStandardAmount())
-                .setUnit(getUnit().name())
-                .setStandardUnit(getStandardUnit().name());
+                .setUnit(getUnit().name());
         return model;
     }
 
@@ -93,7 +99,6 @@ public class FridgeItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getOwnerID());
         dest.writeParcelable(getIngredient(), 0);
-        dest.writeString(getStandardUnit().name());
         dest.writeParcelable(getMeasure(), 0);
     }
 
