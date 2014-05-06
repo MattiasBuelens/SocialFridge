@@ -105,6 +105,8 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
+        } else {
+            doCloseInvites();
         }
 
     }
