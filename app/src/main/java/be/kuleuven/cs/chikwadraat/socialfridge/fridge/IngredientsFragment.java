@@ -149,7 +149,7 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        FridgeItem item = (FridgeItem) l.getItemAtPosition(position);
+        FridgeItem item = ingredientsAdapter.getItem(position);
         editingItemPosition = position;
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -169,7 +169,7 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
     @Override
     public void onMeasureSet(Measure measure) {
         if (editingItemPosition >= 0) {
-            FridgeItem item = (FridgeItem) getListView().getItemAtPosition(editingItemPosition);
+            FridgeItem item = ingredientsAdapter.getItem(editingItemPosition);
             item.setQuantity(measure);
             fireFridgeItemUpdated(item);
             ingredientsAdapter.notifyDataSetChanged();
@@ -212,6 +212,10 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
         } else {
             this.ingredients = new ArrayList<FridgeItem>(ingredients);
         }
+    }
+
+    protected boolean allowRemove(FridgeItem item) {
+        // TODO Only allow actual fridge items to be deleted, not just any ingredient
     }
 
     protected void fireFridgeItemUpdated(FridgeItem item) {
@@ -257,14 +261,12 @@ public class IngredientsFragment extends ListFragment implements SearchView.OnQu
             String nameText = item.getName();
             Drawable picture = item.getPicture(getContext());
             String quantityText = item.getQuantity().toString();
-            // TODO Add proper check if this is a fridge item
-            boolean inFridge = true;
 
             vh.position = position;
             vh.nameView.setText(nameText);
             vh.pictureView.setImageDrawable(picture);
             vh.quantityView.setText(quantityText);
-            vh.removeButton.setVisibility(inFridge ? View.VISIBLE : View.GONE);
+            vh.removeButton.setVisibility(allowRemove(item) ? View.VISIBLE : View.GONE);
             vh.removeButton.setOnClickListener(this);
 
             return v;
