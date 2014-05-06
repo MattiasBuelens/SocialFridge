@@ -1,11 +1,15 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * FridgeItem.
@@ -45,7 +49,32 @@ public class FridgeItem {
         this.ingredientId = ingredientId;
     }
 
+    public static Key<FridgeItem> getKey(User owner, Long ingredientId) {
+        return Key.create(User.getKey(owner.getID()), FridgeItem.class, ingredientId);
+    }
+
+    public static Ref<FridgeItem> getRef(User owner, Long ingredientId) {
+        return Ref.create(getKey(owner, ingredientId));
+    }
+
+    public User getOwner() {
+        return owner.get();
+    }
+
     public Long getIngredientId() {
         return ingredientId;
+    }
+
+    /**
+     * Ingredient
+     */
+    public Ingredient getIngredient() {
+        Ref<Ingredient> ref = Ingredient.getRef(ingredientId);
+        try {
+            return (ofy().load().ref(ref)).safe();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

@@ -9,4 +9,6 @@ import com.google.api.server.spi.config.ApiNamespace;
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class FridgeEndpoint {
+
+    
 }
