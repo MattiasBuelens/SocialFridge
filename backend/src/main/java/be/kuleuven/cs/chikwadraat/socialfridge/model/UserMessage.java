@@ -109,4 +109,21 @@ public class UserMessage {
         this.data.putAll(data);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserMessage message = (UserMessage) o;
+        if (id != null ? !id.equals(message.id) : message.id != null) return false;
+        if (!user.equals(message.user)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + user.hashCode();
+        return result;
+    }
+
 }

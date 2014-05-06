@@ -131,4 +131,21 @@ public class FridgeItem {
         setUnit(measure.getUnit());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FridgeItem item = (FridgeItem) o;
+        if (!ingredientID.equals(item.ingredientID)) return false;
+        if (!owner.equals(item.owner)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = owner.hashCode();
+        result = 31 * result + ingredientID.hashCode();
+        return result;
+    }
+
 }

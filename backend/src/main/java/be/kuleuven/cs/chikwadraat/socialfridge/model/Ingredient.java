@@ -191,6 +191,20 @@ public class Ingredient {
         return getPictureURL(THUMBNAIL_SIZE, true);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public static enum Category {
 
         FATS("Fats"),

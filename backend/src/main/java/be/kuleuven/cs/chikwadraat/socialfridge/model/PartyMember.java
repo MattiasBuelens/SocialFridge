@@ -5,7 +5,6 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.OnLoad;
 import com.googlecode.objectify.annotation.Parent;
 
 import java.util.ArrayList;
@@ -237,6 +236,23 @@ public class PartyMember {
         // Leave
         setStatus(Status.LEFT);
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PartyMember that = (PartyMember) o;
+        if (!party.equals(that.party)) return false;
+        if (!userID.equals(that.userID)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userID.hashCode();
+        result = 31 * result + party.hashCode();
+        return result;
     }
 
     public static enum Status {
