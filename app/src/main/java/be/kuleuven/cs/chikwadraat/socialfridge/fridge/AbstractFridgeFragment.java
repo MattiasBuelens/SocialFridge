@@ -227,6 +227,7 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
             vh.quantityView.setText(quantityText);
             vh.removeButton.setVisibility(allowRemove(item) ? View.VISIBLE : View.GONE);
             vh.removeButton.setOnClickListener(this);
+            vh.removeButton.setTag(vh);
 
             return v;
         }
