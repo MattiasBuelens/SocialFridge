@@ -47,7 +47,7 @@ public class PlanPartyActivity extends BasePartyActivity implements ObservableAs
         // Re-attach to plan task
         task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attach(this);
+            task.attachTransformed(this);
         }
     }
 
