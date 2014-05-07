@@ -12,13 +12,12 @@ import com.facebook.Session;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.FridgeResponse;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.FridgeLoader;
-import be.kuleuven.cs.chikwadraat.socialfridge.loader.IngredientsLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
@@ -34,7 +33,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     private static final String TAG = "FridgeActivity";
 
     private static final int LOADER_FRIDGE = 1;
-    private static final int LOADER_INGREDIENTS = 2;
 
     private FridgeFragment fridgeFragment;
     private IngredientsFragment ingredientsFragment;
@@ -195,30 +193,10 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         getSupportLoaderManager().restartLoader(LOADER_FRIDGE, null, new FridgeLoaderCallbacks());
     }
 
-    public void loadIngredients() {
-        if (!isLoggedIn()) return;
-        getSupportLoaderManager().initLoader(LOADER_INGREDIENTS, null, new IngredientsLoaderCallbacks());
-    }
-
-    public void reloadIngredients() {
-        if (!isLoggedIn()) return;
-        getSupportLoaderManager().restartLoader(LOADER_INGREDIENTS, null, new IngredientsLoaderCallbacks());
-    }
-
-    public void load() {
-        loadFridge();
-        loadIngredients();
-    }
-
-    public void reload() {
-        reloadFridge();
-        reloadIngredients();
-    }
-
     @Override
     protected void onLoggedIn(Session session, User user) {
         super.onLoggedIn(session, user);
-        load();
+        loadFridge();
     }
 
     @Override
@@ -229,7 +207,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemAdded(FridgeItem item) {
         Log.d(TAG, "Added fridge item: " + item.getIngredient().getID());
-        reload();
+        reloadFridge();
     }
 
     @Override
@@ -240,7 +218,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemUpdated(FridgeItem item) {
         Log.d(TAG, "Updated fridge item: " + item.getIngredient().getID());
-        reload();
+        reloadFridge();
     }
 
     @Override
@@ -251,42 +229,25 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemRemoved(FridgeItem item) {
         Log.d(TAG, "Removed fridge item: " + item.getIngredient().getID());
-        reload();
+        reloadFridge();
     }
 
-    private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<FridgeItem>> {
+    private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<FridgeResponse> {
 
         @Override
-        public Loader<List<FridgeItem>> onCreateLoader(int id, Bundle args) {
+        public Loader<FridgeResponse> onCreateLoader(int id, Bundle args) {
             return new FridgeLoader(FridgeActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<List<FridgeItem>> loader, List<FridgeItem> items) {
-            fridgeFragment.setItems(items);
+        public void onLoadFinished(Loader<FridgeResponse> loader, FridgeResponse response) {
+            fridgeFragment.setItems(FridgeItem.fromEndpoint(response.getFridge()));
+            ingredientsFragment.setItems(Ingredient.fromEndpoint(response.getIngredients()));
         }
 
         @Override
-        public void onLoaderReset(Loader<List<FridgeItem>> loader) {
+        public void onLoaderReset(Loader<FridgeResponse> loader) {
             fridgeFragment.setItems(Collections.<FridgeItem>emptyList());
-        }
-
-    }
-
-    private class IngredientsLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Ingredient>> {
-
-        @Override
-        public Loader<List<Ingredient>> onCreateLoader(int id, Bundle args) {
-            return new IngredientsLoader(FridgeActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Ingredient>> loader, List<Ingredient> items) {
-            ingredientsFragment.setItems(items);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Ingredient>> loader) {
             ingredientsFragment.setItems(Collections.<Ingredient>emptyList());
         }
 

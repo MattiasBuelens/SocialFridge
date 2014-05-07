@@ -4,7 +4,6 @@ import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
 
 import java.util.Collection;
@@ -13,6 +12,7 @@ import java.util.List;
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeResponse;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.User;
 
@@ -30,17 +30,24 @@ public class FridgeEndpoint extends BaseEndpoint {
      * Retrieves the user's fridge.
      *
      * @param accessToken The access token for authorization.
-     * @return The retrieved fridge.
+     * @return The retrieved fridge and ingredients to add.
      */
     @ApiMethod(name = "fridge.getFridge", path = "fridge")
-    public CollectionResponse<FridgeItem> getFridge(@Named("accessToken") String accessToken) throws ServiceException {
+    public FridgeResponse getFridge(@Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         User user = User.getRef(userID).get();
         if (user == null) {
             throw new NotFoundException("Fridge item not found.");
         }
+        // Get user's fridge
         Collection<FridgeItem> fridge = dao.getFridge(user);
-        return CollectionResponse.<FridgeItem>builder().setItems(fridge).build();
+        // Get all ingredients
+        List<Ingredient> ingredients = ingredientDAO.getIngredients();
+        // Remove fridge items from ingredients
+        for (FridgeItem item : fridge) {
+            ingredients.remove(item.getIngredient());
+        }
+        return new FridgeResponse(fridge, ingredients);
     }
 
     /**
@@ -73,26 +80,6 @@ public class FridgeEndpoint extends BaseEndpoint {
             throw new NotFoundException("Fridge item not found.");
         }
         return item;
-    }
-
-    /**
-     * Retrieves ingredients which can be added to a user's fridge.
-     *
-     * @return The ingredients not yet in the user's fridge.
-     */
-    @ApiMethod(name = "fridge.getIngredients", path = "fridge/ingredients")
-    public CollectionResponse<Ingredient> getIngredients(@Named("accessToken") String accessToken) throws ServiceException {
-        String userID = getUserID(accessToken);
-        // Get all ingredients
-        List<Ingredient> ingredients = ingredientDAO.getIngredients();
-        // Get user's fridge
-        User user = User.getRef(userID).get();
-        Collection<FridgeItem> fridge = dao.getFridge(user);
-        // Remove fridge items from ingredients
-        for (FridgeItem item : fridge) {
-            ingredients.remove(item.getIngredient());
-        }
-        return CollectionResponse.<Ingredient>builder().setItems(ingredients).build();
     }
 
 }
