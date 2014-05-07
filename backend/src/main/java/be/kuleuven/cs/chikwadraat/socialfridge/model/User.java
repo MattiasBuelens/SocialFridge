@@ -140,6 +140,22 @@ public class User {
         return ofy().load().refs(getFridgeRefs()).values();
     }
 
+    public void addFridgeItem(Ref<FridgeItem> item) {
+        fridge.add(item);
+    }
+
+    public void addFridgeItem(FridgeItem item) {
+        addFridgeItem(Ref.create(item));
+    }
+
+    public void removeFridgeItem(Ref<FridgeItem> item) {
+        fridge.remove(item);
+    }
+
+    public void removeFridgeItem(FridgeItem item) {
+        removeFridgeItem(Ref.create(item));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
