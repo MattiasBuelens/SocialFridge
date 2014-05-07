@@ -2,6 +2,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 
 import android.app.Activity;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
@@ -13,7 +14,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
  */
 public class FridgeFragment extends AbstractFridgeFragment<FridgeItem> {
 
-    private static final String TAG = "IngredientsFragment";
+    private static final String TAG = "FridgeFragment";
 
     private FridgeListener listener;
 
@@ -32,9 +33,13 @@ public class FridgeFragment extends AbstractFridgeFragment<FridgeItem> {
     }
 
     @Override
+    protected CharSequence getSearchQueryHint() {
+        return getString(R.string.fridge_search_hint);
+    }
+
+    @Override
     public Ingredient getIngredient(FridgeItem item) {
-        // TODO return item.getIngredient();
-        return null;
+        return item.getIngredient();
     }
 
     @Override
@@ -91,5 +96,6 @@ public class FridgeFragment extends AbstractFridgeFragment<FridgeItem> {
         public void onFridgeItemRemoved(FridgeItem item);
 
     }
+
 
 }

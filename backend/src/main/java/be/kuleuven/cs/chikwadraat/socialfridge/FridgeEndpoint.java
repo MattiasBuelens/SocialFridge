@@ -32,7 +32,7 @@ public class FridgeEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      * @return The retrieved fridge.
      */
-    @ApiMethod(name = "fridge.getFridge", path = "fridge/{id}")
+    @ApiMethod(name = "fridge.getFridge", path = "fridge")
     public CollectionResponse<FridgeItem> getFridge(@Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         User user = User.getRef(userID).get();
@@ -65,7 +65,7 @@ public class FridgeEndpoint extends BaseEndpoint {
      * @param accessToken  The access token for authorization.
      * @return The deleted fridge item.
      */
-    @ApiMethod(name = "fridge.removeItem", path = "fridge/item/{id}")
+    @ApiMethod(name = "fridge.removeItem", path = "fridge/item/{ingredientId}")
     public FridgeItem removeFridgeItem(final @Named("ingredientId") long ingredientId, @Named("accessToken") String accessToken) throws ServiceException {
         String userID = getUserID(accessToken);
         FridgeItem item = dao.removeFridgeItem(FridgeItem.getRef(userID, ingredientId));

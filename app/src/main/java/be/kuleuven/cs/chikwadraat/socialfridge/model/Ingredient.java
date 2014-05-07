@@ -3,6 +3,9 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Quantity;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 
@@ -77,6 +80,16 @@ public class Ingredient implements Parcelable {
     public String toString() {
         // Used for filtering
         return getName();
+    }
+
+    public static List<Ingredient> fromEndpoint(List<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient> ingredients) {
+        List<Ingredient> list = new ArrayList<Ingredient>();
+        if (ingredients != null) {
+            for (be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient ingredient : ingredients) {
+                list.add(new Ingredient(ingredient));
+            }
+        }
+        return list;
     }
 
     public be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Ingredient toEndpoint() {

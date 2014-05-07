@@ -85,7 +85,7 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
 
         MenuItem searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint(getString(R.string.fridge_search_hint));
+        searchView.setQueryHint(getSearchQueryHint());
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
 
@@ -170,13 +170,12 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
         outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
     }
 
-    public List<T> getItems() {
-        return items;
-    }
-
     public void setItems(List<T> items) {
         if (itemsAdapter != null) {
+            // Replace items
             AdapterUtils.setAll(itemsAdapter, items);
+            // Refresh filter
+            itemsAdapter.getFilter().filter(searchQuery);
         } else {
             this.items = new ArrayList<T>(items);
         }
@@ -193,6 +192,8 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
     protected abstract void onItemUpdated(T item, Measure measure);
 
     protected abstract void onItemRemoved(T item);
+
+    protected abstract CharSequence getSearchQueryHint();
 
     public class ItemsListAdapter extends ArrayAdapter<T> implements View.OnClickListener {
 

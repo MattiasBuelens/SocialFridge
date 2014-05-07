@@ -116,7 +116,8 @@
     <!-- Fridge -->
     <string name="fridge_title">My fridge</string>
     <string name="fridge_search">Search</string>
-    <string name="fridge_search_hint">Search ingredients</string>
+    <string name="fridge_search_hint">Search fridge</string>
+    <string name="fridge_search_ingredients_hint">Search ingredients</string>
     <string name="fridge_add_ingredient">Add ingredients</string>
 
     <!-- Measure picker -->

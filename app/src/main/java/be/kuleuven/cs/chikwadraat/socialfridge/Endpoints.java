@@ -7,9 +7,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Dishes;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Users;
 
 /**
  * Endpoints access.
@@ -34,16 +31,24 @@ public class Endpoints {
      */
     private static final String TEST_ROOT_URL = "http://192.168.1.163:8080/_ah/api/";
 
-    public static Users users() {
+    public static Endpoint.Users users() {
         return endpoint().users();
     }
 
-    public static Parties parties() {
+    public static Endpoint.Parties parties() {
         return endpoint().parties();
     }
 
-    public static Dishes dishes() {
+    public static Endpoint.Dishes dishes() {
         return endpoint().dishes();
+    }
+
+    public static Endpoint.Ingredients ingredients() {
+        return endpoint().ingredients();
+    }
+
+    public static Endpoint.Fridge fridge() {
+        return endpoint().fridge();
     }
 
     private static Endpoint endpoint() {
