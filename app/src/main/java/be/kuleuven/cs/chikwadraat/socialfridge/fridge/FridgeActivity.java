@@ -1,7 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -9,12 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.facebook.Session;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.FridgeLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.IngredientsLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
@@ -27,8 +29,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.fridge;
  * Manage fridge activity.
  */
 public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, FridgeItem>,
-        View.OnClickListener, FridgeFragment.FridgeListener, IngredientsFragment.IngredientsListener,
-        FragmentManager.OnBackStackChangedListener {
+        View.OnClickListener, FridgeFragment.FridgeListener, IngredientsFragment.IngredientsListener {
 
     private static final String TAG = "FridgeActivity";
 
@@ -52,8 +53,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
         addIngredientsButton.setOnClickListener(this);
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
-
         // Re-attach to fridge task
         task = (FridgeEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
@@ -65,7 +64,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         ft.show(fridgeFragment);
         ft.hide(ingredientsFragment);
         ft.commit();
-        loadFridge();
     }
 
     @Override
@@ -192,16 +190,9 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         getSupportLoaderManager().initLoader(LOADER_FRIDGE, null, new FridgeLoaderCallbacks());
     }
 
-    public void reloadFridge(boolean invalidateIngredients) {
+    public void reloadFridge() {
         if (!isLoggedIn()) return;
         getSupportLoaderManager().restartLoader(LOADER_FRIDGE, null, new FridgeLoaderCallbacks());
-        if (invalidateIngredients) {
-            unloadIngredients();
-        }
-    }
-
-    public void unloadFridge() {
-        getSupportLoaderManager().destroyLoader(LOADER_FRIDGE);
     }
 
     public void loadIngredients() {
@@ -209,25 +200,25 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         getSupportLoaderManager().initLoader(LOADER_INGREDIENTS, null, new IngredientsLoaderCallbacks());
     }
 
-    public void reloadIngredients(boolean invalidateFridge) {
+    public void reloadIngredients() {
         if (!isLoggedIn()) return;
         getSupportLoaderManager().restartLoader(LOADER_INGREDIENTS, null, new IngredientsLoaderCallbacks());
-        if (invalidateFridge) {
-            unloadFridge();
-        }
     }
 
-    public void unloadIngredients() {
-        getSupportLoaderManager().destroyLoader(LOADER_INGREDIENTS);
+    public void load() {
+        loadFridge();
+        loadIngredients();
+    }
+
+    public void reload() {
+        reloadFridge();
+        reloadIngredients();
     }
 
     @Override
-    public void onBackStackChanged() {
-        if (fridgeFragment.isVisible()) {
-            loadFridge();
-        } else if (ingredientsFragment.isVisible()) {
-            loadIngredients();
-        }
+    protected void onLoggedIn(Session session, User user) {
+        super.onLoggedIn(session, user);
+        load();
     }
 
     @Override
@@ -238,7 +229,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemAdded(FridgeItem item) {
         Log.d(TAG, "Added fridge item: " + item.getIngredient().getID());
-        reloadIngredients(true);
+        reload();
     }
 
     @Override
@@ -249,7 +240,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemUpdated(FridgeItem item) {
         Log.d(TAG, "Updated fridge item: " + item.getIngredient().getID());
-        reloadIngredients(true);
+        reload();
     }
 
     @Override
@@ -260,7 +251,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemRemoved(FridgeItem item) {
         Log.d(TAG, "Removed fridge item: " + item.getIngredient().getID());
-        reloadFridge(true);
+        reload();
     }
 
     private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<FridgeItem>> {
