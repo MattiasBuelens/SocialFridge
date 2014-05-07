@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.fridge;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,25 +9,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.Session;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint;
-import be.kuleuven.cs.chikwadraat.socialfridge.loader.BaseLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.loader.FridgeLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.loader.IngredientsLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;
 
+import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.fridge;
+
 /**
  * Manage fridge activity.
  */
-public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, Void>, View.OnClickListener, FridgeFragment.FridgeListener, IngredientsFragment.IngredientsListener, FragmentManager.OnBackStackChangedListener {
+public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.Listener<Void, FridgeItem>,
+        View.OnClickListener, FridgeFragment.FridgeListener, IngredientsFragment.IngredientsListener,
+        FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = "FridgeActivity";
 
@@ -38,6 +38,8 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     private FridgeFragment fridgeFragment;
     private IngredientsFragment ingredientsFragment;
     private Button addIngredientsButton;
+
+    private FridgeEndpointAsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +52,13 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
         addIngredientsButton.setOnClickListener(this);
 
-        //TODO Re-attach to close invites task ?
-
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+        // Re-attach to fridge task
+        task = (FridgeEndpointAsyncTask) getLastCustomNonConfigurationInstance();
+        if (task != null) {
+            task.attachTransformed(this);
+        }
 
         // Show fridge
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -63,15 +69,95 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     }
 
     @Override
-    public void onResult(Void v) {
+    public Object onRetainCustomNonConfigurationInstance() {
+        if (task != null) {
+            task.detach();
+        }
+        return task;
+    }
+
+    private void addFridgeItem(FridgeItem item) {
+        if (task != null) task.detach();
+
+        try {
+            task = new FridgeEndpointAsyncTask(this,
+                    fridge().updateItem(
+                            getSession().getAccessToken(),
+                            item.toEndpoint()),
+                    FridgeEndpointAsyncTask.Type.ADD
+            );
+            task.execute();
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing add fridge item request: " + e.getMessage());
+            trackException(e);
+        }
+    }
+
+    private void updateFridgeItem(FridgeItem item) {
+        if (task != null) task.detach();
+
+        try {
+            task = new FridgeEndpointAsyncTask(this,
+                    fridge().updateItem(
+                            getSession().getAccessToken(),
+                            item.toEndpoint()),
+                    FridgeEndpointAsyncTask.Type.UPDATE
+            );
+            task.execute();
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing update fridge item request: " + e.getMessage());
+            trackException(e);
+        }
+    }
+
+    private void removeFridgeItem(FridgeItem item) {
+        if (task != null) task.detach();
+
+        try {
+            task = new FridgeEndpointAsyncTask(this,
+                    fridge().removeItem(
+                            item.getIngredient().getID(),
+                            getSession().getAccessToken()),
+                    FridgeEndpointAsyncTask.Type.REMOVE
+            );
+            task.execute();
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing remove fridge item request: " + e.getMessage());
+            trackException(e);
+        }
+    }
+
+    private void removeFridgeTask() {
+        if (task != null) {
+            task.detach();
+            task = null;
+        }
+    }
+
+    @Override
+    public void onResult(FridgeItem item) {
         hideProgressDialog();
-        // TODO WHAT TO DO HERE?
+
+        switch (task.getType()) {
+            case ADD:
+                afterFridgeItemAdded(item);
+                break;
+            case UPDATE:
+                afterFridgeItemUpdated(item);
+                break;
+            case REMOVE:
+                afterFridgeItemRemoved(item);
+                break;
+        }
+
+        removeFridgeTask();
     }
 
     @Override
     public void onError(Exception exception) {
         Log.e(TAG, "Failed to update/remove fridge item: " + exception.getMessage());
         hideProgressDialog();
+        removeFridgeTask();
         trackException(exception);
 
         // Handle regular exception
@@ -147,44 +233,34 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     @Override
     public void onFridgeItemAdded(FridgeItem item) {
         item.setOwnerID(getLoggedInUser().getId());
-        // TODO Update on backend
-        // TODO reloadIngredients(true) after update
+        addFridgeItem(item);
+    }
+
+    private void afterFridgeItemAdded(FridgeItem item) {
+        Log.d(TAG, "Added fridge item: " + item.getIngredient().getID());
+        reloadIngredients(true);
     }
 
     @Override
     public void onFridgeItemUpdated(FridgeItem item) {
         item.setOwnerID(getLoggedInUser().getId());
-        // TODO Update on backend
-        // TODO reloadFridge(true) after update
+        updateFridgeItem(item);
+    }
+
+    private void afterFridgeItemUpdated(FridgeItem item) {
+        Log.d(TAG, "Updated fridge item: " + item.getIngredient().getID());
+        reloadIngredients(true);
     }
 
     @Override
     public void onFridgeItemRemoved(FridgeItem item) {
         item.setOwnerID(getLoggedInUser().getId());
-        // TODO Remove on backend
-        // TODO reloadFridge(true) after update
+        removeFridgeItem(item);
     }
 
-    public static class FridgeLoader extends BaseLoader<List<FridgeItem>> {
-
-        public FridgeLoader(Context context) {
-            super(context);
-        }
-
-        @Override
-        public List<FridgeItem> loadInBackground() {
-            Endpoint.Fridge fridge = Endpoints.fridge();
-            Session session = Session.getActiveSession();
-
-            try {
-                return FridgeItem.fromEndpoint(fridge.getFridge(session.getAccessToken()).execute().getItems());
-            } catch (IOException e) {
-                Log.e(TAG, "Error while loading fridge: " + e.getMessage());
-                trackException(e);
-                return null;
-            }
-        }
-
+    private void afterFridgeItemRemoved(FridgeItem item) {
+        Log.d(TAG, "Removed fridge item: " + item.getIngredient().getID());
+        reloadFridge(true);
     }
 
     private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<FridgeItem>> {
@@ -202,28 +278,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         @Override
         public void onLoaderReset(Loader<List<FridgeItem>> loader) {
             fridgeFragment.setItems(Collections.<FridgeItem>emptyList());
-        }
-
-    }
-
-    public static class IngredientsLoader extends BaseLoader<List<Ingredient>> {
-
-        public IngredientsLoader(Context context) {
-            super(context);
-        }
-
-        @Override
-        public List<Ingredient> loadInBackground() {
-            Endpoint.Fridge fridge = Endpoints.fridge();
-            Session session = Session.getActiveSession();
-
-            try {
-                return Ingredient.fromEndpoint(fridge.getIngredients(session.getAccessToken()).execute().getItems());
-            } catch (IOException e) {
-                Log.e(TAG, "Error while loading ingredients: " + e.getMessage());
-                trackException(e);
-                return null;
-            }
         }
 
     }
