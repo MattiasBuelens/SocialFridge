@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.EndpointRequest;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.TimeSlotCollection;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
@@ -39,7 +40,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
     private Button declineButton;
     private TimeSlotsFragment timeSlotsFragment;
 
-    private PartyEndpointAsyncTask task;
+    private InviteReplyAsyncTask task;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         declineButton.setOnClickListener(this);
 
         // Re-attach to join/decline task
-        task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
+        task = (InviteReplyAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
             task.attach(this);
         }
@@ -126,10 +127,13 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         try {
             TimeSlotCollection timeSlotCollection = new TimeSlotCollection().setList(TimeSlot.toEndpoint(getTimeSlots()));
-            task = new PartyEndpointAsyncTask(this, parties().acceptInvite(
-                    getPartyID(),
-                    getSession().getAccessToken(),
-                    timeSlotCollection));
+            task = new InviteReplyAsyncTask(this,
+                    parties().acceptInvite(
+                            getPartyID(),
+                            getSession().getAccessToken(),
+                            timeSlotCollection),
+                    InviteReplyAsyncTask.Type.JOIN
+            );
             task.execute();
             showProgressDialog(R.string.party_join_progress);
         } catch (IOException e) {
@@ -142,9 +146,12 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         if (task != null) return;
 
         try {
-            task = new PartyEndpointAsyncTask(this, parties().declineInvite(
-                    getPartyID(),
-                    getSession().getAccessToken()));
+            task = new InviteReplyAsyncTask(this,
+                    parties().declineInvite(
+                            getPartyID(),
+                            getSession().getAccessToken()),
+                    InviteReplyAsyncTask.Type.JOIN
+            );
             task.execute();
             showProgressDialog(R.string.party_decline_progress);
         } catch (IOException e) {
@@ -162,15 +169,18 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     @Override
     public void onResult(Party party) {
-        removeTask();
         hideProgressDialog();
 
-        boolean isJoined = party.isInParty(getLoggedInUser());
-        if (isJoined) {
-            onJoined(party);
-        } else {
-            onDeclined(party);
+        switch (task.getType()) {
+            case JOIN:
+                onJoined(party);
+                break;
+            case DECLINE:
+                onDeclined(party);
+                break;
         }
+
+        removeTask();
     }
 
     private void onJoined(Party party) {
@@ -212,6 +222,26 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     @Override
     public void onProgress(Void... progress) {
+    }
+
+    private static class InviteReplyAsyncTask extends PartyEndpointAsyncTask {
+
+        private final Type type;
+
+        public InviteReplyAsyncTask(Listener<Void, Party> listener, EndpointRequest<be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party> request, Type type) {
+            super(listener, request);
+            this.type = type;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public enum Type {
+            JOIN,
+            DECLINE
+        }
+
     }
 
 }
