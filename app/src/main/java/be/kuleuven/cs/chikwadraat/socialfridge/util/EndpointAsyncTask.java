@@ -5,18 +5,20 @@ import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.EndpointRequest;
 /**
  * Created by Mattias on 2/05/2014.
  */
-public class EndpointAsyncTask<T> extends ObservableAsyncTask<Void, Void, T> {
+public abstract class EndpointAsyncTask<R, T> extends ObservableAsyncTask<Void, Void, T> {
 
-    protected final EndpointRequest<T> request;
+    protected final EndpointRequest<R> request;
 
-    public EndpointAsyncTask(Listener<Void, T> listener, EndpointRequest<T> request) {
+    protected EndpointAsyncTask(Listener<Void, T> listener, EndpointRequest<R> request) {
         super(listener);
         this.request = request;
     }
 
     @Override
     protected T run(Void... params) throws Exception {
-        return request.execute();
+        return parseResponse(request.execute());
     }
+
+    protected abstract T parseResponse(R response);
 
 }

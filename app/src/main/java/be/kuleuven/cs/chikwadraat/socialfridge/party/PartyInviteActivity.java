@@ -51,7 +51,7 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
         // Re-attach to close invites task
         task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attachTransformed(this);
+            task.attach(this);
         }
     }
 

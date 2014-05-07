@@ -57,7 +57,7 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
         // Re-attach to join/decline task
         task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attachTransformed(this);
+            task.attach(this);
         }
     }
 

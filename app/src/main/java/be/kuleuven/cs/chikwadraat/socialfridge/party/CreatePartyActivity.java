@@ -54,7 +54,7 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         // Re-attach to registration task
         task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attachTransformed(this);
+            task.attach(this);
         }
     }
 

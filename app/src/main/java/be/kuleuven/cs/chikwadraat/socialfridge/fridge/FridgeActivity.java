@@ -57,7 +57,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         // Re-attach to fridge task
         task = (FridgeEndpointAsyncTask) getLastCustomNonConfigurationInstance();
         if (task != null) {
-            task.attachTransformed(this);
+            task.attach(this);
         }
 
         // Show fridge
@@ -155,7 +155,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     @Override
     public void onError(Exception exception) {
-        Log.e(TAG, "Failed to update/remove fridge item: " + exception.getMessage());
+        Log.e(TAG, "Failed to process fridge item: " + exception.getMessage());
         hideProgressDialog();
         removeFridgeTask();
         trackException(exception);
