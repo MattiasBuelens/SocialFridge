@@ -66,12 +66,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/start_action_manage_fridge" />
 
+            <!-- TODO Bring me back! -->
             <Button
                 android:id="@+id/action_list_dishes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/start_action_list_dishes" />
+                android:text="@string/start_action_list_dishes"
+                android:visibility="gone" />
         </LinearLayout>
 
     </RelativeLayout>
