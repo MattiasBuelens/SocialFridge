@@ -205,12 +205,12 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-        // Send update to party members
+        // Send update to other recipients
         User user = getUser(userID);
         messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
-                .recipients(party.getUpdateRecipients())
+                .recipients(party.getUpdateRecipientsExcept(User.getRef(userID)))
                 .build());
         return party;
     }
@@ -275,12 +275,12 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-        // Send update to party members
+        // Send update to other recipients
         User user = getUser(userID);
         messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.LEFT)
                 .reasonUser(user)
-                .recipients(party.getUpdateRecipients())
+                .recipients(party.getUpdateRecipientsExcept(User.getRef(userID)))
                 .build());
     }
 
@@ -383,10 +383,10 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-        // Send update to party members except host
+        // Send update to recipients except host
         messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DONE)
-                .recipients(party.getUpdateRecipients(false))
+                .recipients(party.getUpdateRecipientsExceptHost())
                 .build());
         return party;
     }
@@ -425,10 +425,10 @@ public class PartyEndpoint extends BaseEndpoint {
         });
         // Cancel open invites
         party = cancelInvites(party);
-        // Send update to party members except host
+        // Send update to recipients except host
         messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.DISBANDED)
-                .recipients(party.getUpdateRecipients(false))
+                .recipients(party.getUpdateRecipientsExceptHost())
                 .build());
         return party;
     }

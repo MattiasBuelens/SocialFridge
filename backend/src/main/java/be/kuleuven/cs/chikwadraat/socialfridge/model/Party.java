@@ -352,14 +352,36 @@ public class Party {
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     public Collection<User> getUpdateRecipients() {
-        return getUpdateRecipients(true);
+        return getUpdateRecipientsExcept(new User[0]);
     }
 
-    public Collection<User> getUpdateRecipients(boolean includeHost) {
-        Collection<Ref<User>> keys = getUpdateRecipientKeys();
-        if (!includeHost) {
-            keys = new HashSet<Ref<User>>(keys);
-            keys.remove(User.getRef(getHostID()));
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Collection<User> getUpdateRecipientsExceptHost() {
+        return getUpdateRecipientsExcept(getHostRef());
+    }
+
+    public Collection<User> getUpdateRecipientsExcept(Ref<User> exclude) {
+        Set<Ref<User>> keys = new HashSet<Ref<User>>(getUpdateRecipientKeys());
+        keys.remove(exclude);
+        return ofy().load().refs(keys).values();
+    }
+
+    public Collection<User> getUpdateRecipientsExcept(User exclude) {
+        return getUpdateRecipientsExcept(Ref.create(exclude));
+    }
+
+    public Collection<User> getUpdateRecipientsExcept(Ref<User>... exclude) {
+        Set<Ref<User>> keys = new HashSet<Ref<User>>(getUpdateRecipientKeys());
+        for (Ref<User> ref : exclude) {
+            keys.remove(ref);
+        }
+        return ofy().load().refs(keys).values();
+    }
+
+    public Collection<User> getUpdateRecipientsExcept(User... exclude) {
+        Set<Ref<User>> keys = new HashSet<Ref<User>>(getUpdateRecipientKeys());
+        for (User user : exclude) {
+            keys.remove(Ref.create(user));
         }
         return ofy().load().refs(keys).values();
     }
