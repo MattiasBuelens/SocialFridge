@@ -98,6 +98,12 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        searchDishes(searchQuery);
+    }
+
+    @Override
     public boolean onQueryTextChange(String newText) {
         searchDishes(newText);
         return true;
@@ -128,7 +134,9 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         if (searchView != null && !TextUtils.equals(searchView.getQuery(), query)) {
             searchView.setQuery(searchQuery, false);
         }
-        dishesArrayAdapter.getFilter().filter(query);
+        if (dishesArrayAdapter != null) {
+            dishesArrayAdapter.getFilter().filter(query);
+        }
     }
 
     @Override
