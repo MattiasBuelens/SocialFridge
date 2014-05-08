@@ -108,6 +108,8 @@
     <string name="notif_party_invite_content">%1$s invited you to make %2$s together.</string>
     <string name="notif_party_joined_title">Someone joined cooking party</string>
     <string name="notif_party_joined_content">%1$s agreed to make %2$s together.</string>
+    <string name="notif_party_invite_declined_title">Invite declined</string>
+    <string name="notif_party_invite_declined_content">%1$s declined your invite to make %2$s together.</string>
     <string name="notif_party_done_title">Cooking party planned</string>
     <string name="notif_party_done_content">%1$s decided when to make %2$s together.</string>
     <string name="notif_party_disbanded_title">Cooking party disbanded</string>

@@ -5,7 +5,11 @@ package be.kuleuven.cs.chikwadraat.socialfridge.messaging;
  */
 public enum PartyUpdateReason {
 
-    JOINED("partner_joined"), LEFT("partner_left"), DONE("done"), DISBANDED("disbanded");
+    JOINED("partner_joined"),
+    LEFT("partner_left"),
+    DECLINED("invite_declined"),
+    DONE("done"),
+    DISBANDED("disbanded");
 
     private final String name;
 

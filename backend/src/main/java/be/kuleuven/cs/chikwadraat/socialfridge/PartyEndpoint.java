@@ -240,7 +240,13 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-        // TODO Send update to host?
+        // Send update to host
+        User user = getUser(userID);
+        messageDAO.addMessages(Messages.partyUpdated(party)
+                .reason(PartyUpdateReason.DECLINED)
+                .reasonUser(user)
+                .recipients(party.getHost())
+                .build());
         return party;
     }
 

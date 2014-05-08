@@ -123,11 +123,17 @@ public class NotificationIntentService extends BaseIntentService {
 
         switch (reason) {
             case JOINED: {
-
                 String partnerName = message.getUpdateReasonUserName();
                 iconUserID = message.getUpdateReasonUserID();
                 contentTitle = getString(R.string.notif_party_joined_title);
                 contentText = getString(R.string.notif_party_joined_content, partnerName, "dinner");
+                break;
+            }
+            case DECLINED: {
+                String partnerName = message.getUpdateReasonUserName();
+                iconUserID = message.getUpdateReasonUserID();
+                contentTitle = getString(R.string.notif_party_invite_declined_title);
+                contentText = getString(R.string.notif_party_invite_declined_content, partnerName, "dinner");
                 break;
             }
             case DONE: {
