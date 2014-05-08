@@ -59,7 +59,6 @@ public class IngredientsFragment extends AbstractFridgeFragment<Ingredient> {
 
     @Override
     public void onItemUpdated(Ingredient ingredient, Measure measure) {
-        // TODO Create FridgeItem
         FridgeItem item = new FridgeItem(ingredient, measure);
         if (listener != null) {
             listener.onFridgeItemAdded(item);
