@@ -178,7 +178,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.show(ingredientsFragment);
         ft.hide(fridgeFragment);
-        ft.setCustomAnimations(android.R.anim.slide_in_left, 0, 0, android.R.anim.slide_out_right);
         ft.addToBackStack(null);
         ft.commit();
     }

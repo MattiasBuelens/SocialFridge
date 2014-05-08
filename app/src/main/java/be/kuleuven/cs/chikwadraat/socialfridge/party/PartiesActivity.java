@@ -27,7 +27,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 /**
  * Parties activity.
  */
-public class PartiesActivity extends ListActivity {
+public class PartiesActivity extends ListActivity implements View.OnClickListener {
 
     private static final String TAG = "PartiesActivity";
 
@@ -38,7 +38,9 @@ public class PartiesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.simple_card_list);
+        setContentView(R.layout.party_list);
+
+        findViewById(R.id.action_create_party).setOnClickListener(this);
 
         partiesArrayAdapter = new PartiesArrayAdapter();
         setListAdapter(partiesArrayAdapter);
@@ -62,6 +64,17 @@ public class PartiesActivity extends ListActivity {
         Intent intent = new Intent(this, ViewPartyActivity.class);
         intent.putExtra(BasePartyActivity.EXTRA_PARTY_ID, party.getID());
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.action_create_party: {
+                Intent intent = new Intent(this, CreatePartyActivity.class);
+                startActivity(intent);
+            }
+            break;
+        }
     }
 
     public class PartiesArrayAdapter extends ArrayAdapter<Party> {

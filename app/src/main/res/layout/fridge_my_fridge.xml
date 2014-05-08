@@ -5,7 +5,7 @@
     style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.party.FridgeActivity">
+    tools:context="be.kuleuven.cs.chikwadraat.socialfridge.fridge.FridgeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/fridge_action_add_ingredients"
             android:layout_alignParentTop="true"
-            tools:layout="@layout/simple_card_list" />
+            tools:layout="@layout/fragment_fridge_list" />
 
         <Button
             android:id="@+id/fridge_action_add_ingredients"

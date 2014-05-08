@@ -117,6 +117,8 @@
 
     <!-- List parties -->
     <string name="party_list_title">My parties</string>
+    <string name="party_list_empty">No parties</string>
+    <string name="party_list_empty_create">@string/start_action_create_party</string>
 
     <!-- Fridge -->
     <string name="fridge_title">My fridge</string>
@@ -124,6 +126,7 @@
     <string name="fridge_search_hint">Search fridge</string>
     <string name="fridge_search_ingredients_hint">Search ingredients</string>
     <string name="fridge_add_ingredient">Add ingredients</string>
+    <string name="fridge_empty">Fridge is empty</string>
 
     <!-- Measure picker -->
     <string name="measure_picker_done">Done</string>
