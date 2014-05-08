@@ -78,6 +78,12 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        searchIngredients(searchQuery);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -127,7 +133,9 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
         if (searchView != null && !TextUtils.equals(searchView.getQuery(), query)) {
             searchView.setQuery(searchQuery, false);
         }
-        itemsAdapter.getFilter().filter(query);
+        if (itemsAdapter != null) {
+            itemsAdapter.getFilter().filter(query);
+        }
     }
 
     @Override
