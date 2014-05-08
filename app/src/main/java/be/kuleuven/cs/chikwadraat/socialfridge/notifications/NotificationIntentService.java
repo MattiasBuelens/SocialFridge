@@ -9,7 +9,6 @@ import android.support.v4.app.NotificationCompat;
 
 import java.io.IOException;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.AppSession;
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseIntentService;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.facebook.FacebookAPI;
@@ -114,8 +113,6 @@ public class NotificationIntentService extends BaseIntentService {
     }
 
     private void issueUpdateNotification(GcmMessage message) {
-        // TODO if(message.getUpdateReasonUserID().equals(getCurrentUserID())) return;
-        
         PartyUpdateReason reason = message.getUpdateReason();
         String iconUserID;
         String contentTitle;
@@ -210,11 +207,6 @@ public class NotificationIntentService extends BaseIntentService {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    private String getCurrentUserID() {
-        return "ThisShouldBeTheCurrentUserID";
-        //TODO: correct implementeren
     }
 
 }
