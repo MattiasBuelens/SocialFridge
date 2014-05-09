@@ -9,7 +9,7 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.EndpointRequest;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.CollectionResponsePartyMember;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 
 import static be.kuleuven.cs.chikwadraat.socialfridge.Endpoints.parties;
 
@@ -36,7 +36,7 @@ public class PartyCandidatesLoader extends EndpointLoader<List<PartyMember>, Col
 
     @Override
     protected List<PartyMember> parseResponse(CollectionResponsePartyMember response) {
-        return response.getItems();
+        return PartyMember.fromEndpoint(response.getItems());
     }
 
 }

@@ -17,8 +17,8 @@ public class PartyMember implements Parcelable {
     private final String userID;
     private final String userName;
     private final boolean isHost;
-    private final boolean isInParty;
-    private final boolean isInvited;
+    private boolean isInParty;
+    private boolean isInvited;
     private final List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
     public PartyMember(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember model) {
@@ -65,8 +65,16 @@ public class PartyMember implements Parcelable {
         return isInParty;
     }
 
+    public void setInParty(boolean isInParty) {
+        this.isInParty = isInParty;
+    }
+
     public boolean isInvited() {
         return isInvited;
+    }
+
+    public void setInvited(boolean isInvited) {
+        this.isInvited = isInvited;
     }
 
     public Role getRole() {

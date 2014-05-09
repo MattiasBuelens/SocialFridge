@@ -15,8 +15,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import java.io.IOException;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.DetailsFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.ObservableAsyncTask;

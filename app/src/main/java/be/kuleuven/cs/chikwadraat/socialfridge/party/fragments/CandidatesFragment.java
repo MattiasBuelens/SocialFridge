@@ -20,10 +20,10 @@ import com.facebook.widget.ProfilePictureView;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
@@ -182,7 +182,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
             vh.inviteButton.setOnClickListener(this);
             vh.inviteButton.setTag(vh);
 
-            if (candidate.getInvited()) {
+            if (candidate.isInvited()) {
                 vh.inviteButton.setText(R.string.party_partner_status_invited);
                 vh.inviteButton.setEnabled(false);
                 //cancelInviteButton.setVisibility(View.VISIBLE);
