@@ -14,9 +14,7 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
 
-import be.kuleuven.cs.chikwadraat.socialfridge.Endpoints;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
-import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.Endpoint.Parties;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.CandidatesFragment;
@@ -164,74 +162,78 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     }
 
-    private class InviteTask extends AsyncTask<Void, Void, Exception> {
+    private class InviteTask extends AsyncTask<Void, Void, Party> {
 
         private final PartyMember candidate;
+        private Exception exception;
 
         private InviteTask(PartyMember candidate) {
             this.candidate = candidate;
         }
 
         @Override
-        protected Exception doInBackground(Void... params) {
+        protected Party doInBackground(Void... params) {
             try {
-                parties().invite(candidate.getPartyID(), candidate.getUserID(), Session.getActiveSession().getAccessToken()).execute();
-                return null;
+                return new Party(parties().invite(
+                        candidate.getPartyID(),
+                        candidate.getUserID(),
+                        Session.getActiveSession().getAccessToken()
+                ).execute());
             } catch (IOException e) {
-                return e;
+                exception = e;
+                return null;
             }
         }
 
         @Override
-        protected void onPostExecute(Exception exception) {
-            if (exception == null) {
+        protected void onPostExecute(Party party) {
+            if (party != null) {
+                cacheParty(party);
                 candidate.setInvited(true);
                 candidatesFragment.refreshCandidates();
-            } else {
+            } else if (exception != null) {
                 Log.e(TAG, "Error while inviting: " + exception.getMessage());
                 trackException(exception);
                 // TODO Error handling?
             }
         }
 
-        private Parties parties() {
-            return Endpoints.parties();
-        }
-
     }
 
-    private class CancelInviteTask extends AsyncTask<Void, Void, Exception> {
+    private class CancelInviteTask extends AsyncTask<Void, Void, Party> {
 
         private final PartyMember candidate;
+        private Exception exception;
 
         private CancelInviteTask(PartyMember candidate) {
             this.candidate = candidate;
         }
 
         @Override
-        protected Exception doInBackground(Void... params) {
+        protected Party doInBackground(Void... params) {
             try {
-                parties().cancelInvite(candidate.getPartyID(), candidate.getUserID(), Session.getActiveSession().getAccessToken()).execute();
-                return null;
+                return new Party(parties().cancelInvite(
+                        candidate.getPartyID(),
+                        candidate.getUserID(),
+                        Session.getActiveSession().getAccessToken()
+                ).execute());
             } catch (IOException e) {
-                return e;
+                exception = e;
+                return null;
             }
         }
 
         @Override
-        protected void onPostExecute(Exception exception) {
-            if (exception == null) {
+        protected void onPostExecute(Party party) {
+            if (party != null) {
+                cacheParty(party);
                 candidate.setInvited(false);
                 candidatesFragment.refreshCandidates();
-            } else {
+            } else if (exception != null) {
                 Log.e(TAG, "Error while canceling invite: " + exception.getMessage());
                 trackException(exception);
                 // TODO Error handling?
             }
-        }
-
-        private Parties parties() {
-            return Endpoints.parties();
         }
 
     }

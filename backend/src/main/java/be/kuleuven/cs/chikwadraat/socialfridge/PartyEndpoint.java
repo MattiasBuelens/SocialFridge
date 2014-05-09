@@ -95,7 +95,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.invite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.GET)
-    public void invite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party invite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         // Check if user is befriended with friend
         if (!isBefriendedWith(friendID, accessToken)) {
@@ -125,13 +125,13 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
-
         // Send invite to friend
         User friend = getUser(friendID);
         messageDAO.addMessages(Messages.partyInvited(party)
                 .invitee(friend)
                 .recipients(friend)
                 .build());
+        return party;
     }
 
     /**
@@ -142,7 +142,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.cancelInvite", path = "party/{partyID}/invite/{friendID}", httpMethod = ApiMethod.HttpMethod.DELETE)
-    public void cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
+    public Party cancelInvite(@Named("partyID") final long partyID, @Named("friendID") final String friendID, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
         Party party = transact(new Work<Party, ServiceException>() {
             @Override
@@ -170,6 +170,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
+        return party;
     }
 
     protected void sendCancelInvite(Party party, User invitee) throws ServiceException {
