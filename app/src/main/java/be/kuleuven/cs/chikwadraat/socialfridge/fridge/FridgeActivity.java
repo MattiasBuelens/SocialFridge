@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.facebook.Session;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -206,6 +207,11 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemAdded(FridgeItem item) {
         Log.d(TAG, "Added fridge item: " + item.getIngredient().getID());
+
+        getTracker().send(new HitBuilders.EventBuilder("Fridge", "Add")
+                .setLabel(item.getIngredient().getName())
+                .build());
+
         reloadFridge();
     }
 
@@ -217,6 +223,11 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemUpdated(FridgeItem item) {
         Log.d(TAG, "Updated fridge item: " + item.getIngredient().getID());
+
+        getTracker().send(new HitBuilders.EventBuilder("Fridge", "Update")
+                .setLabel(item.getIngredient().getName())
+                .build());
+
         reloadFridge();
     }
 
@@ -228,6 +239,11 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private void afterFridgeItemRemoved(FridgeItem item) {
         Log.d(TAG, "Removed fridge item: " + item.getIngredient().getID());
+
+        getTracker().send(new HitBuilders.EventBuilder("Fridge", "Remove")
+                .setLabel(item.getIngredient().getName())
+                .build());
+
         reloadFridge();
     }
 
