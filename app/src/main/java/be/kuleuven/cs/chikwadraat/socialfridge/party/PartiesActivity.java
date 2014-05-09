@@ -97,7 +97,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
 
             Party party = getItem(position);
             PartyMember host = party.getHost();
-            PartyMember user = party.getPartner(getLoggedInUser());
+            PartyMember user = party.getMember(getLoggedInUser());
             int nbOtherPartners = party.getPartners().size() - 1;
 
             String partnersText = getContext().getResources().getQuantityString(R.plurals.party_partners, nbOtherPartners,

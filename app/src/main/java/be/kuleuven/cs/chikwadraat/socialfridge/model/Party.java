@@ -68,6 +68,18 @@ public class Party implements Parcelable {
         return getPartner(getHostID());
     }
 
+    public PartyMember getMember(User user) {
+        return getMember(user.getId());
+    }
+
+    public PartyMember getMember(String userID) {
+        PartyMember member = getPartner(userID);
+        if (member == null) {
+            member = getInvitee(userID);
+        }
+        return member;
+    }
+
     public PartyMember getPartner(User user) {
         return getPartner(user.getId());
     }
