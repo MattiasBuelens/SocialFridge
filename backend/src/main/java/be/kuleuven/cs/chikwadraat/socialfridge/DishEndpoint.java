@@ -16,7 +16,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 
 @Api(
         name = "endpoint",
-        version = "v2",
+        version = "v3",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class DishEndpoint extends BaseEndpoint {

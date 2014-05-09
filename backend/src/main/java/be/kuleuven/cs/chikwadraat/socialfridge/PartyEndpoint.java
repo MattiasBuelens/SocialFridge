@@ -34,7 +34,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 
 @Api(
         name = "endpoint",
-        version = "v2",
+        version = "v3",
         namespace = @ApiNamespace(ownerDomain = "chikwadraat.cs.kuleuven.be", ownerName = "Chi Kwadraat", packagePath = "socialfridge")
 )
 public class PartyEndpoint extends BaseEndpoint {

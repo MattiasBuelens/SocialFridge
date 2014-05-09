@@ -3,7 +3,7 @@ apply plugin: 'war'
 apply plugin: 'appengine'
 
 def appId = "socialfridge"
-def appVersion = 2
+def appVersion = 3
 
 def appengineVersion = "1.9.3"
 
