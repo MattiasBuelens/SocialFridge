@@ -142,7 +142,7 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(STATE_QUERY, searchView.getQuery().toString());
+        outState.putString(STATE_QUERY, searchQuery);
     }
 
     @Override

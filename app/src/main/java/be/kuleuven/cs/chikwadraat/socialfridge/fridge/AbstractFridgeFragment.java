@@ -173,7 +173,7 @@ public abstract class AbstractFridgeFragment<T extends Parcelable> extends ListF
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(STATE_QUERY, searchView.getQuery().toString());
+        outState.putString(STATE_QUERY, searchQuery);
         outState.putParcelableArrayList(STATE_ITEMS, items);
         outState.putInt(STATE_EDITING_ITEM, editingItemPosition);
     }
