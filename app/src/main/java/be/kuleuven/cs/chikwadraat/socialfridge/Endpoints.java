@@ -23,7 +23,7 @@ public class Endpoints {
      * Endpoint root URL for production setup.
      * TODO Remove version prefix on release!
      */
-    private static final String PRODUCTION_ROOT_URL = "https://2-dot-socialfridge.appspot.com/_ah/api/";
+    private static final String PRODUCTION_ROOT_URL = "https://socialfridge.appspot.com/_ah/api/";
 
     /**
      * Endpoint root URL for testing setup.
