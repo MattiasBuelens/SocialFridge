@@ -138,6 +138,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
      * Cache the received party.
      */
     protected void cacheParty(Party party) {
+        this.party = party;
         PartyLoaderService.cacheParty(party);
     }
 

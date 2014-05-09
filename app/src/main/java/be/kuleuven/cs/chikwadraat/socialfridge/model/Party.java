@@ -187,6 +187,7 @@ public class Party implements Parcelable {
         dest.writeLong(getID());
         dest.writeString(getHostID());
         dest.writeTypedList(getPartners());
+        dest.writeTypedList(getInvitees());
         dest.writeString(getStatus().name());
         dest.writeTypedList(getTimeSlots());
         dest.writeLong(getDate().getTime());
