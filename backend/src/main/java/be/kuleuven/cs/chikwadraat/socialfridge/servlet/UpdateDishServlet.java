@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.repackaged.com.google.api.client.util.Strings;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.DishDAO;
+import be.kuleuven.cs.chikwadraat.socialfridge.IngredientDAO;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 
 /**
  * Created by Mattias on 20/04/2014.
@@ -21,6 +25,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 public class UpdateDishServlet extends HttpServlet {
 
     private DishDAO dao = new DishDAO();
+    private IngredientDAO ingredientDAO = new IngredientDAO();
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     @Override
@@ -32,6 +37,7 @@ public class UpdateDishServlet extends HttpServlet {
             return;
         }
         req.setAttribute("dish", dish);
+        req.setAttribute("ingredients", ingredientDAO.getIngredients());
 
         String submitURL = req.getRequestURI() + "?dishID=" + dishID;
         String formUrl = blobstoreService.createUploadUrl(submitURL);
@@ -47,9 +53,10 @@ public class UpdateDishServlet extends HttpServlet {
         String name = req.getParameter("dishName");
         List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
         String action = req.getParameter("action");
+        String addIngredientID = req.getParameter("dishAddItem");
 
         try {
-            if (action.equals("update")) {
+            if (action.equals("update") || action.equals("addItem")) {
                 // Update dish
                 Dish dish = new Dish(dishID);
                 dish.setName(name);
@@ -58,8 +65,18 @@ public class UpdateDishServlet extends HttpServlet {
                     BlobKey pictureKey = blobs.remove(0);
                     dish.setPictureKey(pictureKey);
                 }
+                if (action.equals("addItem") && !Strings.isNullOrEmpty(addIngredientID)) {
+                    // Add new item
+                    long ingredientID = Long.parseLong(addIngredientID);
+                    DishItem item = new DishItem(Ingredient.getRef(ingredientID));
+                    dish.getItems().add(item);
+                }
                 dao.updateDish(dish);
-                resp.sendRedirect("/admin/dishes?updated=" + dishID);
+                if (action.equals("addItem")) {
+                    resp.sendRedirect("/admin/updateDish?dishID=" + dishID);
+                } else {
+                    resp.sendRedirect("/admin/dishes?updated=" + dishID);
+                }
             } else if (action.equals("delete")) {
                 // Delete dish
                 dao.removeDish(Dish.getRef(dishID));

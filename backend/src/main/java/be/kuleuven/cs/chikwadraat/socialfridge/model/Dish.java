@@ -10,6 +10,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
@@ -41,7 +42,7 @@ public class Dish {
     /**
      * Items, per person.
      */
-    private List<DishItem> items;
+    private List<DishItem> items = new ArrayList<DishItem>();
 
     public Dish() {
     }
@@ -128,7 +129,8 @@ public class Dish {
     }
 
     public void setItems(List<DishItem> items) {
-        this.items = items;
+        this.items.clear();
+        this.items.addAll(items);
     }
 
     @Override
