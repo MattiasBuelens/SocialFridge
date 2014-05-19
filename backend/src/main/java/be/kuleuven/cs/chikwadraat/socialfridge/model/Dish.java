@@ -10,6 +10,8 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.util.List;
+
 import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
 
 /**
@@ -35,6 +37,11 @@ public class Dish {
      * Blob key of dish picture.
      */
     private BlobKey pictureKey;
+
+    /**
+     * Items, per person.
+     */
+    private List<DishItem> items;
 
     public Dish() {
     }
@@ -111,6 +118,17 @@ public class Dish {
      */
     public String getThumbnailURL() {
         return getPictureURL(THUMBNAIL_SIZE, true);
+    }
+
+    /**
+     * Items, per person.
+     */
+    public List<DishItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<DishItem> items) {
+        this.items = items;
     }
 
     @Override
