@@ -32,8 +32,16 @@ public class DishItem {
         return ingredient;
     }
 
+    public void setIngredientRef(Ref<Ingredient> ingredient) {
+        this.ingredient = ingredient;
+    }
+
     public Ingredient getIngredient() {
         return getIngredientRef().get();
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        setIngredientRef(Ref.create(ingredient));
     }
 
     public double getStandardAmount() {

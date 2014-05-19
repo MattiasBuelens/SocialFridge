@@ -15,12 +15,14 @@ public class Dish implements Parcelable {
     private final String name;
     private final String pictureURL;
     private final String thumbnailURL;
+    private final List<DishItem> items = new ArrayList<DishItem>();
 
     public Dish(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Dish model) {
         this.id = model.getId();
         this.name = model.getName();
         this.pictureURL = model.getPictureURL();
         this.thumbnailURL = model.getThumbnailURL();
+        this.items.addAll(DishItem.fromEndpoint(model.getItems()));
     }
 
     public Dish(Parcel in) {
@@ -28,6 +30,7 @@ public class Dish implements Parcelable {
         this.name = in.readString();
         this.pictureURL = in.readString();
         this.thumbnailURL = in.readString();
+        in.readTypedList(items, DishItem.CREATOR);
     }
 
     public long getID() {
@@ -44,6 +47,10 @@ public class Dish implements Parcelable {
 
     public String getThumbnailURL() {
         return thumbnailURL;
+    }
+
+    public List<DishItem> getItems() {
+        return items;
     }
 
     @Override
@@ -73,6 +80,7 @@ public class Dish implements Parcelable {
         dest.writeString(getName());
         dest.writeString(getPictureURL());
         dest.writeString(getThumbnailURL());
+        dest.writeTypedList(getItems());
     }
 
     public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {

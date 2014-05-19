@@ -127,6 +127,12 @@ public class Party {
      */
     private Date dateCreated;
 
+    /**
+     * Dish.
+     */
+    @Load
+    private Ref<Dish> dish;
+
     public Party() {
     }
 
@@ -437,6 +443,26 @@ public class Party {
         Collection<TimeSlot> mergedSlots = TimeSlot.merge(allSlots);
         // Replace time slots
         setTimeSlots(mergedSlots);
+    }
+
+    /**
+     * Dish.
+     */
+    public Dish getDish() {
+        return dish.get();
+    }
+
+    public void setDish(Dish dish) {
+        setDishRef(Ref.create(dish));
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Ref<Dish> getDishRef() {
+        return dish;
+    }
+
+    public void setDishRef(Ref<Dish> dish) {
+        this.dish = dish;
     }
 
     /**

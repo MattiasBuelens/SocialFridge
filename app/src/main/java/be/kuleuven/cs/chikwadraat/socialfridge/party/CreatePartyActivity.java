@@ -154,6 +154,8 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
         PartyBuilder builder = new PartyBuilder();
         builder.setHostID(getLoggedInUser().getId());
+        // TODO Dish
+        builder.setDishID(null);
         builder.setDate(new DateTime(getPartyDate()));
         builder.setHostTimeSlots(TimeSlot.toEndpoint(getTimeSlots()));
 

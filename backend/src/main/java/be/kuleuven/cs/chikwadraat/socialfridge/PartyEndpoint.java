@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
@@ -75,7 +76,8 @@ public class PartyEndpoint extends BaseEndpoint {
                 party.setDateCreated(new Date());
                 // Party date
                 party.setDate(builder.getDate());
-                // TODO Dish
+                // Dish
+                party.setDishRef(Dish.getRef(builder.getDishID()));
                 // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host

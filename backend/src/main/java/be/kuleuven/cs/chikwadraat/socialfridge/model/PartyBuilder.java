@@ -9,6 +9,7 @@ import java.util.List;
 public class PartyBuilder {
 
     private String hostID;
+    private long dishID;
     private Date date;
     private List<TimeSlot> hostTimeSlots;
 
@@ -21,6 +22,14 @@ public class PartyBuilder {
 
     public void setHostID(String host) {
         this.hostID = host;
+    }
+
+    public long getDishID() {
+        return dishID;
+    }
+
+    public void setDishID(long dishID) {
+        this.dishID = dishID;
     }
 
     public Date getDate() {

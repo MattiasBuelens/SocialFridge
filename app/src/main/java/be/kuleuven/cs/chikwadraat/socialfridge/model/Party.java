@@ -25,6 +25,7 @@ public class Party implements Parcelable {
     private final List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
     private final Date date;
     private final Date dateCreated;
+    private final Dish dish;
 
     public Party(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party model) {
         this.id = model.getId();
@@ -35,6 +36,7 @@ public class Party implements Parcelable {
         this.timeSlots.addAll(TimeSlot.fromEndpoint(model.getTimeSlots()));
         this.date = new Date(model.getDate().getValue());
         this.dateCreated = new Date(model.getDateCreated().getValue());
+        this.dish = new Dish(model.getDish());
     }
 
     public Party(Parcel in) {
@@ -46,6 +48,7 @@ public class Party implements Parcelable {
         in.readTypedList(this.timeSlots, TimeSlot.CREATOR);
         this.date = new Date(in.readLong());
         this.dateCreated = new Date(in.readLong());
+        this.dish = in.readParcelable(null);
     }
 
     public long getID() {
@@ -189,6 +192,10 @@ public class Party implements Parcelable {
         return list;
     }
 
+    public Dish getDish() {
+        return dish;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -204,6 +211,7 @@ public class Party implements Parcelable {
         dest.writeTypedList(getTimeSlots());
         dest.writeLong(getDate().getTime());
         dest.writeLong(getDateCreated().getTime());
+        dest.writeParcelable(getDish(), 0);
     }
 
     public static final Parcelable.Creator<Party> CREATOR = new Parcelable.Creator<Party>() {
