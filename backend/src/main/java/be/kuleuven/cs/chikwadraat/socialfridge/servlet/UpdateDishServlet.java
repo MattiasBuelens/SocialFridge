@@ -3,10 +3,13 @@ package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.util.Strings;
+import com.google.common.base.Strings;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -55,34 +58,50 @@ public class UpdateDishServlet extends HttpServlet {
         List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
         String action = req.getParameter("action");
         String addIngredientID = req.getParameter("dishAddItem");
+        String redirectURL = "/admin/dishes?updated=";
+
+        // Update items
+        List<DishItem> items = new ArrayList<DishItem>();
+        for (int i = 0; !Strings.isNullOrEmpty(req.getParameter("dishItems[" + i + "].ingredient")); i++) {
+            long ingredientID = Long.parseLong(req.getParameter("dishItems[" + i + "].ingredient"));
+            double standardAmount = Double.parseDouble(req.getParameter("dishItems[" + i + "].amount"));
+            DishItem item = new DishItem(Ingredient.getRef(ingredientID));
+            item.setStandardAmount(standardAmount);
+            items.add(item);
+        }
+        // Delete item
+        Matcher m = Pattern.compile("^dishItems\\[(\\d+)\\]\\.delete$").matcher(action);
+        if (m.matches()) {
+            int index = Integer.parseInt(m.group(1));
+            items.remove(index);
+            redirectURL = "/admin/updateDish?dishID=";
+        }
+        // Add new item
+        if (action.equals("addItem") && !Strings.isNullOrEmpty(addIngredientID)) {
+            long ingredientID = Long.parseLong(addIngredientID);
+            DishItem item = new DishItem(Ingredient.getRef(ingredientID));
+            items.add(item);
+            redirectURL = "/admin/updateDish?dishID=";
+        }
 
         try {
-            if (action.equals("update") || action.equals("addItem")) {
+            if (action.equals("delete")) {
+                // Delete dish
+                dao.removeDish(Dish.getRef(dishID));
+                redirectURL = "/admin/dishes?deleted=";
+            } else {
                 // Update dish
                 Dish dish = new Dish(dishID);
                 dish.setName(name);
+                dish.setItems(items);
                 if (blobs != null && !blobs.isEmpty()) {
                     // Use first upload as picture
                     BlobKey pictureKey = blobs.remove(0);
                     dish.setPictureKey(pictureKey);
                 }
-                if (action.equals("addItem") && !Strings.isNullOrEmpty(addIngredientID)) {
-                    // Add new item
-                    long ingredientID = Long.parseLong(addIngredientID);
-                    DishItem item = new DishItem(Ingredient.getRef(ingredientID));
-                    dish.getItems().add(item);
-                }
                 dao.updateDish(dish);
-                if (action.equals("addItem")) {
-                    resp.sendRedirect("/admin/updateDish?dishID=" + dishID);
-                } else {
-                    resp.sendRedirect("/admin/dishes?updated=" + dishID);
-                }
-            } else if (action.equals("delete")) {
-                // Delete dish
-                dao.removeDish(Dish.getRef(dishID));
-                resp.sendRedirect("/admin/dishes?deleted=" + dishID);
             }
+            resp.sendRedirect(redirectURL + dishID);
         } finally {
             // Remove any leftover uploads
             if (blobs != null && !blobs.isEmpty()) {

@@ -64,10 +64,19 @@
                                      alt="${item.ingredient.name}"
                                      width="32" class="img-thumbnail"/></td>
                             <td>
-                                <c:out value="${item.ingredient.name}"/>
+                                <select id="dishItems[${loopStatus.index}].ingredient"
+                                        name="dishItems[${loopStatus.index}].ingredient"
+                                        class="form-control">
+                                    <c:forEach var="ingredient" items="${ingredients}">
+                                        <option value="${ingredient.ID}"
+                                        ${item.ingredient.ID == ingredient.ID ? "selected" : ""}>
+                                        <c:out value="${ingredient.name}"/>
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </td>
                             <td>
-                                <input type="number" min="0"
+                                <input type="number" min="0" step="any"
                                        id="dishItems[${loopStatus.index}].amount"
                                        name="dishItems[${loopStatus.index}].amount"
                                        value="${item.standardAmount}" class="form-control"/></td>
@@ -77,34 +86,35 @@
                             <td>
                                 <button type="submit" name="action"
                                         value="dishItems[${loopStatus.index}].delete"
-                                        class="btn btn-danger">
+                                        class="btn btn-sm btn-danger">
                                     <span class="glyphicon glyphicon-trash"></span> Delete
                                 </button>
                             </td>
                         </tr>
                     </c:forEach>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>
+                            <select id="dishAddItem" name="dishAddItem"
+                                    class="form-control">
+                                <option value="">---</option>
+                                <c:forEach var="ingredient" items="${ingredients}">
+                                    <option value="${ingredient.ID}">
+                                        <c:out value="${ingredient.name}"/>
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit" name="action" value="addItem" class="btn">
+                                <span class="glyphicon glyphicon-plus"></span> Add
+                            </button>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <div class="col-sm-8">
-                    <select id="dishAddItem" name="dishAddItem"
-                            class="form-control">
-                        <option value="">---</option>
-                        <c:forEach var="ingredient" items="${ingredients}">
-                            <option value="${ingredient.ID}">
-                                <c:out value="${ingredient.name}"/>
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    <button type="submit" name="action" value="addItem" class="btn">
-                        <span class="glyphicon glyphicon-plus"></span> Add
-                    </button>
-                </div>
             </div>
         </div>
         <div class="form-group">

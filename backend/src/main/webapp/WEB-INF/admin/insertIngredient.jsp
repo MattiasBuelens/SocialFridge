@@ -38,7 +38,8 @@
                 amount:</label>
 
             <div class="col-sm-8">
-                <input type="number" min="0" id="ingredientDefaultAmount"
+                <input type="number" min="0" step="any"
+                       id="ingredientDefaultAmount"
                        name="ingredientDefaultAmount"
                        class="form-control"/>
             </div>
