@@ -28,6 +28,7 @@ public class InsertDishServlet extends HttpServlet {
         String formUrl = blobstoreService.createUploadUrl(req.getRequestURI());
         req.setAttribute("formURL", formUrl);
 
+        ServletUtils.disableCaching(resp);
         getServletContext().getRequestDispatcher("/WEB-INF/admin/insertDish.jsp").include(req, resp);
     }
 

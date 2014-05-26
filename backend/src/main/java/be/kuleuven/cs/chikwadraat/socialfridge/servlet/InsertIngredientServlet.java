@@ -32,6 +32,7 @@ public class InsertIngredientServlet extends HttpServlet {
         req.setAttribute("categories", Ingredient.Category.values());
         req.setAttribute("units", Unit.values());
 
+        ServletUtils.disableCaching(resp);
         getServletContext().getRequestDispatcher("/WEB-INF/admin/insertIngredient.jsp").include(req, resp);
     }
 

@@ -41,6 +41,7 @@ public class UpdateIngredientServlet extends HttpServlet {
         String formUrl = blobstoreService.createUploadUrl(submitURL);
         req.setAttribute("formURL", formUrl);
 
+        ServletUtils.disableCaching(resp);
         getServletContext().getRequestDispatcher("/WEB-INF/admin/updateIngredient.jsp").include(req, resp);
     }
 
