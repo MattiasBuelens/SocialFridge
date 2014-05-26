@@ -84,6 +84,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
     @Override
     public void onPartyLoaded(Party party, User user) {
+        updateDish(party);
         updateDate(party);
         updatePlace(party);
         updatePartners(party);
@@ -91,9 +92,18 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
     @Override
     public void onPartyUnloaded() {
+        clearDish();
         clearDate();
         clearPlace();
         clearPartners();
+    }
+
+    private void updateDish(Party party) {
+        dishHeader.setDish(party.getDish());
+    }
+
+    private void clearDish() {
+        dishHeader.setDish(null);
     }
 
     private void updateDate(Party party) {
