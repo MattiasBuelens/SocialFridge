@@ -133,6 +133,13 @@ public class Party {
     @Load
     private Ref<Dish> dish;
 
+    @OnLoad
+    private void upgradeDish() {
+        if (dish == null) {
+            setDishRef(Ref.create(ofy().load().type(Dish.class).keys().first().now()));
+        }
+    }
+
     public Party() {
     }
 
