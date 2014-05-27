@@ -36,6 +36,8 @@ public class ViewDishActivity extends BaseActivity implements View.OnClickListen
 
         dishHeader = (DishHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.dish_header);
 
+        findViewById(R.id.dish_action_create_party).setOnClickListener(this);
+
         updateDish();
     }
 
