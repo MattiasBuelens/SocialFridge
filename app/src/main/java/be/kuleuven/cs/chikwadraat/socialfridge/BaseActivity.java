@@ -36,6 +36,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private AppSession appSession;
 
     private boolean isResumed = false;
+    private boolean isStarted = false;
     private UiLifecycleHelper uiHelper;
     private Session.StatusCallback sessionCallback = new Session.StatusCallback() {
         @Override
@@ -74,6 +75,10 @@ public abstract class BaseActivity extends ActionBarActivity {
         isResumed = false;
     }
 
+    protected final boolean isResumed() {
+        return isResumed;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -103,13 +108,19 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        isStarted = true;
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        isStarted = false;
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
+    protected final boolean isStarted() {
+        return isStarted;
     }
 
     protected boolean allowUpNavigation() {
@@ -259,7 +270,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        if (isResumed) {
+        if (isResumed()) {
             // check for the OPENED state instead of session.isOpened() since for the
             // OPENED_TOKEN_UPDATED state, the start fragment should already be showing.
             if (state.equals(SessionState.OPENED)) {
