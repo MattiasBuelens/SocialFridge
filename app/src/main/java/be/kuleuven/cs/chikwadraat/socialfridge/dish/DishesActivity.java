@@ -141,6 +141,13 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         outState.putString(STATE_QUERY, searchQuery);
     }
 
+    protected void setDishes(List<Dish> dishes) {
+        // Replace items
+        AdapterUtils.setAll(dishesArrayAdapter, dishes);
+        // Refresh filter
+        dishesArrayAdapter.getFilter().filter(searchQuery);
+    }
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Dish dish = (Dish) l.getItemAtPosition(position);
@@ -201,8 +208,8 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         }
 
         @Override
-        public void onLoadFinished(Loader<List<Dish>> loader, List<Dish> parties) {
-            AdapterUtils.setAll(dishesArrayAdapter, parties);
+        public void onLoadFinished(Loader<List<Dish>> loader, List<Dish> dishes) {
+            setDishes(dishes);
             setListShown(true);
         }
 
