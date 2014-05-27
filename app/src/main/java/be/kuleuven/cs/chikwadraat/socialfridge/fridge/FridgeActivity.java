@@ -6,7 +6,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -37,7 +36,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     private FridgeFragment fridgeFragment;
     private IngredientsFragment ingredientsFragment;
-    private Button addIngredientsButton;
 
     private FridgeLoaderCallbacks loaderCallbacks = new FridgeLoaderCallbacks();
     private FridgeEndpointAsyncTask task;
@@ -49,9 +47,8 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
         fridgeFragment = (FridgeFragment) getSupportFragmentManager().findFragmentById(R.id.fridge_fragment);
         ingredientsFragment = (IngredientsFragment) getSupportFragmentManager().findFragmentById(R.id.ingredients_fragment);
-        addIngredientsButton = (Button) findViewById(R.id.fridge_action_add_ingredients);
 
-        addIngredientsButton.setOnClickListener(this);
+        findViewById(R.id.fridge_action_add_ingredients).setOnClickListener(this);
 
         // Re-attach to fridge task
         task = (FridgeEndpointAsyncTask) getLastCustomNonConfigurationInstance();

@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.facebook.Session;
 import com.google.android.gms.analytics.HitBuilders;
@@ -32,7 +31,6 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
     private DetailsFragment detailsFragment;
     private CandidatesFragment candidatesFragment;
-    private Button confirmPartnersButton;
 
     private PartyEndpointAsyncTask task;
 
@@ -43,10 +41,9 @@ public class PartyInviteActivity extends BasePartyActivity implements Candidates
 
         detailsFragment = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.details_fragment);
         candidatesFragment = (CandidatesFragment) getSupportFragmentManager().findFragmentById(R.id.candidates_fragment);
-        confirmPartnersButton = (Button) findViewById(R.id.party_action_confirm_partners);
 
         candidatesFragment.addHeaderView(detailsFragment.getView());
-        confirmPartnersButton.setOnClickListener(this);
+        findViewById(R.id.party_action_confirm_partners).setOnClickListener(this);
 
         // Re-attach to close invites task
         task = (PartyEndpointAsyncTask) getLastCustomNonConfigurationInstance();

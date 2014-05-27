@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -41,7 +40,6 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
     private DishHeaderFragment dishHeader;
     private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
-    private Button findPartnersButton;
 
     private Dish dish;
     private PartyEndpointAsyncTask task;
@@ -61,9 +59,8 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         dishHeader = (DishHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.dish_header);
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
-        findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
 
-        findPartnersButton.setOnClickListener(this);
+        findViewById(R.id.party_action_find_partners).setOnClickListener(this);
 
         updateDish();
         updateTimeSlotSelections();

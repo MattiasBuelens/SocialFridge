@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -36,8 +35,6 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
     private static final String TAG = "InviteReplyActivity";
 
-    private Button joinButton;
-    private Button declineButton;
     private TimeSlotsFragment timeSlotsFragment;
 
     private InviteReplyAsyncTask task;
@@ -49,11 +46,8 @@ public class InviteReplyActivity extends BasePartyActivity implements View.OnCli
 
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
 
-        joinButton = (Button) findViewById(R.id.invite_reply_action_join);
-        joinButton.setOnClickListener(this);
-
-        declineButton = (Button) findViewById(R.id.invite_reply_action_decline);
-        declineButton.setOnClickListener(this);
+        findViewById(R.id.invite_reply_action_join).setOnClickListener(this);
+        findViewById(R.id.invite_reply_action_decline).setOnClickListener(this);
 
         // Re-attach to join/decline task
         task = (InviteReplyAsyncTask) getLastCustomNonConfigurationInstance();
