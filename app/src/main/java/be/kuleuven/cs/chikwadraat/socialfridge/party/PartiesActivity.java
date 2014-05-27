@@ -34,6 +34,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
     private static final int LOADER_PARTIES = 1;
 
     private PartiesArrayAdapter partiesArrayAdapter;
+    private PartiesLoaderCallbacks loaderCallbacks = new PartiesLoaderCallbacks();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +45,14 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
 
         partiesArrayAdapter = new PartiesArrayAdapter();
         setListAdapter(partiesArrayAdapter);
+        setListShownNoAnimation(false);
     }
 
     @Override
     protected void onLoggedIn(Session session, User user) {
         super.onLoggedIn(session, user);
-        getSupportLoaderManager().restartLoader(LOADER_PARTIES, null, new PartiesLoaderCallbacks());
+        setListShown(false);
+        getSupportLoaderManager().restartLoader(LOADER_PARTIES, null, loaderCallbacks);
     }
 
     @Override
@@ -154,11 +157,13 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
         @Override
         public void onLoadFinished(Loader<List<Party>> loader, List<Party> parties) {
             AdapterUtils.setAll(partiesArrayAdapter, parties);
+            setListShown(true);
         }
 
         @Override
         public void onLoaderReset(Loader<List<Party>> loader) {
             partiesArrayAdapter.clear();
+            setListShown(false);
         }
 
     }

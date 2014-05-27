@@ -42,6 +42,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     private View candidatesHeader;
     private ListView candidatesList;
     private CandidatesListAdapter candidatesAdapter;
+    private CandidatesLoaderCallbacks loaderCallbacks = new CandidatesLoaderCallbacks();
     private CandidateListener listener;
 
     /**
@@ -124,7 +125,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
     private void loadCandidates(long partyID) {
         Bundle args = new Bundle();
         args.putLong(LOADER_ARGS_PARTY_ID, partyID);
-        getLoaderManager().restartLoader(LOADER_CANDIDATES, args, new CandidatesLoaderCallbacks());
+        getLoaderManager().restartLoader(LOADER_CANDIDATES, args, loaderCallbacks);
     }
 
     public void refreshCandidates() {

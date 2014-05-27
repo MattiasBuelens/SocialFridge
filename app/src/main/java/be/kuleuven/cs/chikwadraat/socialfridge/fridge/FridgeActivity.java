@@ -39,6 +39,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     private IngredientsFragment ingredientsFragment;
     private Button addIngredientsButton;
 
+    private FridgeLoaderCallbacks loaderCallbacks = new FridgeLoaderCallbacks();
     private FridgeEndpointAsyncTask task;
 
     @Override
@@ -185,18 +186,26 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
 
     public void loadFridge() {
         if (!isLoggedIn()) return;
-        getSupportLoaderManager().initLoader(LOADER_FRIDGE, null, new FridgeLoaderCallbacks());
+        setListsShown(false);
+        getSupportLoaderManager().initLoader(LOADER_FRIDGE, null, loaderCallbacks);
     }
 
     public void reloadFridge() {
         if (!isLoggedIn()) return;
-        getSupportLoaderManager().restartLoader(LOADER_FRIDGE, null, new FridgeLoaderCallbacks());
+        setListsShown(false);
+        getSupportLoaderManager().restartLoader(LOADER_FRIDGE, null, loaderCallbacks);
     }
 
     @Override
     protected void onLoggedIn(Session session, User user) {
         super.onLoggedIn(session, user);
         loadFridge();
+    }
+
+    @Override
+    protected void onLoggedOut() {
+        super.onLoggedOut();
+        getSupportLoaderManager().destroyLoader(LOADER_FRIDGE);
     }
 
     @Override
@@ -247,6 +256,11 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         reloadFridge();
     }
 
+    protected void setListsShown(boolean shown) {
+        fridgeFragment.setListShown(shown);
+        ingredientsFragment.setListShown(shown);
+    }
+
     private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<FridgeResponse> {
 
         @Override
@@ -258,12 +272,14 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         public void onLoadFinished(Loader<FridgeResponse> loader, FridgeResponse response) {
             fridgeFragment.setItems(FridgeItem.fromEndpoint(response.getFridge()));
             ingredientsFragment.setItems(Ingredient.fromEndpoint(response.getIngredients()));
+            setListsShown(true);
         }
 
         @Override
         public void onLoaderReset(Loader<FridgeResponse> loader) {
             fridgeFragment.setItems(Collections.<FridgeItem>emptyList());
             ingredientsFragment.setItems(Collections.<Ingredient>emptyList());
+            setListsShown(false);
         }
 
     }

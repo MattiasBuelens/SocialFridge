@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -31,6 +30,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
+import be.kuleuven.cs.chikwadraat.socialfridge.widget.ListFragment;
 
 /**
  * Fragment displaying a list of ingredients.
