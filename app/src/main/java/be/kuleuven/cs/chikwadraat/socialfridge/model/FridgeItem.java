@@ -35,8 +35,8 @@ public class FridgeItem implements Parcelable {
 
     public FridgeItem(Parcel in) {
         this.ownerID = in.readString();
-        this.ingredient = in.readParcelable(null);
-        setMeasure((Measure) in.readParcelable(null));
+        this.ingredient = in.readParcelable(Ingredient.class.getClassLoader());
+        setMeasure((Measure) in.readParcelable(Measure.class.getClassLoader()));
     }
 
     public String getOwnerID() {

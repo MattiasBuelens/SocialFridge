@@ -22,7 +22,7 @@ public class DishItem implements Parcelable {
     }
 
     public DishItem(Parcel in) {
-        this.ingredient = in.readParcelable(null);
+        this.ingredient = in.readParcelable(Ingredient.class.getClassLoader());
         setStandardAmount(in.readDouble());
     }
 

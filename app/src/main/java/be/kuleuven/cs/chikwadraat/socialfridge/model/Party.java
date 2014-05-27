@@ -48,7 +48,7 @@ public class Party implements Parcelable {
         in.readTypedList(this.timeSlots, TimeSlot.CREATOR);
         this.date = new Date(in.readLong());
         this.dateCreated = new Date(in.readLong());
-        this.dish = in.readParcelable(null);
+        this.dish = in.readParcelable(Dish.class.getClassLoader());
     }
 
     public long getID() {
