@@ -69,6 +69,7 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
+        setListShown(false);
         getSupportLoaderManager().destroyLoader(LOADER_DISHES);
     }
 
@@ -208,7 +209,6 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         @Override
         public void onLoaderReset(Loader<List<Dish>> loader) {
             dishesArrayAdapter.clear();
-            setListShown(false);
         }
 
     }

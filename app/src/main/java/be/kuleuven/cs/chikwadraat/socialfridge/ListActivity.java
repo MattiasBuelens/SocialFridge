@@ -210,6 +210,9 @@ public abstract class ListActivity extends BaseActivity {
      */
     private void setListShown(boolean shown, boolean animate) {
         ensureList();
+        if (mProgressContainer == null || mListContainer == null) {
+            return;
+        }
         if (mListShown == shown) {
             return;
         }

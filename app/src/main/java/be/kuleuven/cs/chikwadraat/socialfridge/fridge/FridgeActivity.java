@@ -205,6 +205,7 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
+        setListsShown(false);
         getSupportLoaderManager().destroyLoader(LOADER_FRIDGE);
     }
 
@@ -279,7 +280,6 @@ public class FridgeActivity extends BaseActivity implements ObservableAsyncTask.
         public void onLoaderReset(Loader<FridgeResponse> loader) {
             fridgeFragment.setItems(Collections.<FridgeItem>emptyList());
             ingredientsFragment.setItems(Collections.<Ingredient>emptyList());
-            setListsShown(false);
         }
 
     }

@@ -58,6 +58,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
     @Override
     protected void onLoggedOut() {
         super.onLoggedOut();
+        setListShown(false);
         getSupportLoaderManager().destroyLoader(LOADER_PARTIES);
     }
 
@@ -163,7 +164,6 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
         @Override
         public void onLoaderReset(Loader<List<Party>> loader) {
             partiesArrayAdapter.clear();
-            setListShown(false);
         }
 
     }
