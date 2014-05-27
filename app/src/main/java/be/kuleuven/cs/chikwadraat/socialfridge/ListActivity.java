@@ -3,6 +3,7 @@ package be.kuleuven.cs.chikwadraat.socialfridge;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -17,7 +18,6 @@ public abstract class ListActivity extends BaseActivity {
     private ListView mList;
 
     private Handler mHandler = new Handler();
-    private boolean mFinishedStart = false;
 
     private Runnable mRequestFocus = new Runnable() {
         public void run() {
@@ -26,7 +26,7 @@ public abstract class ListActivity extends BaseActivity {
     };
 
     private boolean mListShown;
-    private View mListContainer;
+    private ViewGroup mListContainer;
     private View mProgressContainer;
 
     /**
@@ -75,7 +75,7 @@ public abstract class ListActivity extends BaseActivity {
     public void onSupportContentChanged() {
         super.onSupportContentChanged();
         View emptyView = findViewById(android.R.id.empty);
-        mListContainer = findViewById(R.id.list_container);
+        mListContainer = (ViewGroup) findViewById(R.id.list_container);
         mProgressContainer = findViewById(R.id.progress_container);
         mList = (ListView) findViewById(android.R.id.list);
         if (mList == null) {
@@ -85,26 +85,30 @@ public abstract class ListActivity extends BaseActivity {
             );
         }
         if (emptyView != null) {
+            // Move to list container
+            ViewGroup.LayoutParams lp = emptyView.getLayoutParams();
+            if (emptyView.getParent() != null) {
+                ((ViewGroup) emptyView.getParent()).removeView(emptyView);
+            }
+            mListContainer.addView(emptyView, lp);
+            // Set as empty view
             mList.setEmptyView(emptyView);
         }
 
         mListShown = true;
         mList.setOnItemClickListener(mOnClickListener);
-        if (mFinishedStart) {
-            if (mAdapter != null) {
-                ListAdapter adapter = mAdapter;
-                mAdapter = null;
-                setListAdapter(adapter);
-            } else {
-                // We are starting without an adapter, so assume we won't
-                // have our data right away and start with the progress indicator.
-                if (mProgressContainer != null) {
-                    setListShown(false, false);
-                }
+        if (mAdapter != null) {
+            ListAdapter adapter = mAdapter;
+            mAdapter = null;
+            setListAdapter(adapter);
+        } else {
+            // We are starting without an adapter, so assume we won't
+            // have our data right away and start with the progress indicator.
+            if (mProgressContainer != null) {
+                setListShown(false, false);
             }
         }
         mHandler.post(mRequestFocus);
-        mFinishedStart = true;
     }
 
     /**
