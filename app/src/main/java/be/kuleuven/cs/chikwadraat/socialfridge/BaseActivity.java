@@ -75,7 +75,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         isResumed = false;
     }
 
-    protected final boolean isResumed() {
+    protected final boolean isActivityResumed() {
         return isResumed;
     }
 
@@ -119,7 +119,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
-    protected final boolean isStarted() {
+    protected final boolean isActivityStarted() {
         return isStarted;
     }
 
@@ -270,7 +270,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        if (isResumed()) {
+        if (isActivityResumed()) {
             // check for the OPENED state instead of session.isOpened() since for the
             // OPENED_TOKEN_UPDATED state, the start fragment should already be showing.
             if (state.equals(SessionState.OPENED)) {

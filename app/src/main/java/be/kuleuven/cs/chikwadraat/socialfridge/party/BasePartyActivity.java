@@ -189,7 +189,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     }
 
     private void firePartyLoaded(Party party) {
-        if (!isStarted()) return;
+        if (!isActivityStarted()) return;
 
         User user = getLoggedInUser();
         if (user == null) return;
@@ -209,7 +209,7 @@ public abstract class BasePartyActivity extends BaseActivity implements PartyLis
     }
 
     private void firePartyUnloaded() {
-        if (!isStarted()) return;
+        if (!isActivityStarted()) return;
 
         // Call own listener
         onPartyUnloaded();
