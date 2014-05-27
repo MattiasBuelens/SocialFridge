@@ -38,7 +38,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         findViewById(R.id.action_create_party).setOnClickListener(this);
         findViewById(R.id.action_list_parties).setOnClickListener(this);
-        findViewById(R.id.action_list_dishes).setOnClickListener(this);
         findViewById(R.id.action_manage_fridge).setOnClickListener(this);
 
         if (savedInstanceState != null) {
