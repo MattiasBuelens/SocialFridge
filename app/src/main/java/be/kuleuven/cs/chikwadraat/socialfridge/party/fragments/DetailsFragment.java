@@ -55,7 +55,8 @@ public class DetailsFragment extends Fragment implements PartyListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_party_details, container, false);
 
-        dishHeader = (DishHeaderFragment) getChildFragmentManager().findFragmentById(R.id.dish_header);
+        dishHeader = (DishHeaderFragment) getFragmentManager().findFragmentById(R.id.dish_header);
+
         dateView = ((TextView) view.findViewById(R.id.party_date));
         placeView = ((TextView) view.findViewById(R.id.party_place));
         partnersView = ((TextView) view.findViewById(R.id.party_partners));
