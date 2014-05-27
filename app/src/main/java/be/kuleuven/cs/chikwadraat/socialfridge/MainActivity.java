@@ -72,17 +72,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_create_party: {
-                Intent intent = new Intent(this, CreatePartyActivity.class);
+                Intent intent = new Intent(this, DishesActivity.class);
                 startActivity(intent);
             }
             break;
             case R.id.action_list_parties: {
                 Intent intent = new Intent(this, PartiesActivity.class);
-                startActivity(intent);
-            }
-            break;
-            case R.id.action_list_dishes: {
-                Intent intent = new Intent(this, DishesActivity.class);
                 startActivity(intent);
             }
             break;

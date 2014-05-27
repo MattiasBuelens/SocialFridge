@@ -18,7 +18,9 @@ import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyBuilder;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlot;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.TimeSlotSelection;
@@ -34,9 +36,14 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
     private static final String TAG = "CreatePartyActivity";
 
+    public static final String EXTRA_DISH = "dish_object";
+
+    private DishHeaderFragment dishHeader;
     private RadioGroup dayGroup;
     private TimeSlotsFragment timeSlotsFragment;
     private Button findPartnersButton;
+
+    private Dish dish;
     private PartyEndpointAsyncTask task;
 
     @Override
@@ -44,11 +51,21 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         super.onCreate(savedInstanceState);
         setContentView(R.layout.party_create);
 
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(EXTRA_DISH)) {
+            dish = intent.getParcelableExtra(EXTRA_DISH);
+        } else {
+            throw new IllegalArgumentException("Missing required dish in intent");
+        }
+
+        dishHeader = (DishHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.dish_header);
         dayGroup = (RadioGroup) findViewById(R.id.party_create_day_options);
         timeSlotsFragment = (TimeSlotsFragment) getSupportFragmentManager().findFragmentById(R.id.time_slots_fragment);
         findPartnersButton = (Button) findViewById(R.id.party_action_find_partners);
 
         findPartnersButton.setOnClickListener(this);
+
+        updateDish();
         updateTimeSlotSelections();
 
         // Re-attach to registration task
@@ -92,6 +109,14 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
         if (group == dayGroup) {
             updateTimeSlotSelections();
         }
+    }
+
+    protected Dish getDish() {
+        return dish;
+    }
+
+    private void updateDish() {
+        dishHeader.setDish(getDish());
     }
 
     private Date getPartyDate() {
@@ -154,8 +179,7 @@ public class CreatePartyActivity extends BaseActivity implements ObservableAsync
 
         PartyBuilder builder = new PartyBuilder();
         builder.setHostID(getLoggedInUser().getId());
-        // TODO Dish
-        builder.setDishID(null);
+        builder.setDishID(getDish().getID());
         builder.setDate(new DateTime(getPartyDate()));
         builder.setHostTimeSlots(TimeSlot.toEndpoint(getTimeSlots()));
 

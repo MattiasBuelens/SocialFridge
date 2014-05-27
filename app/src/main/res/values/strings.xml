@@ -19,7 +19,6 @@
     <!-- Start -->
     <string name="start_action_create_party">Create Cooking Party</string>
     <string name="start_action_list_parties">My Parties</string>
-    <string name="start_action_list_dishes">Dishes</string>
     <string name="start_action_manage_fridge">My Fridge</string>
 
     <!-- Dishes -->
@@ -132,6 +131,11 @@
 
     <!-- Measure picker -->
     <string name="measure_picker_done">Done</string>
+
+    <!-- View dish -->
+    <string name="dish_view_title">Dish</string>
+    <string name="dish_view_ingredients_title">Ingredients</string>
+    <string name="dish_action_create_party">Create party</string>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>

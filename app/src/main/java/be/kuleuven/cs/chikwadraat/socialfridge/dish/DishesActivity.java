@@ -1,6 +1,5 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.dish;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,12 +19,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.facebook.Session;
 
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.Application;
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.DishesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
@@ -36,10 +37,10 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 public class DishesActivity extends ListActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String TAG = "DishesActivity";
-    private static final int LOADER_PARTIES = 1;
-
+    private static final int LOADER_DISHES = 1;
 
     private DishesArrayAdapter dishesArrayAdapter;
+    private DishesLoaderCallbacks loaderCallbacks = new DishesLoaderCallbacks();
 
     private static final String STATE_QUERY = "dishes_search_query";
     private SearchView searchView;
@@ -56,10 +57,19 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
 
         dishesArrayAdapter = new DishesArrayAdapter();
         setListAdapter(dishesArrayAdapter);
+        setListShownNoAnimation(false);
+    }
 
-        getSupportLoaderManager().initLoader(LOADER_PARTIES, null, new DishesLoaderCallbacks());
+    @Override
+    protected void onLoggedIn(Session session, User user) {
+        super.onLoggedIn(session, user);
+        getSupportLoaderManager().initLoader(LOADER_DISHES, null, loaderCallbacks);
+    }
 
-        handleIntent(getIntent());
+    @Override
+    protected void onLoggedOut() {
+        super.onLoggedOut();
+        getSupportLoaderManager().destroyLoader(LOADER_DISHES);
     }
 
     @Override
@@ -80,21 +90,6 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         }
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    protected void handleIntent(Intent intent) {
-        if (intent == null) return;
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            searchDishes(query);
-        }
     }
 
     @Override
@@ -148,10 +143,10 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Dish dish = (Dish) l.getItemAtPosition(position);
-        // TODO Link with View dish activity
-        //Intent intent = new Intent(this, ViewDishActivity.class);
-        //intent.putExtra(BasePartyActivity.EXTRA_DISH_ID, dish.getID());
-        //startActivity(intent);
+        // View dish
+        Intent intent = new Intent(this, ViewDishActivity.class);
+        intent.putExtra(ViewDishActivity.EXTRA_DISH, dish);
+        startActivity(intent);
     }
 
     public class DishesArrayAdapter extends ArrayAdapter<Dish> {
@@ -207,11 +202,13 @@ public class DishesActivity extends ListActivity implements SearchView.OnQueryTe
         @Override
         public void onLoadFinished(Loader<List<Dish>> loader, List<Dish> parties) {
             AdapterUtils.setAll(dishesArrayAdapter, parties);
+            setListShown(true);
         }
 
         @Override
         public void onLoaderReset(Loader<List<Dish>> loader) {
             dishesArrayAdapter.clear();
+            setListShown(false);
         }
 
     }
