@@ -1,45 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/ingredient_pic"
         android:layout_width="@dimen/ingredient_thumbnail_size"
         android:layout_height="@dimen/ingredient_thumbnail_size"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:scaleType="centerCrop" />
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/ingredient_name"
+        style="@style/AppTheme.CardTitle"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/text_divider_margin"
+        android:layout_marginStart="@dimen/text_divider_margin"
+        android:layout_toEndOf="@+id/ingredient_pic"
+        android:layout_toLeftOf="@+id/item_quantity"
+        android:layout_toRightOf="@+id/ingredient_pic"
+        android:layout_toStartOf="@+id/item_quantity"
+        tools:text="Ingredient Name" />
+
+    <TextView
+        android:id="@+id/item_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="@dimen/text_divider_margin"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/text_divider_margin"
-        android:layout_marginRight="@dimen/text_divider_margin"
-        android:layout_marginStart="@dimen/text_divider_margin">
+        android:layout_marginStart="@dimen/text_divider_margin"
+        android:layout_toLeftOf="@+id/item_in_fridge"
+        android:layout_toStartOf="@+id/item_in_fridge"
+        tools:text="6 pcs" />
 
-        <TextView
-            android:id="@+id/ingredient_name"
-            style="@style/AppTheme.CardTitle"
-            android:layout_toLeftOf="@+id/ingredient_name"
-            android:layout_toStartOf="@+id/ingredient_name"
-            tools:text="Ingredient Name" />
+    <ImageView
+        android:id="@+id/item_in_fridge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/text_divider_margin"
+        android:layout_marginStart="@dimen/text_divider_margin"
+        android:src="@drawable/ic_action_cancel_light" />
 
-        <TextView
-            android:id="@+id/item_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/ingredient_name"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/text_divider_margin"
-            android:layout_marginStart="@dimen/text_divider_margin"
-            tools:text="6 pcs" />
-
-    </RelativeLayout>
-
-
-</LinearLayout>
+</RelativeLayout>

@@ -7,15 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import be.kuleuven.cs.chikwadraat.socialfridge.Application;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
 
 
@@ -30,6 +35,7 @@ public class DishIngredientsFragment extends Fragment {
     private IngredientsListAdapter ingredientsAdapter;
 
     private Dish dish;
+    private List<FridgeItem> fridge = new ArrayList<FridgeItem>();
 
     /**
      * Use this factory method to create a new instance of
@@ -74,21 +80,38 @@ public class DishIngredientsFragment extends Fragment {
         ingredientsAdapter = new IngredientsListAdapter(getActivity());
         ingredientsList.setAdapter(ingredientsAdapter);
 
-        updateDish();
+        updateIngredients();
     }
 
     public void setDish(Dish dish) {
         this.dish = dish;
-        updateDish();
+        updateIngredients();
     }
 
-    private void updateDish() {
+    public void setFridge(List<FridgeItem> fridge) {
+        this.fridge.clear();
+        this.fridge.addAll(fridge);
+        updateIngredients();
+    }
+
+    private void updateIngredients() {
         if (ingredientsAdapter == null) return;
         if (dish != null) {
             AdapterUtils.setAll(ingredientsAdapter, dish.getItems());
         } else {
             ingredientsAdapter.clear();
         }
+    }
+
+    private boolean isInFridge(DishItem dishItem) {
+        for (FridgeItem fridgeItem : fridge) {
+            if (fridgeItem.getIngredient().getID() == dishItem.getIngredient().getID()) {
+                double ingredientAmount = dishItem.getMeasure().getValue(dishItem.getStandardUnit());
+                double fridgeAmount = fridgeItem.getMeasure().getValue(dishItem.getStandardUnit());
+                return fridgeAmount >= ingredientAmount;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -116,10 +139,15 @@ public class DishIngredientsFragment extends Fragment {
             }
 
             DishItem item = getItem(position);
+            boolean isInFridge = isInFridge(item);
+
             vh.position = position;
             vh.pictureView.setImageUrl(item.getIngredient().getThumbnailURL(), Application.get().getImageLoader());
             vh.nameView.setText(item.getIngredient().getName());
             vh.quantityView.setText(item.getMeasure().toString());
+            vh.inFridgeView.setImageResource(isInFridge
+                    ? R.drawable.abc_ic_cab_done_holo_light
+                    : R.drawable.ic_action_cancel_light);
 
             return v;
         }
@@ -128,12 +156,14 @@ public class DishIngredientsFragment extends Fragment {
             TextView nameView;
             TextView quantityView;
             NetworkImageView pictureView;
+            ImageView inFridgeView;
             int position;
 
             private ViewHolder(View v) {
                 nameView = (TextView) v.findViewById(R.id.ingredient_name);
                 pictureView = (NetworkImageView) v.findViewById(R.id.ingredient_pic);
                 quantityView = (TextView) v.findViewById(R.id.item_quantity);
+                inFridgeView = (ImageView) v.findViewById(R.id.item_in_fridge);
             }
         }
 

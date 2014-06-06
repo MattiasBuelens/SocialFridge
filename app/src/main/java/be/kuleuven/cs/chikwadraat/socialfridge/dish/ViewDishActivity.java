@@ -2,11 +2,21 @@ package be.kuleuven.cs.chikwadraat.socialfridge.dish;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.View;
+
+import com.facebook.Session;
+
+import java.util.Collections;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.BaseActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.FridgeResponse;
+import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
+import be.kuleuven.cs.chikwadraat.socialfridge.loader.FridgeLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.FridgeItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.CreatePartyActivity;
 
 /**
@@ -18,8 +28,11 @@ public class ViewDishActivity extends BaseActivity implements View.OnClickListen
 
     public static final String EXTRA_DISH = "dish_object";
 
+    private static final int LOADER_FRIDGE = 1;
+
     private DishHeaderFragment dishHeader;
     private DishIngredientsFragment dishIngredients;
+    private FridgeLoaderCallbacks loaderCallbacks = new FridgeLoaderCallbacks();
 
     private Dish dish;
 
@@ -65,6 +78,37 @@ public class ViewDishActivity extends BaseActivity implements View.OnClickListen
         Intent intent = new Intent(this, CreatePartyActivity.class);
         intent.putExtra(CreatePartyActivity.EXTRA_DISH, getDish());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onLoggedIn(Session session, User user) {
+        super.onLoggedIn(session, user);
+        getSupportLoaderManager().initLoader(LOADER_FRIDGE, null, loaderCallbacks);
+    }
+
+    @Override
+    protected void onLoggedOut() {
+        super.onLoggedOut();
+        getSupportLoaderManager().destroyLoader(LOADER_FRIDGE);
+    }
+
+    private class FridgeLoaderCallbacks implements LoaderManager.LoaderCallbacks<FridgeResponse> {
+
+        @Override
+        public Loader<FridgeResponse> onCreateLoader(int id, Bundle args) {
+            return new FridgeLoader(ViewDishActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<FridgeResponse> loader, FridgeResponse response) {
+            dishIngredients.setFridge(FridgeItem.fromEndpoint(response.getFridge()));
+        }
+
+        @Override
+        public void onLoaderReset(Loader<FridgeResponse> loader) {
+            dishIngredients.setFridge(Collections.<FridgeItem>emptyList());
+        }
+
     }
 
 }
