@@ -14,8 +14,8 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/dish_pic"
-            android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_small"
-            android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_small"
+            android:layout_width="@dimen/dish_thumbnail_size"
+            android:layout_height="@dimen/dish_thumbnail_size"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"

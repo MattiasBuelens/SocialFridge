@@ -14,15 +14,11 @@
 
         <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
             style="@style/AppTheme.HeaderTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@string/party_candidates" />
 
         <TextView
             android:id="@+id/party_candidates_summary"
             style="@style/AppTheme.HeaderSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@string/party_candidates_summary" />
 
     </LinearLayout>

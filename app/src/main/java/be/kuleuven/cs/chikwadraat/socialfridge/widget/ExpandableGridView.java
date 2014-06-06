@@ -1,6 +1,7 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.widget;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.GridView;
 
@@ -30,7 +31,7 @@ public class ExpandableGridView extends GridView {
         if (getLayoutParams().height == LayoutParams.WRAP_CONTENT) {
             // Calculate entire height by providing a very large height hint.
             // View.MEASURED_SIZE_MASK represents the largest height possible.
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(MEASURED_SIZE_MASK, MeasureSpec.AT_MOST);
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(ViewCompat.MEASURED_SIZE_MASK, MeasureSpec.AT_MOST);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }

@@ -57,9 +57,9 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
         dishHeader = (DishHeaderFragment) getFragmentManager().findFragmentById(R.id.dish_header);
 
-        dateView = ((TextView) view.findViewById(R.id.party_date));
-        placeView = ((TextView) view.findViewById(R.id.party_place));
-        partnersView = ((TextView) view.findViewById(R.id.party_partners));
+        dateView = (TextView) view.findViewById(R.id.party_date);
+        placeView = (TextView) view.findViewById(R.id.party_place);
+        partnersView = (TextView) view.findViewById(R.id.party_partners);
         partnersGrid = (GridView) view.findViewById(R.id.party_partners_list);
 
         return view;
