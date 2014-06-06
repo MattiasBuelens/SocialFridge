@@ -134,7 +134,7 @@
 
     <!-- View dish -->
     <string name="dish_view_title">Dish</string>
-    <string name="dish_view_ingredients_title">Ingredients</string>
+    <string name="dish_view_ingredients_title">Ingredients (per person)</string>
     <string name="dish_action_create_party">Create party</string>
 
     <!-- Facebook errors -->

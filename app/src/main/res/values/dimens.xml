@@ -32,6 +32,9 @@
     <!-- Indentation before the text label above the dish photo in the dish detail view -->
     <dimen name="dish_detail_photo_label_indent">18dp</dimen>
 
+    <!-- Size of an ingredient photo thumbnail -->
+    <dimen name="ingredient_thumbnail_size">50dp</dimen>
+
     <!-- Vertical margin between small pictures -->
     <dimen name="picture_small_vertical_margin">5dp</dimen>
 

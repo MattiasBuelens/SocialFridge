@@ -2,6 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="be.kuleuven.cs.chikwadraat.socialfridge.dish.ViewDishActivity">
@@ -30,12 +31,31 @@
                 style="@style/AppTheme.HeaderSingleTitle"
                 android:text="@string/dish_view_ingredients_title" />
 
-            <!--<fragment
-                android:id="@+id/time_slots_fragment"
-                android:name="be.kuleuven.cs.chikwadraat.socialfridge.party.fragments.TimeSlotsFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_timeslots" />-->
+            <LinearLayout
+                style="@style/AppTheme.CardOuter"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    style="@style/AppTheme.CardInner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableListView
+                        android:id="@+id/dish_ingredients"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:divider="@null"
+                        android:dividerHeight="0dp"
+                        android:listSelector="@android:color/transparent"
+                        tools:listitem="@layout/dish_ingredient_list_item" />
+
+                </FrameLayout>
+
+                <!--suppress AndroidLintContentDescription -->
+                <ImageView style="@style/AppTheme.CardShadow" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
