@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
         minSdkVersion 9
@@ -16,7 +16,7 @@ android {
     }
     buildTypes {
         debug {
-            packageNameSuffix ".debug"
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.debug
         }
         release {
@@ -41,7 +41,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":shared")
 
-    compile "com.google.guava:guava:16.+"
+    compile "com.google.guava:guava:17.+"
     compile "com.mcxiaoke.volley:library:1.0.+"
 
     // Support libraries
