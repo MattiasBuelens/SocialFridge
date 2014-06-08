@@ -472,6 +472,144 @@ public class Party {
         this.dish = dish;
     }
 
+    public List<DishItem> getDishItems(Collection<FridgeItem> fridgeItems) {
+        List<DishItem> dishItems = new ArrayList<DishItem>();
+        Set<Ref<Ingredient>> ingredients = getDish().getIngredientRefs();
+        for (FridgeItem fridgeItem : fridgeItems) {
+            if (ingredients.contains(fridgeItem.getIngredientRef())) {
+                dishItems.add(DishItem.fromFridge(fridgeItem));
+            }
+        }
+        return dishItems;
+    }
+
+    /**
+     * Get the items currently being brought to the party.
+     * <p>Ingredients being brought by multiple partners only appear
+     * once with the combined amount from all partners.</p>
+     */
+    public Collection<DishItem> getBringItems() {
+        return getBringItemsMap().values();
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Map<Ref<Ingredient>, DishItem> getBringItemsMap() {
+        Map<Ref<Ingredient>, DishItem> bring = new HashMap<Ref<Ingredient>, DishItem>();
+        for (PartyMember partner : getPartners()) {
+            for (DishItem item : partner.getBringItems()) {
+                DishItem bringItem = bring.get(item.getIngredientRef());
+                if (bringItem == null) {
+                    bring.put(item.getIngredientRef(), item.copy());
+                } else {
+                    bringItem.add(item.getStandardAmount());
+                }
+            }
+        }
+        return bring;
+    }
+
+    /**
+     * Get the items required to serve all current partners.
+     * <p>Ingredients being brought by multiple partners only appear
+     * once with the combined amount from all partners.</p>
+     */
+    public Collection<DishItem> getRequiredItems() {
+        return getRequiredItemsMap().values();
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Map<Ref<Ingredient>, DishItem> getRequiredItemsMap() {
+        int nbPersons = getPartners().size();
+        Map<Ref<Ingredient>, DishItem> required = new HashMap<Ref<Ingredient>, DishItem>();
+        for (DishItem item : getDish().getItems()) {
+            required.put(item.getIngredientRef(), item.times(nbPersons));
+        }
+        return required;
+    }
+
+    /**
+     * Get the items missing to serve all current partners.
+     * <p>Ingredients being brought by multiple partners only appear
+     * once with the combined amount from all partners.</p>
+     */
+    public Collection<DishItem> getMissingItems() {
+        return getMissingItemsMap().values();
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Map<Ref<Ingredient>, DishItem> getMissingItemsMap() {
+        Map<Ref<Ingredient>, DishItem> bring = getBringItemsMap();
+        Map<Ref<Ingredient>, DishItem> required = getRequiredItemsMap();
+        Map<Ref<Ingredient>, DishItem> missing = new HashMap<Ref<Ingredient>, DishItem>(required);
+        for (DishItem bringItem : bring.values()) {
+            DishItem missingItem = missing.get(bringItem.getIngredientRef());
+            if (missingItem != null) {
+                // Decrease amount missing
+                missingItem.subtract(bringItem.getStandardAmount());
+                if (missingItem.getStandardAmount() <= 0) {
+                    // No longer missing
+                    missing.remove(bringItem.getIngredientRef());
+                }
+            }
+        }
+        return missing;
+    }
+
+    /**
+     * Allocates the item needs over the available bringing partners.
+     * <p>The total need for each ingredient is calculated and is assigned to the partners
+     * who can contribute the most of that ingredient. Multiple partners may be selected
+     * if one partner does not suffice.</p>
+     */
+    protected void allocateItems() {
+        Map<Ref<Ingredient>, DishItem> required = getRequiredItemsMap();
+        for (Map.Entry<Ref<Ingredient>, DishItem> entry : required.entrySet()) {
+            Ref<Ingredient> ingredientRef = entry.getKey();
+            DishItem requiredItem = entry.getValue();
+            List<PartnerItem> partnerItems = getPartnersBringing(ingredientRef);
+            double remainingAmount = requiredItem.getStandardAmount();
+            for (PartnerItem partnerItem : partnerItems) {
+                double neededAmount = Math.min(remainingAmount, partnerItem.item.getStandardAmount());
+                partnerItem.item.setStandardAmount(neededAmount);
+                remainingAmount -= neededAmount;
+            }
+        }
+    }
+
+    /**
+     * Get the partners bringing the given ingredient, greatest amount first.
+     *
+     * @param ingredientRef The ingredient.
+     */
+    protected List<PartnerItem> getPartnersBringing(Ref<Ingredient> ingredientRef) {
+        // Collect partners who can bring the ingredient
+        List<PartnerItem> bringing = new ArrayList<PartnerItem>();
+        for (PartyMember partner : getPartners()) {
+            DishItem item = partner.getBringItem(ingredientRef);
+            if (item != null) {
+                bringing.add(new PartnerItem(partner, item));
+            }
+        }
+        // Sort by amount (greatest to lowest)
+        Collections.sort(bringing, new Ordering<PartnerItem>() {
+            @Override
+            public int compare(PartnerItem left, PartnerItem right) {
+                return DishItem.amountComparator.compare(left.item, right.item);
+            }
+        }.reverse());
+        return bringing;
+    }
+
+    protected class PartnerItem {
+        protected final PartyMember partner;
+        protected final DishItem item;
+
+        public PartnerItem(PartyMember partner, DishItem item) {
+            this.partner = partner;
+            this.item = item;
+        }
+    }
+
     /**
      * Invite a user to this party.
      *
@@ -525,12 +663,13 @@ public class Party {
     /**
      * Accept a user's invite.
      *
-     * @param invitee   The user of whom to accept the invite.
-     * @param timeSlots The time slots chosen by the user.
+     * @param invitee    The user of whom to accept the invite.
+     * @param timeSlots  The time slots chosen by the user.
+     * @param bringItems The items brought by the user.
      * @throws IllegalArgumentException If the user is already in the party or was not invited.
      * @throws IllegalStateException    If the party is no longer inviting.
      */
-    public void acceptInvite(User invitee, List<TimeSlot> timeSlots) throws IllegalArgumentException, IllegalStateException {
+    public void acceptInvite(User invitee, List<TimeSlot> timeSlots, List<DishItem> bringItems) throws IllegalArgumentException, IllegalStateException {
         if (!isInviting()) {
             throw new IllegalStateException("Cannot accept invite, no longer inviting.");
         }
@@ -544,6 +683,7 @@ public class Party {
         }
         // Set time slots
         member.setTimeSlots(timeSlots);
+        member.setBringItems(bringItems);
         updateMember(member);
         updatePartner(member);
     }
@@ -606,6 +746,8 @@ public class Party {
             throw new IllegalStateException("Cannot close invites, no longer inviting.");
         }
         setStatus(Status.PLANNING);
+        // Allocate items for dish
+        allocateItems();
     }
 
     /**

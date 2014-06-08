@@ -2,6 +2,8 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Doubles;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.Load;
@@ -65,5 +67,52 @@ public class DishItem {
     public void setMeasure(Measure measure) {
         setStandardAmount(measure.getValue(getStandardUnit()));
     }
+
+    public DishItem copy() {
+        DishItem copy = new DishItem(getIngredientRef());
+        copy.setStandardAmount(getStandardAmount());
+        return copy;
+    }
+
+    public void add(double standardAmount) {
+        setStandardAmount(standardAmount + getStandardAmount());
+    }
+
+    public void subtract(double standardAmount) {
+        add(-standardAmount);
+    }
+
+    public void multiply(int scale) {
+        setStandardAmount(scale * getStandardAmount());
+    }
+
+    public DishItem plus(double standardAmount) {
+        DishItem copy = copy();
+        copy.add(standardAmount);
+        return copy;
+    }
+
+    public DishItem minus(double standardAmount) {
+        return plus(-standardAmount);
+    }
+
+    public DishItem times(int scale) {
+        DishItem copy = copy();
+        copy.multiply(scale);
+        return copy;
+    }
+
+    public static DishItem fromFridge(FridgeItem fridgeItem) {
+        DishItem dishItem = new DishItem(fridgeItem.getIngredientRef());
+        dishItem.setMeasure(fridgeItem.getMeasure());
+        return dishItem;
+    }
+
+    public static final Ordering<DishItem> amountComparator = new Ordering<DishItem>() {
+        @Override
+        public int compare(DishItem left, DishItem right) {
+            return Doubles.compare(left.getStandardAmount(), right.getStandardAmount());
+        }
+    };
 
 }

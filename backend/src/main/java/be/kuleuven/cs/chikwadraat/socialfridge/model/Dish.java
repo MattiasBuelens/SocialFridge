@@ -11,7 +11,9 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.ImagesService;
 
@@ -131,6 +133,18 @@ public class Dish {
     public void setItems(List<DishItem> items) {
         this.items.clear();
         this.items.addAll(items);
+    }
+
+    /**
+     * Ingredients, per person.
+     */
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public Set<Ref<Ingredient>> getIngredientRefs() {
+        Set<Ref<Ingredient>> refs = new HashSet<Ref<Ingredient>>();
+        for (DishItem item : getItems()) {
+            refs.add(item.getIngredientRef());
+        }
+        return refs;
     }
 
     @Override

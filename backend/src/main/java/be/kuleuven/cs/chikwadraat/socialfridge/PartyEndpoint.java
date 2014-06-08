@@ -21,6 +21,7 @@ import javax.inject.Named;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.messaging.PartyUpdateReason;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyBuilder;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
@@ -41,6 +42,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 public class PartyEndpoint extends BaseEndpoint {
 
     private final UserMessageDAO messageDAO = new UserMessageDAO();
+    private final FridgeDAO fridgeDAO = new FridgeDAO();
 
     /**
      * Retrieves a party.
@@ -187,6 +189,7 @@ public class PartyEndpoint extends BaseEndpoint {
      * Accept an invite to a party.
      *
      * @param partyID     The party ID.
+     * @param timeSlots   The chosen time slots.
      * @param accessToken The access token for authorization.
      */
     @ApiMethod(name = "parties.acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
@@ -197,9 +200,10 @@ public class PartyEndpoint extends BaseEndpoint {
             public Party run() throws ServiceException {
                 User user = getUser(userID);
                 Party party = getParty(partyID, true);
+                List<DishItem> bringItems = party.getDishItems(fridgeDAO.getFridge(user));
                 // Accept invite
                 try {
-                    party.acceptInvite(user, timeSlots.getList());
+                    party.acceptInvite(user, timeSlots.getList(), bringItems);
                 } catch (Exception e) {
                     throw new ConflictException(e.getMessage());
                 }

@@ -48,6 +48,11 @@ public class PartyMember {
      */
     private List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 
+    /**
+     * Items to bring to the party.
+     */
+    private List<DishItem> bringItems = new ArrayList<DishItem>();
+
     public PartyMember() {
     }
 
@@ -138,6 +143,26 @@ public class PartyMember {
         for (TimeSlot slot : getTimeSlots()) {
             if (slot.getBeginDate().equals(beginDate) && slot.getEndDate().equals(endDate)) {
                 return slot;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Items to bring to the party.
+     */
+    public List<DishItem> getBringItems() {
+        return bringItems;
+    }
+
+    public void setBringItems(List<DishItem> bringItems) {
+        this.bringItems = bringItems;
+    }
+
+    public DishItem getBringItem(Ref<Ingredient> ingredientRef) {
+        for (DishItem item : bringItems) {
+            if (item.getIngredientRef().equals(ingredientRef)) {
+                return item;
             }
         }
         return null;
