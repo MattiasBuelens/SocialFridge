@@ -26,6 +26,9 @@ public class Party implements Parcelable {
     private final Date date;
     private final Date dateCreated;
     private final Dish dish;
+    private final List<DishItem> bringItems = new ArrayList<DishItem>();
+    private final List<DishItem> requiredItems = new ArrayList<DishItem>();
+    private final List<DishItem> missingItems = new ArrayList<DishItem>();
 
     public Party(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party model) {
         this.id = model.getId();
@@ -37,6 +40,9 @@ public class Party implements Parcelable {
         this.date = new Date(model.getDate().getValue());
         this.dateCreated = new Date(model.getDateCreated().getValue());
         this.dish = new Dish(model.getDish());
+        this.bringItems.addAll(DishItem.fromEndpoint(model.getBringItems()));
+        this.requiredItems.addAll(DishItem.fromEndpoint(model.getRequiredItems()));
+        this.missingItems.addAll(DishItem.fromEndpoint(model.getMissingItems()));
     }
 
     public Party(Parcel in) {
@@ -49,6 +55,9 @@ public class Party implements Parcelable {
         this.date = new Date(in.readLong());
         this.dateCreated = new Date(in.readLong());
         this.dish = in.readParcelable(Dish.class.getClassLoader());
+        in.readTypedList(this.bringItems, DishItem.CREATOR);
+        in.readTypedList(this.requiredItems, DishItem.CREATOR);
+        in.readTypedList(this.missingItems, DishItem.CREATOR);
     }
 
     public long getID() {
@@ -196,6 +205,18 @@ public class Party implements Parcelable {
         return dish;
     }
 
+    public List<DishItem> getBringItems() {
+        return bringItems;
+    }
+
+    public List<DishItem> getRequiredItems() {
+        return requiredItems;
+    }
+
+    public List<DishItem> getMissingItems() {
+        return missingItems;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -212,6 +233,9 @@ public class Party implements Parcelable {
         dest.writeLong(getDate().getTime());
         dest.writeLong(getDateCreated().getTime());
         dest.writeParcelable(getDish(), 0);
+        dest.writeTypedList(getBringItems());
+        dest.writeTypedList(getRequiredItems());
+        dest.writeTypedList(getMissingItems());
     }
 
     public static final Parcelable.Creator<Party> CREATOR = new Parcelable.Creator<Party>() {

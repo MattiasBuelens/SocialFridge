@@ -20,6 +20,7 @@ public class PartyMember implements Parcelable {
     private boolean isInParty;
     private boolean isInvited;
     private final List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    private final List<DishItem> bringItems = new ArrayList<DishItem>();
 
     public PartyMember(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.PartyMember model) {
         this.partyID = model.getPartyID();
@@ -29,6 +30,7 @@ public class PartyMember implements Parcelable {
         this.isInParty = model.getInParty();
         this.isInvited = model.getInvited();
         this.timeSlots.addAll(TimeSlot.fromEndpoint(model.getTimeSlots()));
+        this.bringItems.addAll(DishItem.fromEndpoint(model.getBringItems()));
     }
 
     public PartyMember(Parcel in) {
@@ -39,6 +41,7 @@ public class PartyMember implements Parcelable {
         this.isInParty = (in.readByte() == 1);
         this.isInvited = (in.readByte() == 1);
         in.readTypedList(this.timeSlots, TimeSlot.CREATOR);
+        in.readTypedList(this.bringItems, DishItem.CREATOR);
     }
 
     public long getPartyID() {
@@ -55,6 +58,10 @@ public class PartyMember implements Parcelable {
 
     public List<TimeSlot> getTimeSlots() {
         return timeSlots;
+    }
+
+    public List<DishItem> getBringItems() {
+        return bringItems;
     }
 
     public boolean isHost() {
@@ -112,6 +119,7 @@ public class PartyMember implements Parcelable {
         dest.writeByte((byte) (isInParty() ? 1 : 0));
         dest.writeByte((byte) (isInvited() ? 1 : 0));
         dest.writeTypedList(getTimeSlots());
+        dest.writeTypedList(getBringItems());
     }
 
     public enum Role {
