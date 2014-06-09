@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
@@ -215,6 +216,17 @@ public class Party implements Parcelable {
 
     public List<DishItem> getMissingItems() {
         return missingItems;
+    }
+
+    public List<DishItem> getDishItems(List<FridgeItem> fridgeItems) {
+        List<DishItem> dishItems = new ArrayList<DishItem>();
+        Set<Long> ingredientIDs = getDish().getIngredientIDs();
+        for (FridgeItem fridgeItem : fridgeItems) {
+            if (ingredientIDs.contains(fridgeItem.getIngredient().getID())) {
+                dishItems.add(DishItem.fromFridge(fridgeItem));
+            }
+        }
+        return dishItems;
     }
 
     @Override

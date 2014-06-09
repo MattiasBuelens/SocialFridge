@@ -315,7 +315,10 @@ public class PartyEndpoint extends BaseEndpoint {
             PartyMember member = members.get(friend.getID());
             if (member == null) {
                 // Not yet invited
-                candidates.add(new PartyMember(party, friend, PartyMember.Status.CANDIDATE));
+                List<DishItem> candidateItems = party.getDishItems(fridgeDAO.getFridge(friend));
+                PartyMember candidate = new PartyMember(party, friend, PartyMember.Status.CANDIDATE);
+                candidate.setBringItems(candidateItems);
+                candidates.add(candidate);
             } else if (member.canInvite() || member.isInvited()) {
                 // Can invite or already invited
                 candidates.add(member);
@@ -351,8 +354,10 @@ public class PartyEndpoint extends BaseEndpoint {
                 } catch (Exception e) {
                     throw new ConflictException(e.getMessage());
                 }
-                // Save
+                // Save party
                 ofy().save().entity(party).now();
+                // Save partners with allocated dish items
+                ofy().save().entities(party.getPartners());
                 return party;
             }
         });

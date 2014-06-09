@@ -26,6 +26,10 @@ public class DishItem implements Parcelable {
         setStandardAmount(in.readDouble());
     }
 
+    protected DishItem(Ingredient ingredient) {
+        this.ingredient = ingredient;
+    }
+
     public Ingredient getIngredient() {
         return ingredient;
     }
@@ -74,6 +78,12 @@ public class DishItem implements Parcelable {
         model.setIngredient(getIngredient().toEndpoint())
                 .setStandardAmount(getStandardAmount());
         return model;
+    }
+
+    public static DishItem fromFridge(FridgeItem fridgeItem) {
+        DishItem dishItem = new DishItem(fridgeItem.getIngredient());
+        dishItem.setMeasure(fridgeItem.getMeasure());
+        return dishItem;
     }
 
     @Override

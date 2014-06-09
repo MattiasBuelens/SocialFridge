@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter for {@link be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Dish Dish} endpoint model.
@@ -51,6 +53,22 @@ public class Dish implements Parcelable {
 
     public List<DishItem> getItems() {
         return items;
+    }
+
+    public Set<Ingredient> getIngredients() {
+        Set<Ingredient> ingredients = new HashSet<Ingredient>();
+        for (DishItem item : getItems()) {
+            ingredients.add(item.getIngredient());
+        }
+        return ingredients;
+    }
+
+    public Set<Long> getIngredientIDs() {
+        Set<Long> ids = new HashSet<Long>();
+        for (DishItem item : getItems()) {
+            ids.add(item.getIngredient().getID());
+        }
+        return ids;
     }
 
     @Override
