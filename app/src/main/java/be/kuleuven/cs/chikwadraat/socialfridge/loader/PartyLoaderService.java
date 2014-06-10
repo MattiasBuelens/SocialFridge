@@ -34,7 +34,7 @@ public class PartyLoaderService extends BaseIntentService {
      * Static cache.
      */
     private static final LoadingCache<Long, Party> cache = CacheBuilder.newBuilder()
-            .expireAfterWrite(5000, TimeUnit.SECONDS)
+            .expireAfterWrite(5, TimeUnit.SECONDS)
             .maximumSize(20)
             .build(new CacheLoader<Long, Party>() {
                 @Override
