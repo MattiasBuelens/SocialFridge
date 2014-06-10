@@ -78,6 +78,7 @@ public class PartyEndpoint extends BaseEndpoint {
                 party.setDateCreated(new Date());
                 // Party date
                 party.setDate(builder.getDate());
+                party.setEndDate(builder.getDate());
                 // Dish
                 party.setDishRef(Dish.getRef(builder.getDishID()));
                 // Save party first (needed to generate a key)

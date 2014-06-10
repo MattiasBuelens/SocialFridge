@@ -15,6 +15,7 @@ import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.OnLoad;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -123,6 +124,25 @@ public class Party {
      */
     @Index
     private Date date;
+
+    /**
+     * Party end date.
+     */
+    private Date endDate;
+
+    @OnLoad
+    private void upgradeEndDate() {
+        if (endDate == null) {
+            if (isPlanned()) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(getDate());
+                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                setEndDate(calendar.getTime());
+            } else {
+                setEndDate(getDate());
+            }
+        }
+    }
 
     /**
      * Date created.
@@ -247,6 +267,18 @@ public class Party {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    /**
+     * Party end date.
+     * When {@link #isPlanned() not planned yet}, the time part is not yet configured and should be ignored.
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -726,6 +758,7 @@ public class Party {
         }
         setStatus(Status.PLANNED);
         setDate(timeSlot.getBeginDate());
+        setEndDate(timeSlot.getEndDate());
     }
 
     /**

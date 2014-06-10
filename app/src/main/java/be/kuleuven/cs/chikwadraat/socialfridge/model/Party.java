@@ -25,6 +25,7 @@ public class Party implements Parcelable {
     private final Status status;
     private final List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
     private final Date date;
+    private final Date endDate;
     private final Date dateCreated;
     private final Dish dish;
     private final List<ChecklistItem> checklist = new ArrayList<ChecklistItem>();
@@ -37,6 +38,7 @@ public class Party implements Parcelable {
         this.status = Status.valueOf(model.getStatus());
         this.timeSlots.addAll(TimeSlot.fromEndpoint(model.getTimeSlots()));
         this.date = new Date(model.getDate().getValue());
+        this.endDate = new Date(model.getEndDate().getValue());
         this.dateCreated = new Date(model.getDateCreated().getValue());
         this.dish = new Dish(model.getDish());
         this.checklist.addAll(ChecklistItem.fromEndpoint(model.getChecklist()));
@@ -50,6 +52,7 @@ public class Party implements Parcelable {
         this.status = Status.valueOf(in.readString());
         in.readTypedList(this.timeSlots, TimeSlot.CREATOR);
         this.date = new Date(in.readLong());
+        this.endDate = new Date(in.readLong());
         this.dateCreated = new Date(in.readLong());
         this.dish = in.readParcelable(Dish.class.getClassLoader());
         in.readTypedList(this.checklist, ChecklistItem.CREATOR);
@@ -167,6 +170,10 @@ public class Party implements Parcelable {
 
     public Date getDate() {
         return date;
+    }
+
+    public Date getEndDate() {
+        return endDate;
     }
 
     public String formatDate(Context context) {

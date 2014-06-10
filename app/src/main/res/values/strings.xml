@@ -106,6 +106,13 @@
     <!-- View party -->
     <string name="party_view_title">Party</string>
     <string name="party_view_place">At %1$s\'s place</string>
+    <string name="party_action_add_calendar">Add to calendar</string>
+
+    <!-- Party calendar event -->
+    <string name="calendar_party_title">Cooking party: %1$s</string>
+    <string name="calendar_party_location">%1$s\'s place</string>
+    <string name="calendar_party_description">Bring:\n%1$s</string>
+    <string name="calendar_party_bring_item_format"> - %1$s of %2$s</string>
 
     <!-- Notifications -->
     <string name="notif_party_invite_title">Invited to cooking party</string>
