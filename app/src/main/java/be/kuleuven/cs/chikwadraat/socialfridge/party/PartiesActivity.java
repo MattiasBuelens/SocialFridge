@@ -18,6 +18,7 @@ import java.util.List;
 import be.kuleuven.cs.chikwadraat.socialfridge.Application;
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
+import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishesActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartiesLoader;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
@@ -74,7 +75,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_create_party: {
-                Intent intent = new Intent(this, CreatePartyActivity.class);
+                Intent intent = new Intent(this, DishesActivity.class);
                 startActivity(intent);
             }
             break;
