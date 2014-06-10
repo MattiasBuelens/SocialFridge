@@ -152,7 +152,6 @@ public class Party {
     /**
      * Dish.
      */
-    @Load
     private Ref<Dish> dish;
 
     @OnLoad

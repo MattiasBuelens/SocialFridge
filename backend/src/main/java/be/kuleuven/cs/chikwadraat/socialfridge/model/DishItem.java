@@ -16,7 +16,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 @Embed
 public class DishItem {
 
-    @Load
     private Ref<Ingredient> ingredient;
 
     private double standardAmount;
