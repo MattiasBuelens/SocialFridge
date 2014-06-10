@@ -41,12 +41,12 @@
                 style="@style/AppTheme.CardTitle"
                 tools:text="Candidate Name" />
 
-            <!--<TextView
-                android:id="@+id/candidate_ingredients"
+            <TextView
+                android:id="@+id/candidate_items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                tools:text="Ingredients" />-->
+                tools:text="1 kg of spaghettis\n5 pcs of tomatoes" />
 
         </LinearLayout>
 

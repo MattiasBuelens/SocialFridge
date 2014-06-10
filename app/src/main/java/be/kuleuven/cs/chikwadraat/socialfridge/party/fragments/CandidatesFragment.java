@@ -16,12 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 
 import java.util.List;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.loader.PartyCandidatesLoader;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
@@ -128,6 +132,21 @@ public class CandidatesFragment extends Fragment implements PartyListener {
         getLoaderManager().restartLoader(LOADER_CANDIDATES, args, loaderCallbacks);
     }
 
+    private String formatCandidateItems(List<DishItem> bringItems) {
+        return Joiner.on('\n').join(Collections2.transform(bringItems, new Function<DishItem, String>() {
+            @Override
+            public String apply(DishItem bringItem) {
+                return formatCandidateItem(bringItem);
+            }
+        }));
+    }
+
+    private String formatCandidateItem(DishItem bringItem) {
+        return getString(R.string.party_candidate_item_format,
+                bringItem.getMeasure().toString(),
+                bringItem.getIngredient().getName());
+    }
+
     public void refreshCandidates() {
         if (candidatesAdapter != null) {
             candidatesAdapter.notifyDataSetChanged();
@@ -166,11 +185,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
             ViewHolder vh;
             if (v == null) {
                 v = View.inflate(getContext(), R.layout.candidate_list_item, null);
-                vh = new ViewHolder();
-                vh.pictureView = (ProfilePictureView) v.findViewById(R.id.candidate_pic);
-                vh.nameView = (TextView) v.findViewById(R.id.candidate_name);
-                vh.inviteButton = (Button) v.findViewById(R.id.candidate_invite);
-                //vh.cancelInviteButton = (Button) v.findViewById(R.id.candidate_cancel_invite);
+                vh = new ViewHolder(v);
                 v.setTag(vh);
             } else {
                 vh = (ViewHolder) v.getTag();
@@ -180,6 +195,7 @@ public class CandidatesFragment extends Fragment implements PartyListener {
             vh.position = position;
             vh.pictureView.setProfileId(candidate.getUserID());
             vh.nameView.setText(candidate.getUserName());
+            vh.itemsView.setText(formatCandidateItems(candidate.getBringItems()));
             vh.inviteButton.setOnClickListener(this);
             vh.inviteButton.setTag(vh);
 
@@ -211,10 +227,19 @@ public class CandidatesFragment extends Fragment implements PartyListener {
         }
 
         private class ViewHolder {
-            ProfilePictureView pictureView;
-            TextView nameView;
-            Button inviteButton;
+            final ProfilePictureView pictureView;
+            final TextView nameView;
+            final TextView itemsView;
+            final Button inviteButton;
             int position;
+
+            private ViewHolder(View v) {
+                pictureView = (ProfilePictureView) v.findViewById(R.id.candidate_pic);
+                nameView = (TextView) v.findViewById(R.id.candidate_name);
+                itemsView = (TextView) v.findViewById(R.id.candidate_items);
+                inviteButton = (Button) v.findViewById(R.id.candidate_invite);
+                //cancelInviteButton = (Button) v.findViewById(R.id.candidate_cancel_invite);
+            }
         }
 
     }
