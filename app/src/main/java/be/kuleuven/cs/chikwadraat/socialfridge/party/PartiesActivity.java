@@ -1,21 +1,21 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.party;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.Session;
 
 import java.util.List;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.Application;
 import be.kuleuven.cs.chikwadraat.socialfridge.ListActivity;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
@@ -111,8 +111,8 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
             String statusText = getContext().getString(party.getStatus().getStringResource());
             int statusColor = getContext().getResources().getColor(party.getStatus().getColorResource());
             String dateText = party.formatDate(getContext());
-            String dishText = "Spaghetti Bolognese"; // TODO Dummy
-            Drawable dishDrawable = getContext().getResources().getDrawable(R.drawable.detail_spaghetti); // TODO Dummy
+            String dishText = party.getDish().getName();
+            String dishThumbnailURL = party.getDish().getThumbnailURL();
 
             vh.position = position;
             vh.partnersView.setText(partnersText);
@@ -121,7 +121,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
             vh.statusView.setText(statusText);
             vh.statusView.setBackgroundColor(statusColor);
             vh.dateView.setText(dateText);
-            vh.dishImageView.setImageDrawable(dishDrawable);
+            vh.dishImageView.setImageUrl(dishThumbnailURL, Application.get().getImageLoader());
             vh.dishNameView.setText(dishText);
 
             return v;
@@ -132,7 +132,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
             final TextView roleView;
             final TextView statusView;
             final TextView dateView;
-            final ImageView dishImageView;
+            final NetworkImageView dishImageView;
             final TextView dishNameView;
             int position;
 
@@ -141,7 +141,7 @@ public class PartiesActivity extends ListActivity implements View.OnClickListene
                 roleView = (TextView) v.findViewById(R.id.party_role);
                 statusView = (TextView) v.findViewById(R.id.party_status);
                 dateView = (TextView) v.findViewById(R.id.party_date);
-                dishImageView = (ImageView) v.findViewById(R.id.dish_pic);
+                dishImageView = (NetworkImageView) v.findViewById(R.id.dish_pic);
                 dishNameView = (TextView) v.findViewById(R.id.dish_name);
             }
         }
