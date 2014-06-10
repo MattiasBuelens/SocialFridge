@@ -106,9 +106,7 @@ public class DishIngredientsFragment extends Fragment {
     private boolean isInFridge(DishItem dishItem) {
         for (FridgeItem fridgeItem : fridge) {
             if (fridgeItem.getIngredient().getID() == dishItem.getIngredient().getID()) {
-                double ingredientAmount = dishItem.getMeasure().getValue(dishItem.getStandardUnit());
-                double fridgeAmount = fridgeItem.getMeasure().getValue(dishItem.getStandardUnit());
-                return fridgeAmount >= ingredientAmount;
+                return fridgeItem.getMeasure().compareTo(dishItem.getMeasure()) >= 0;
             }
         }
         return false;

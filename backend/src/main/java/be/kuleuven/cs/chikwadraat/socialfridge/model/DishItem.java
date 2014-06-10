@@ -3,7 +3,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge.model;
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.collect.Ordering;
-import com.google.common.primitives.Doubles;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.Load;
@@ -111,7 +110,7 @@ public class DishItem {
     public static final Ordering<DishItem> amountComparator = new Ordering<DishItem>() {
         @Override
         public int compare(DishItem left, DishItem right) {
-            return Doubles.compare(left.getStandardAmount(), right.getStandardAmount());
+            return left.getMeasure().compareTo(right.getMeasure());
         }
     };
 

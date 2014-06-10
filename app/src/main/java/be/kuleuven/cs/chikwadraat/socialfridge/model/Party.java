@@ -218,6 +218,33 @@ public class Party implements Parcelable {
         return missingItems;
     }
 
+    public DishItem getBringItem(long ingredientID) {
+        for (DishItem bringItem : getBringItems()) {
+            if (bringItem.getIngredient().getID() == ingredientID) {
+                return bringItem;
+            }
+        }
+        return null;
+    }
+
+    public DishItem getRequiredItem(long ingredientID) {
+        for (DishItem requiredItem : getRequiredItems()) {
+            if (requiredItem.getIngredient().getID() == ingredientID) {
+                return requiredItem;
+            }
+        }
+        return null;
+    }
+
+    public DishItem getMissingItem(long ingredientID) {
+        for (DishItem missingItem : getMissingItems()) {
+            if (missingItem.getIngredient().getID() == ingredientID) {
+                return missingItem;
+            }
+        }
+        return null;
+    }
+
     public List<DishItem> getDishItems(List<FridgeItem> fridgeItems) {
         List<DishItem> dishItems = new ArrayList<DishItem>();
         Set<Long> ingredientIDs = getDish().getIngredientIDs();

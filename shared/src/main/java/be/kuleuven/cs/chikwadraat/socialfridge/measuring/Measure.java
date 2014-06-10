@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Milan Samyn on 28/04/2014.
  */
-public class Measure {
+public class Measure implements Comparable<Measure> {
 
     private final double standardValue;
     private final Unit unit;
@@ -46,4 +46,10 @@ public class Measure {
     public String toString() {
         return getUnit().format(getValue());
     }
+
+    @Override
+    public int compareTo(Measure other) {
+        return Double.compare(getValue(), other.getValue(getUnit()));
+    }
+
 }
