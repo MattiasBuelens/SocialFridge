@@ -1,6 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 
-import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.DishDAO;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.BlobUtils;
 
 /**
  * Created by Mattias on 20/04/2014.
@@ -36,25 +37,23 @@ public class InsertDishServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String name = req.getParameter("dishName");
-        List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
+        List<BlobInfo> blobs = blobstoreService.getBlobInfos(req).get("dishPicture");
 
         try {
             // Insert dish
             Dish dish = new Dish(name);
-            if (blobs == null || blobs.isEmpty()) {
+            if (blobs == null || blobs.isEmpty() || !BlobUtils.isImage(blobs.get(0))) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            dish.setPictureKey(blobs.remove(0));
+            dish.setPictureKey(blobs.remove(0).getBlobKey());
             dish = dao.updateDish(dish);
 
             long dishID = dish.getID();
             resp.sendRedirect("/admin/dishes?inserted=" + dishID);
         } finally {
             // Remove any leftover uploads
-            if (blobs != null && !blobs.isEmpty()) {
-                blobstoreService.delete(blobs.toArray(new BlobKey[blobs.size()]));
-            }
+            BlobUtils.deleteBlobInfos(blobs);
         }
     }
 

@@ -1,6 +1,6 @@
 package be.kuleuven.cs.chikwadraat.socialfridge.servlet;
 
-import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.common.base.Strings;
@@ -21,6 +21,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.IngredientDAO;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Dish;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
+import be.kuleuven.cs.chikwadraat.socialfridge.util.BlobUtils;
 
 /**
  * Created by Mattias on 20/04/2014.
@@ -55,7 +56,7 @@ public class UpdateDishServlet extends HttpServlet {
             throws ServletException, IOException {
         long dishID = Long.parseLong(req.getParameter("dishID"));
         String name = req.getParameter("dishName");
-        List<BlobKey> blobs = blobstoreService.getUploads(req).get("dishPicture");
+        List<BlobInfo> blobs = blobstoreService.getBlobInfos(req).get("dishPicture");
         String action = req.getParameter("action");
         String addIngredientID = req.getParameter("dishAddItem");
         String redirectURL = "/admin/dishes?updated=";
@@ -94,18 +95,16 @@ public class UpdateDishServlet extends HttpServlet {
                 Dish dish = new Dish(dishID);
                 dish.setName(name);
                 dish.setItems(items);
-                if (blobs != null && !blobs.isEmpty()) {
+                if (blobs != null && !blobs.isEmpty() && BlobUtils.isImage(blobs.get(0))) {
                     // Use first upload as picture
-                    dish.setPictureKey(blobs.remove(0));
+                    dish.setPictureKey(blobs.remove(0).getBlobKey());
                 }
                 dao.updateDish(dish);
             }
             resp.sendRedirect(redirectURL + dishID);
         } finally {
             // Remove any leftover uploads
-            if (blobs != null && !blobs.isEmpty()) {
-                blobstoreService.delete(blobs.toArray(new BlobKey[blobs.size()]));
-            }
+            BlobUtils.deleteBlobInfos(blobs);
         }
     }
 
