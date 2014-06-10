@@ -77,7 +77,10 @@
         style="@style/AppTheme.CardOuter"
         android:orientation="vertical">
 
-        <FrameLayout style="@style/AppTheme.CardInner">
+        <FrameLayout
+            style="@style/AppTheme.CardInner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <be.kuleuven.cs.chikwadraat.socialfridge.widget.ExpandableListView
                 android:id="@+id/party_checklist"
