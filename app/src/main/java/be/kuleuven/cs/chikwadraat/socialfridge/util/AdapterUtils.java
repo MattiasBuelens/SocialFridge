@@ -11,18 +11,25 @@ import java.util.List;
  */
 public class AdapterUtils {
 
-    @TargetApi(11)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static <T> void setAll(ArrayAdapter<T> adapter, List<T> items) {
         adapter.clear();
         if (items != null) {
-            // If the platform supports it, use addAll, otherwise add in loop
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                adapter.addAll(items);
-            } else {
-                for (T item : items) {
-                    adapter.add(item);
-                }
+            addAll(adapter, items);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static <T> void addAll(ArrayAdapter<T> adapter, List<T> items) {
+        // If the platform supports it, use addAll, otherwise add in loop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            adapter.addAll(items);
+        } else {
+            adapter.setNotifyOnChange(false);
+            for (T item : items) {
+                adapter.add(item);
             }
+            adapter.notifyDataSetChanged();
         }
     }
 
