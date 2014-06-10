@@ -43,7 +43,7 @@
     <color name="party_status_disbanded_background">@color/ics_dark_red</color>
 
     <!-- Party checklist colors -->
-    <color name="party_checklist_item_in_party">@color/ics_green</color>
-    <color name="party_checklist_item_not_in_party">@color/ics_red</color>
+    <color name="party_checklist_item_sufficient">@color/ics_green</color>
+    <color name="party_checklist_item_insufficient">@color/ics_red</color>
 
 </resources>

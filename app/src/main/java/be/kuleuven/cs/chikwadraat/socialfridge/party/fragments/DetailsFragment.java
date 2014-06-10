@@ -20,6 +20,7 @@ import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.ChecklistItem;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
@@ -99,7 +100,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
         updateDate(party);
         updatePlace(party);
         updatePartners(party);
-        updateChecklist(party);
+        updateChecklist(party, user);
     }
 
     @Override
@@ -151,11 +152,13 @@ public class DetailsFragment extends Fragment implements PartyListener {
         partnersAdapter.clear();
     }
 
-    private void updateChecklist(Party party) {
+    private void updateChecklist(Party party, User user) {
+        checklistAdapter.userPartner = party.getPartner(user);
         AdapterUtils.setAll(checklistAdapter, party.getChecklist());
     }
 
     private void clearChecklist() {
+        checklistAdapter.userPartner = null;
         checklistAdapter.clear();
     }
 
@@ -194,6 +197,8 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
     public class ChecklistAdapter extends ArrayAdapter<ChecklistItem> {
 
+        private PartyMember userPartner;
+
         public ChecklistAdapter(Context context) {
             super(context, R.layout.party_checklist_list_item);
         }
@@ -211,19 +216,29 @@ public class DetailsFragment extends Fragment implements PartyListener {
             }
 
             ChecklistItem item = getItem(position);
-            boolean isInParty = item.getBring().compareTo(item.getRequired()) >= 0;
-            // TODO Show how much current user brings?
-            boolean bring = true;
-            String bringText = getString(R.string.party_checklist_bring, item.getBring().toString());
+
+            // Check if available amount is sufficient
+            boolean isSufficient = item.getBring().compareTo(item.getRequired()) >= 0;
+
+            // Check if current user needs to bring this item
+            boolean bring = false;
+            String bringText = "";
+            if (userPartner != null) {
+                DishItem bringItem = userPartner.getBringItem(item.getIngredient().getID());
+                if (bringItem != null && bringItem.getMeasure().getValue() > 0) {
+                    bring = true;
+                    bringText = getString(R.string.party_checklist_bring, bringItem.getMeasure().toString());
+                }
+            }
 
             vh.position = position;
             vh.pictureView.setImageUrl(item.getIngredient().getThumbnailURL(), Application.get().getImageLoader());
             vh.nameView.setText(item.getIngredient().getName());
             vh.requiredQuantityView.setText(getString(R.string.party_checklist_needed, item.getRequired().toString()));
             vh.availableQuantityView.setText(getString(R.string.party_checklist_available, item.getBring().toString()));
-            vh.availableQuantityView.setTextColor(getResources().getColor(isInParty
-                    ? R.color.party_checklist_item_in_party
-                    : R.color.party_checklist_item_not_in_party));
+            vh.availableQuantityView.setTextColor(getResources().getColor(isSufficient
+                    ? R.color.party_checklist_item_sufficient
+                    : R.color.party_checklist_item_insufficient));
             vh.bringQuantityView.setVisibility(bring ? View.VISIBLE : View.GONE);
             vh.bringQuantityView.setText(bringText);
 
