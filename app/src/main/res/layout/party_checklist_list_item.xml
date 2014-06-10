@@ -30,36 +30,31 @@
         android:id="@+id/item_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/text_divider_margin"
-        android:layout_marginStart="@dimen/text_divider_margin"
-        android:layout_toLeftOf="@+id/item_in_party"
-        android:layout_toStartOf="@+id/item_in_party"
+        android:layout_margin="@dimen/text_divider_margin"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_quantity_required"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="8 pcs needed" />
 
         <TextView
-            android:id="@+id/item_quantity_bring"
-            android:layout_width="wrap_content"
+            android:id="@+id/item_quantity_available"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="6 pcs available" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/item_quantity_bring"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="Bring 4 pcs" />
 
-    <ImageView
-        android:id="@+id/item_in_party"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/text_divider_margin"
-        android:layout_marginStart="@dimen/text_divider_margin"
-        android:src="@drawable/ic_action_cancel_light" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -64,6 +64,15 @@ public class PartyMember implements Parcelable {
         return bringItems;
     }
 
+    public DishItem getBringItem(long ingredientID) {
+        for (DishItem bringItem : getBringItems()) {
+            if (bringItem.getIngredient().getID() == ingredientID) {
+                return bringItem;
+            }
+        }
+        return null;
+    }
+
     public boolean isHost() {
         return isHost;
     }

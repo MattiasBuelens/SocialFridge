@@ -21,31 +21,37 @@
         android:layout_marginLeft="@dimen/text_divider_margin"
         android:layout_marginStart="@dimen/text_divider_margin"
         android:layout_toEndOf="@+id/ingredient_pic"
-        android:layout_toLeftOf="@+id/item_quantity"
+        android:layout_toLeftOf="@+id/item_quantities"
         android:layout_toRightOf="@+id/ingredient_pic"
-        android:layout_toStartOf="@+id/item_quantity"
+        android:layout_toStartOf="@+id/item_quantities"
         tools:text="Ingredient Name" />
 
-    <TextView
-        android:id="@+id/item_quantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/text_divider_margin"
-        android:layout_marginStart="@dimen/text_divider_margin"
-        android:layout_toLeftOf="@+id/item_in_fridge"
-        android:layout_toStartOf="@+id/item_in_fridge"
-        tools:text="6 pcs" />
-
-    <ImageView
-        android:id="@+id/item_in_fridge"
+    <LinearLayout
+        android:id="@+id/item_quantities"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/text_divider_margin"
         android:layout_marginLeft="@dimen/text_divider_margin"
+        android:layout_marginRight="@dimen/text_divider_margin"
         android:layout_marginStart="@dimen/text_divider_margin"
-        android:src="@drawable/ic_action_cancel_light" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="6 pcs" />
+
+        <be.kuleuven.cs.chikwadraat.socialfridge.widget.LightTextView
+            android:id="@+id/item_quantity_fridge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            tools:text="4 pcs in fridge" />
+
+    </LinearLayout>
 
 </RelativeLayout>

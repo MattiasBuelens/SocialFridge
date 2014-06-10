@@ -34,6 +34,9 @@
     <string name="party_place">Place</string>
     <string name="party_date">Date</string>
     <string name="party_checklist">Ingredient checklist</string>
+    <string name="party_checklist_needed">%1$s needed</string>
+    <string name="party_checklist_available">%1$s available</string>
+    <string name="party_checklist_bring">Bring %1$s</string>
     <string name="party_time_slot_format">%1$s to %2$s</string>
     <string name="party_action_disband">Disband</string>
     <string name="party_action_delete">Delete</string>
@@ -138,6 +141,7 @@
     <string name="dish_view_title">Dish</string>
     <string name="dish_view_ingredients_title">Ingredients (per person)</string>
     <string name="dish_action_create_party">Create party</string>
+    <string name="dish_item_in_fridge">%1$s in fridge</string>
 
     <!-- Facebook errors -->
     <string name="error_dialog_title">Something went wrong</string>

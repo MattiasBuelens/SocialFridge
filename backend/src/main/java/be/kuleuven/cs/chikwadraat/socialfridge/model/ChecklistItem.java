@@ -20,6 +20,8 @@ public class ChecklistItem {
 
     public ChecklistItem(Ingredient ingredient) {
         this.ingredient = ingredient;
+        setBringAmount(0d);
+        setRequiredAmount(0d);
     }
 
     public Ingredient getIngredient() {

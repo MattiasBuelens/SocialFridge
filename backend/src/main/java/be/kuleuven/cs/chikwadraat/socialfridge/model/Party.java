@@ -181,11 +181,12 @@ public class Party {
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public void setHost(User host, List<TimeSlot> timeSlots) {
+    public void setHost(User host, List<TimeSlot> timeSlots, List<DishItem> bringItems) {
         // Set as host
         this.host = Ref.create(host);
         PartyMember member = new PartyMember(this, host, PartyMember.Status.HOST);
         member.setTimeSlots(timeSlots);
+        member.setBringItems(bringItems);
         // Update
         updateMember(member);
         updatePartner(member);

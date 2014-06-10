@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,8 +35,8 @@ public class DetailsFragment extends Fragment implements PartyListener {
     private DishHeaderFragment dishHeader;
     private TextView dateView;
     private TextView placeView;
-    private TextView partnersView;
-    private GridView partnersGrid;
+    private TextView partnersTitle;
+    private GridView partnersView;
     private ListView checklistView;
     private PartnersListAdapter partnersAdapter;
     private ChecklistAdapter checklistAdapter;
@@ -66,8 +65,9 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
         dateView = (TextView) view.findViewById(R.id.party_date);
         placeView = (TextView) view.findViewById(R.id.party_place);
-        partnersView = (TextView) view.findViewById(R.id.party_partners);
-        partnersGrid = (GridView) view.findViewById(R.id.party_partners_list);
+        partnersTitle = (TextView) view.findViewById(R.id.party_partners);
+        partnersView = (GridView) view.findViewById(R.id.party_partners_list);
+        checklistView = (ListView) view.findViewById(R.id.party_checklist);
 
         return view;
     }
@@ -77,7 +77,7 @@ public class DetailsFragment extends Fragment implements PartyListener {
         super.onActivityCreated(savedInstanceState);
 
         partnersAdapter = new PartnersListAdapter(getActivity());
-        partnersGrid.setAdapter(partnersAdapter);
+        partnersView.setAdapter(partnersAdapter);
 
         checklistAdapter = new ChecklistAdapter(getActivity());
         checklistView.setAdapter(checklistAdapter);
@@ -142,12 +142,12 @@ public class DetailsFragment extends Fragment implements PartyListener {
         PartyMember host = party.getHost();
         String partnersText = getResources().getQuantityString(R.plurals.party_partners, nbOtherPartners,
                 host.getUserName(), nbOtherPartners);
-        partnersView.setText(partnersText);
+        partnersTitle.setText(partnersText);
         AdapterUtils.setAll(partnersAdapter, party.getPartners());
     }
 
     private void clearPartners() {
-        partnersView.setText("");
+        partnersTitle.setText("");
         partnersAdapter.clear();
     }
 
@@ -212,33 +212,38 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
             ChecklistItem item = getItem(position);
             boolean isInParty = item.getBring().compareTo(item.getRequired()) >= 0;
+            // TODO Show how much current user brings?
+            boolean bring = true;
+            String bringText = getString(R.string.party_checklist_bring, item.getBring().toString());
 
             vh.position = position;
             vh.pictureView.setImageUrl(item.getIngredient().getThumbnailURL(), Application.get().getImageLoader());
             vh.nameView.setText(item.getIngredient().getName());
-            vh.requiredQuantityView.setText(item.getRequired().toString());
-            vh.bringQuantityView.setText(item.getBring().toString());
-            vh.inPartyView.setImageResource(isInParty
-                    ? R.drawable.abc_ic_cab_done_holo_light
-                    : R.drawable.ic_action_cancel_light);
+            vh.requiredQuantityView.setText(getString(R.string.party_checklist_needed, item.getRequired().toString()));
+            vh.availableQuantityView.setText(getString(R.string.party_checklist_available, item.getBring().toString()));
+            vh.availableQuantityView.setTextColor(getResources().getColor(isInParty
+                    ? R.color.party_checklist_item_in_party
+                    : R.color.party_checklist_item_not_in_party));
+            vh.bringQuantityView.setVisibility(bring ? View.VISIBLE : View.GONE);
+            vh.bringQuantityView.setText(bringText);
 
             return v;
         }
 
         private class ViewHolder {
-            TextView nameView;
-            NetworkImageView pictureView;
-            TextView requiredQuantityView;
-            TextView bringQuantityView;
-            ImageView inPartyView;
+            final TextView nameView;
+            final NetworkImageView pictureView;
+            final TextView requiredQuantityView;
+            final TextView availableQuantityView;
+            final TextView bringQuantityView;
             int position;
 
             private ViewHolder(View v) {
                 nameView = (TextView) v.findViewById(R.id.ingredient_name);
                 pictureView = (NetworkImageView) v.findViewById(R.id.ingredient_pic);
                 requiredQuantityView = (TextView) v.findViewById(R.id.item_quantity_required);
+                availableQuantityView = (TextView) v.findViewById(R.id.item_quantity_available);
                 bringQuantityView = (TextView) v.findViewById(R.id.item_quantity_bring);
-                inPartyView = (ImageView) v.findViewById(R.id.item_in_party);
             }
         }
 

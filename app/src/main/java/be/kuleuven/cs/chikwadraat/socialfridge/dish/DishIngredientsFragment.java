@@ -103,13 +103,13 @@ public class DishIngredientsFragment extends Fragment {
         }
     }
 
-    private boolean isInFridge(DishItem dishItem) {
+    private FridgeItem getFridgeItem(DishItem dishItem) {
         for (FridgeItem fridgeItem : fridge) {
             if (fridgeItem.getIngredient().getID() == dishItem.getIngredient().getID()) {
-                return fridgeItem.getMeasure().compareTo(dishItem.getMeasure()) >= 0;
+                return fridgeItem;
             }
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -137,31 +137,34 @@ public class DishIngredientsFragment extends Fragment {
             }
 
             DishItem item = getItem(position);
-            boolean isInFridge = isInFridge(item);
+            String fridgeText = "";
+            FridgeItem fridgeItem = getFridgeItem(item);
+            if (fridgeItem != null) {
+                fridgeText = getString(R.string.dish_item_in_fridge, fridgeItem.getMeasure().toString());
+            }
 
             vh.position = position;
             vh.pictureView.setImageUrl(item.getIngredient().getThumbnailURL(), Application.get().getImageLoader());
             vh.nameView.setText(item.getIngredient().getName());
             vh.quantityView.setText(item.getMeasure().toString());
-            vh.inFridgeView.setImageResource(isInFridge
-                    ? R.drawable.abc_ic_cab_done_holo_light
-                    : R.drawable.ic_action_cancel_light);
+            vh.fridgeQuantityView.setVisibility(fridgeItem != null ? View.VISIBLE : View.GONE);
+            vh.fridgeQuantityView.setText(fridgeText);
 
             return v;
         }
 
         private class ViewHolder {
-            TextView nameView;
-            TextView quantityView;
-            NetworkImageView pictureView;
-            ImageView inFridgeView;
+            final TextView nameView;
+            final TextView quantityView;
+            final TextView fridgeQuantityView;
+            final NetworkImageView pictureView;
             int position;
 
             private ViewHolder(View v) {
                 nameView = (TextView) v.findViewById(R.id.ingredient_name);
                 pictureView = (NetworkImageView) v.findViewById(R.id.ingredient_pic);
                 quantityView = (TextView) v.findViewById(R.id.item_quantity);
-                inFridgeView = (ImageView) v.findViewById(R.id.item_in_fridge);
+                fridgeQuantityView = (TextView) v.findViewById(R.id.item_quantity_fridge);
             }
         }
 

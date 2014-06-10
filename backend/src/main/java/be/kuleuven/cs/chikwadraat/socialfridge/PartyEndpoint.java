@@ -83,7 +83,8 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host
-                party.setHost(user, builder.getHostTimeSlots());
+                List<DishItem> bringItems = party.getDishItems(fridgeDAO.getFridge(user));
+                party.setHost(user, builder.getHostTimeSlots(), bringItems);
                 // Save again
                 ofy().save().entities(party, user).now();
                 return party;
