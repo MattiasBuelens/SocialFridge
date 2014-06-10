@@ -53,7 +53,7 @@ public class IngredientDAO {
                     // Copy optional properties from stored ingredient
                     if (ingredient.getPictureKey() == null) {
                         ingredient.setPictureKey(storedIngredient.getPictureKey());
-                    } else if (storedIngredient.getPictureKey() != null) {
+                    } else if (!storedIngredient.getPictureKey().equals(ingredient.getPictureKey())) {
                         // Remove old picture
                         blobstoreService.delete(storedIngredient.getPictureKey());
                     }

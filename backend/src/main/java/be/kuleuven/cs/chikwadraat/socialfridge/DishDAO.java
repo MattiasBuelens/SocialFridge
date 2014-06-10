@@ -53,7 +53,7 @@ public class DishDAO {
                     // Copy optional properties from stored dish
                     if (dish.getPictureKey() == null) {
                         dish.setPictureKey(storedDish.getPictureKey());
-                    } else if (storedDish.getPictureKey() != null) {
+                    } else if (!storedDish.getPictureKey().equals(dish.getPictureKey())) {
                         // Remove old picture
                         blobstoreService.delete(storedDish.getPictureKey());
                     }

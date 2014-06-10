@@ -96,8 +96,7 @@ public class UpdateDishServlet extends HttpServlet {
                 dish.setItems(items);
                 if (blobs != null && !blobs.isEmpty()) {
                     // Use first upload as picture
-                    BlobKey pictureKey = blobs.remove(0);
-                    dish.setPictureKey(pictureKey);
+                    dish.setPictureKey(blobs.remove(0));
                 }
                 dao.updateDish(dish);
             }
