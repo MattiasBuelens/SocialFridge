@@ -490,7 +490,7 @@ public class Party {
      * Dish.
      */
     public Dish getDish() {
-        return dish.get();
+        return ofy().transactionless().load().ref(dish).now();
     }
 
     public void setDish(Dish dish) {

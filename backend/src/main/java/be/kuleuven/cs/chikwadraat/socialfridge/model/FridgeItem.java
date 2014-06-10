@@ -11,6 +11,8 @@ import com.googlecode.objectify.annotation.Parent;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
 
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
+
 /**
  * FridgeItem.
  */
@@ -105,7 +107,7 @@ public class FridgeItem {
     }
 
     public Ingredient getIngredient() {
-        return getIngredientRef().get();
+        return ofy().transactionless().load().ref(getIngredientRef()).now();
     }
 
     public void setIngredient(Ingredient ingredient) {

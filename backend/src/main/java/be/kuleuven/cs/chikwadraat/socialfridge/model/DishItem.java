@@ -5,10 +5,11 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.collect.Ordering;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Embed;
-import com.googlecode.objectify.annotation.Load;
 
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
 import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Unit;
+
+import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 /**
  * Created by Mattias on 19/05/2014.
@@ -37,7 +38,7 @@ public class DishItem {
     }
 
     public Ingredient getIngredient() {
-        return getIngredientRef().get();
+        return ofy().transactionless().load().ref(getIngredientRef()).now();
     }
 
     public void setIngredient(Ingredient ingredient) {
