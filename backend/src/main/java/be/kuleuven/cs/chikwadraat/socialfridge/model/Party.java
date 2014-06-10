@@ -506,17 +506,6 @@ public class Party {
         this.dish = dish;
     }
 
-    public List<DishItem> getDishItems(Collection<FridgeItem> fridgeItems) {
-        List<DishItem> dishItems = new ArrayList<DishItem>();
-        Set<Ref<Ingredient>> ingredients = getDish().getIngredientRefs();
-        for (FridgeItem fridgeItem : fridgeItems) {
-            if (ingredients.contains(fridgeItem.getIngredientRef())) {
-                dishItems.add(DishItem.fromFridge(fridgeItem));
-            }
-        }
-        return dishItems;
-    }
-
     /**
      * Get the current dish item checklist.
      */

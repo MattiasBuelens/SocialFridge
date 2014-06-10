@@ -11,6 +11,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -145,6 +146,23 @@ public class Dish {
             refs.add(item.getIngredientRef());
         }
         return refs;
+    }
+
+    /**
+     * Match the given fridge items with the ingredients of this dish.
+     *
+     * @param fridgeItems The fridge items.
+     * @return The matching fridge items, as dish items.
+     */
+    public List<DishItem> matchFridge(Collection<FridgeItem> fridgeItems) {
+        List<DishItem> dishItems = new ArrayList<DishItem>();
+        Set<Ref<Ingredient>> ingredients = getIngredientRefs();
+        for (FridgeItem fridgeItem : fridgeItems) {
+            if (ingredients.contains(fridgeItem.getIngredientRef())) {
+                dishItems.add(DishItem.fromFridge(fridgeItem));
+            }
+        }
+        return dishItems;
     }
 
     @Override

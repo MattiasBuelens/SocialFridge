@@ -42,6 +42,7 @@ import static be.kuleuven.cs.chikwadraat.socialfridge.TransactUtils.transact;
 public class PartyEndpoint extends BaseEndpoint {
 
     private final UserMessageDAO messageDAO = new UserMessageDAO();
+    private final DishDAO dishDAO = new DishDAO();
     private final FridgeDAO fridgeDAO = new FridgeDAO();
 
     /**
@@ -69,6 +70,12 @@ public class PartyEndpoint extends BaseEndpoint {
     public Party insertParty(final PartyBuilder builder, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = builder.getHostID();
         checkAccess(accessToken, userID);
+
+        // Match host's fridge with dish
+        User user = getUser(userID);
+        Dish dish = dishDAO.getDish(builder.getDishID());
+        final List<DishItem> bringItems = dish.matchFridge(fridgeDAO.getFridge(user));
+
         return transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
@@ -84,7 +91,6 @@ public class PartyEndpoint extends BaseEndpoint {
                 // Save party first (needed to generate a key)
                 ofy().save().entity(party).now();
                 // Configure the host
-                List<DishItem> bringItems = party.getDishItems(fridgeDAO.getFridge(user));
                 party.setHost(user, builder.getHostTimeSlots(), bringItems);
                 // Save again
                 ofy().save().entities(party, user).now();
@@ -197,12 +203,17 @@ public class PartyEndpoint extends BaseEndpoint {
     @ApiMethod(name = "parties.acceptInvite", path = "party/{partyID}/acceptInvite", httpMethod = ApiMethod.HttpMethod.POST)
     public Party acceptInvite(@Named("partyID") final long partyID, final TimeSlotCollection timeSlots, @Named("accessToken") String accessToken) throws ServiceException {
         final String userID = getUserID(accessToken);
-        Party party = transact(new Work<Party, ServiceException>() {
+
+        // Match user's fridge with dish
+        User user = getUser(userID);
+        Party party = getParty(partyID, false);
+        final List<DishItem> bringItems = party.getDish().matchFridge(fridgeDAO.getFridge(user));
+
+        party = transact(new Work<Party, ServiceException>() {
             @Override
             public Party run() throws ServiceException {
                 User user = getUser(userID);
                 Party party = getParty(partyID, true);
-                List<DishItem> bringItems = party.getDishItems(fridgeDAO.getFridge(user));
                 // Accept invite
                 try {
                     party.acceptInvite(user, timeSlots.getList(), bringItems);
@@ -214,8 +225,8 @@ public class PartyEndpoint extends BaseEndpoint {
                 return party;
             }
         });
+
         // Send update to other recipients
-        User user = getUser(userID);
         messageDAO.addMessages(Messages.partyUpdated(party)
                 .reason(PartyUpdateReason.JOINED)
                 .reasonUser(user)
@@ -317,7 +328,7 @@ public class PartyEndpoint extends BaseEndpoint {
             PartyMember member = members.get(friend.getID());
             if (member == null) {
                 // Not yet invited
-                List<DishItem> candidateItems = party.getDishItems(fridgeDAO.getFridge(friend));
+                List<DishItem> candidateItems = party.getDish().matchFridge(fridgeDAO.getFridge(friend));
                 PartyMember candidate = new PartyMember(party, friend, PartyMember.Status.CANDIDATE);
                 candidate.setBringItems(candidateItems);
                 candidates.add(candidate);
