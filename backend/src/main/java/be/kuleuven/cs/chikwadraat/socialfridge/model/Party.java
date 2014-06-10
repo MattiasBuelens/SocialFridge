@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import be.kuleuven.cs.chikwadraat.socialfridge.measuring.Measure;
+
 import static be.kuleuven.cs.chikwadraat.socialfridge.OfyService.ofy;
 
 
@@ -484,75 +486,30 @@ public class Party {
     }
 
     /**
-     * Get the items currently being brought to the party.
-     * <p>Ingredients being brought by multiple partners only appear
-     * once with the combined amount from all partners.</p>
+     * Get the current dish item checklist.
      */
-    public Collection<DishItem> getBringItems() {
-        return getBringItemsMap().values();
+    public Collection<ChecklistItem> getChecklist() {
+        return getChecklistMap().values();
     }
 
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Map<Ref<Ingredient>, DishItem> getBringItemsMap() {
-        Map<Ref<Ingredient>, DishItem> bring = new HashMap<Ref<Ingredient>, DishItem>();
-        for (PartyMember partner : getPartners()) {
-            for (DishItem item : partner.getBringItems()) {
-                DishItem bringItem = bring.get(item.getIngredientRef());
-                if (bringItem == null) {
-                    bring.put(item.getIngredientRef(), item.copy());
-                } else {
-                    bringItem.add(item.getStandardAmount());
-                }
-            }
-        }
-        return bring;
-    }
-
-    /**
-     * Get the items required to serve all current partners.
-     * <p>Ingredients being brought by multiple partners only appear
-     * once with the combined amount from all partners.</p>
-     */
-    public Collection<DishItem> getRequiredItems() {
-        return getRequiredItemsMap().values();
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Map<Ref<Ingredient>, DishItem> getRequiredItemsMap() {
+    public Map<Ref<Ingredient>, ChecklistItem> getChecklistMap() {
         int nbPersons = getPartners().size();
-        Map<Ref<Ingredient>, DishItem> required = new HashMap<Ref<Ingredient>, DishItem>();
-        for (DishItem item : getDish().getItems()) {
-            required.put(item.getIngredientRef(), item.times(nbPersons));
+        Map<Ref<Ingredient>, ChecklistItem> items = new HashMap<Ref<Ingredient>, ChecklistItem>();
+        // Initialize with required items
+        for (DishItem requiredItem : getDish().getItems()) {
+            ChecklistItem item = new ChecklistItem(requiredItem.getIngredient());
+            item.setRequiredMeasure(requiredItem.getMeasure().times(nbPersons));
+            items.put(requiredItem.getIngredientRef(), item);
         }
-        return required;
-    }
-
-    /**
-     * Get the items missing to serve all current partners.
-     * <p>Ingredients being brought by multiple partners only appear
-     * once with the combined amount from all partners.</p>
-     */
-    public Collection<DishItem> getMissingItems() {
-        return getMissingItemsMap().values();
-    }
-
-    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
-    public Map<Ref<Ingredient>, DishItem> getMissingItemsMap() {
-        Map<Ref<Ingredient>, DishItem> bring = getBringItemsMap();
-        Map<Ref<Ingredient>, DishItem> required = getRequiredItemsMap();
-        Map<Ref<Ingredient>, DishItem> missing = new HashMap<Ref<Ingredient>, DishItem>(required);
-        for (DishItem bringItem : bring.values()) {
-            DishItem missingItem = missing.get(bringItem.getIngredientRef());
-            if (missingItem != null) {
-                // Decrease amount missing
-                missingItem.subtract(bringItem.getStandardAmount());
-                if (missingItem.getStandardAmount() <= 0) {
-                    // No longer missing
-                    missing.remove(bringItem.getIngredientRef());
-                }
+        // Add bring items
+        for (PartyMember partner : getPartners()) {
+            for (DishItem bringItem : partner.getBringItems()) {
+                ChecklistItem item = items.get(bringItem.getIngredientRef());
+                item.setBringMeasure(item.getBringMeasure().plus(bringItem.getMeasure()));
             }
         }
-        return missing;
+        return items;
     }
 
     /**
@@ -562,16 +519,16 @@ public class Party {
      * if one partner does not suffice.</p>
      */
     protected void allocateItems() {
-        Map<Ref<Ingredient>, DishItem> required = getRequiredItemsMap();
-        for (Map.Entry<Ref<Ingredient>, DishItem> entry : required.entrySet()) {
+        Map<Ref<Ingredient>, ChecklistItem> required = getChecklistMap();
+        for (Map.Entry<Ref<Ingredient>, ChecklistItem> entry : required.entrySet()) {
             Ref<Ingredient> ingredientRef = entry.getKey();
-            DishItem requiredItem = entry.getValue();
+            ChecklistItem checklistItem = entry.getValue();
             List<PartnerItem> partnerItems = getPartnersBringing(ingredientRef);
-            double remainingAmount = requiredItem.getStandardAmount();
+            Measure remaining = checklistItem.getRequiredMeasure();
             for (PartnerItem partnerItem : partnerItems) {
-                double neededAmount = Math.min(remainingAmount, partnerItem.item.getStandardAmount());
-                partnerItem.item.setStandardAmount(neededAmount);
-                remainingAmount -= neededAmount;
+                Measure needed = Measure.ordering.min(remaining, partnerItem.item.getMeasure());
+                partnerItem.item.setMeasure(needed);
+                remaining = remaining.minus(needed);
             }
         }
     }

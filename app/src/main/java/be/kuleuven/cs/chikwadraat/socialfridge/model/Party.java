@@ -27,9 +27,7 @@ public class Party implements Parcelable {
     private final Date date;
     private final Date dateCreated;
     private final Dish dish;
-    private final List<DishItem> bringItems = new ArrayList<DishItem>();
-    private final List<DishItem> requiredItems = new ArrayList<DishItem>();
-    private final List<DishItem> missingItems = new ArrayList<DishItem>();
+    private final List<ChecklistItem> checklist = new ArrayList<ChecklistItem>();
 
     public Party(be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.Party model) {
         this.id = model.getId();
@@ -41,9 +39,7 @@ public class Party implements Parcelable {
         this.date = new Date(model.getDate().getValue());
         this.dateCreated = new Date(model.getDateCreated().getValue());
         this.dish = new Dish(model.getDish());
-        this.bringItems.addAll(DishItem.fromEndpoint(model.getBringItems()));
-        this.requiredItems.addAll(DishItem.fromEndpoint(model.getRequiredItems()));
-        this.missingItems.addAll(DishItem.fromEndpoint(model.getMissingItems()));
+        this.checklist.addAll(ChecklistItem.fromEndpoint(model.getChecklist()));
     }
 
     public Party(Parcel in) {
@@ -56,9 +52,7 @@ public class Party implements Parcelable {
         this.date = new Date(in.readLong());
         this.dateCreated = new Date(in.readLong());
         this.dish = in.readParcelable(Dish.class.getClassLoader());
-        in.readTypedList(this.bringItems, DishItem.CREATOR);
-        in.readTypedList(this.requiredItems, DishItem.CREATOR);
-        in.readTypedList(this.missingItems, DishItem.CREATOR);
+        in.readTypedList(this.checklist, ChecklistItem.CREATOR);
     }
 
     public long getID() {
@@ -206,43 +200,8 @@ public class Party implements Parcelable {
         return dish;
     }
 
-    public List<DishItem> getBringItems() {
-        return bringItems;
-    }
-
-    public List<DishItem> getRequiredItems() {
-        return requiredItems;
-    }
-
-    public List<DishItem> getMissingItems() {
-        return missingItems;
-    }
-
-    public DishItem getBringItem(long ingredientID) {
-        for (DishItem bringItem : getBringItems()) {
-            if (bringItem.getIngredient().getID() == ingredientID) {
-                return bringItem;
-            }
-        }
-        return null;
-    }
-
-    public DishItem getRequiredItem(long ingredientID) {
-        for (DishItem requiredItem : getRequiredItems()) {
-            if (requiredItem.getIngredient().getID() == ingredientID) {
-                return requiredItem;
-            }
-        }
-        return null;
-    }
-
-    public DishItem getMissingItem(long ingredientID) {
-        for (DishItem missingItem : getMissingItems()) {
-            if (missingItem.getIngredient().getID() == ingredientID) {
-                return missingItem;
-            }
-        }
-        return null;
+    public List<ChecklistItem> getChecklist() {
+        return checklist;
     }
 
     public List<DishItem> getDishItems(List<FridgeItem> fridgeItems) {
@@ -272,9 +231,7 @@ public class Party implements Parcelable {
         dest.writeLong(getDate().getTime());
         dest.writeLong(getDateCreated().getTime());
         dest.writeParcelable(getDish(), 0);
-        dest.writeTypedList(getBringItems());
-        dest.writeTypedList(getRequiredItems());
-        dest.writeTypedList(getMissingItems());
+        dest.writeTypedList(getChecklist());
     }
 
     public static final Parcelable.Creator<Party> CREATOR = new Parcelable.Creator<Party>() {

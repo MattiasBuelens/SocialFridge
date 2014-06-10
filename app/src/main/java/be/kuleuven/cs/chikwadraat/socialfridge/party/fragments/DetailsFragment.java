@@ -3,8 +3,6 @@ package be.kuleuven.cs.chikwadraat.socialfridge.party.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +16,11 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.widget.ProfilePictureView;
 
-import java.util.ArrayList;
-
 import be.kuleuven.cs.chikwadraat.socialfridge.Application;
 import be.kuleuven.cs.chikwadraat.socialfridge.R;
 import be.kuleuven.cs.chikwadraat.socialfridge.dish.DishHeaderFragment;
 import be.kuleuven.cs.chikwadraat.socialfridge.endpoint.model.User;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.DishItem;
-import be.kuleuven.cs.chikwadraat.socialfridge.model.Ingredient;
+import be.kuleuven.cs.chikwadraat.socialfridge.model.ChecklistItem;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.Party;
 import be.kuleuven.cs.chikwadraat.socialfridge.model.PartyMember;
 import be.kuleuven.cs.chikwadraat.socialfridge.party.PartyListener;
@@ -38,8 +33,6 @@ import be.kuleuven.cs.chikwadraat.socialfridge.util.AdapterUtils;
  */
 public class DetailsFragment extends Fragment implements PartyListener {
 
-    private static final String STATE_CHECKLIST = "checklist";
-
     private DishHeaderFragment dishHeader;
     private TextView dateView;
     private TextView placeView;
@@ -48,8 +41,6 @@ public class DetailsFragment extends Fragment implements PartyListener {
     private ListView checklistView;
     private PartnersListAdapter partnersAdapter;
     private ChecklistAdapter checklistAdapter;
-
-    private ArrayList<ChecklistItem> checklistItems = new ArrayList<ChecklistItem>();
 
     /**
      * Create a new partners fragment.
@@ -63,16 +54,6 @@ public class DetailsFragment extends Fragment implements PartyListener {
 
     public DetailsFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore
-            checklistItems = savedInstanceState.getParcelableArrayList(STATE_CHECKLIST);
-        }
     }
 
     @Override
@@ -171,25 +152,11 @@ public class DetailsFragment extends Fragment implements PartyListener {
     }
 
     private void updateChecklist(Party party) {
-        checklistItems.clear();
-        for (Ingredient ingredient : party.getDish().getIngredients()) {
-            DishItem required = party.getRequiredItem(ingredient.getID());
-            DishItem bring = party.getBringItem(ingredient.getID());
-            DishItem missing = party.getMissingItem(ingredient.getID());
-            ChecklistItem item = new ChecklistItem(ingredient, required, bring, missing);
-            checklistItems.add(item);
-        }
-        checklistAdapter.notifyDataSetChanged();
+        AdapterUtils.setAll(checklistAdapter, party.getChecklist());
     }
 
     private void clearChecklist() {
         checklistAdapter.clear();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_CHECKLIST, checklistItems);
     }
 
     public class PartnersListAdapter extends ArrayAdapter<PartyMember> {
@@ -244,13 +211,13 @@ public class DetailsFragment extends Fragment implements PartyListener {
             }
 
             ChecklistItem item = getItem(position);
-            boolean isInParty = item.bring.getMeasure().compareTo(item.required.getMeasure()) <= 0;
+            boolean isInParty = item.getBring().compareTo(item.getRequired()) >= 0;
 
             vh.position = position;
-            vh.pictureView.setImageUrl(item.ingredient.getThumbnailURL(), Application.get().getImageLoader());
-            vh.nameView.setText(item.ingredient.getName());
-            vh.requiredQuantityView.setText(item.required.getMeasure().toString());
-            vh.bringQuantityView.setText(item.bring.getMeasure().toString());
+            vh.pictureView.setImageUrl(item.getIngredient().getThumbnailURL(), Application.get().getImageLoader());
+            vh.nameView.setText(item.getIngredient().getName());
+            vh.requiredQuantityView.setText(item.getRequired().toString());
+            vh.bringQuantityView.setText(item.getBring().toString());
             vh.inPartyView.setImageResource(isInParty
                     ? R.drawable.abc_ic_cab_done_holo_light
                     : R.drawable.ic_action_cancel_light);
@@ -274,54 +241,6 @@ public class DetailsFragment extends Fragment implements PartyListener {
                 inPartyView = (ImageView) v.findViewById(R.id.item_in_party);
             }
         }
-
-    }
-
-    public static class ChecklistItem implements Parcelable {
-
-        public final Ingredient ingredient;
-        public final DishItem required;
-        public final DishItem bring;
-        public final DishItem missing;
-
-        public ChecklistItem(Ingredient ingredient, DishItem required, DishItem bring, DishItem missing) {
-            this.ingredient = ingredient;
-            this.required = required;
-            this.bring = bring;
-            this.missing = missing;
-        }
-
-        public ChecklistItem(Parcel in) {
-            this.ingredient = in.readParcelable(Ingredient.class.getClassLoader());
-            this.required = in.readParcelable(DishItem.class.getClassLoader());
-            this.bring = in.readParcelable(DishItem.class.getClassLoader());
-            this.missing = in.readParcelable(DishItem.class.getClassLoader());
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(ingredient, 0);
-            dest.writeParcelable(required, 0);
-            dest.writeParcelable(bring, 0);
-            dest.writeParcelable(missing, 0);
-        }
-
-        public static final Creator<ChecklistItem> CREATOR = new Creator<ChecklistItem>() {
-
-            public ChecklistItem createFromParcel(Parcel in) {
-                return new ChecklistItem(in);
-            }
-
-            public ChecklistItem[] newArray(int size) {
-                return new ChecklistItem[size];
-            }
-
-        };
 
     }
 

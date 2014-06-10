@@ -69,20 +69,34 @@ public class DishItem {
 
     public DishItem copy() {
         DishItem copy = new DishItem(getIngredientRef());
-        copy.setStandardAmount(getStandardAmount());
+        copy.setMeasure(getMeasure());
         return copy;
     }
 
+    public void add(Measure measure) {
+        setMeasure(getMeasure().plus(measure));
+    }
+
     public void add(double standardAmount) {
-        setStandardAmount(standardAmount + getStandardAmount());
+        add(new Measure(standardAmount, getStandardUnit()));
+    }
+
+    public void subtract(Measure measure) {
+        setMeasure(getMeasure().plus(measure));
     }
 
     public void subtract(double standardAmount) {
-        add(-standardAmount);
+        subtract(new Measure(standardAmount, getStandardUnit()));
     }
 
-    public void multiply(int scale) {
-        setStandardAmount(scale * getStandardAmount());
+    public void multiply(long scale) {
+        setMeasure(getMeasure().times(scale));
+    }
+
+    public DishItem plus(Measure measure) {
+        DishItem copy = copy();
+        copy.add(measure);
+        return copy;
     }
 
     public DishItem plus(double standardAmount) {
@@ -91,11 +105,15 @@ public class DishItem {
         return copy;
     }
 
+    public DishItem minus(Measure measure) {
+        return plus(measure.negate());
+    }
+
     public DishItem minus(double standardAmount) {
         return plus(-standardAmount);
     }
 
-    public DishItem times(int scale) {
+    public DishItem times(long scale) {
         DishItem copy = copy();
         copy.multiply(scale);
         return copy;
