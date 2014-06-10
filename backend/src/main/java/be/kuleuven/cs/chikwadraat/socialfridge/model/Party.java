@@ -138,7 +138,7 @@ public class Party {
     @OnLoad
     private void upgradeDish() {
         if (dish == null) {
-            setDishRef(Ref.create(ofy().load().type(Dish.class).keys().first().now()));
+            setDishRef(Ref.create(ofy().transactionless().load().type(Dish.class).keys().first().now()));
         }
     }
 
